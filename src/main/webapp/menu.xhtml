@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:h="http://java.sun.com/jsf/html">
+
+    <h:form id="menuform">
+        <p:growl id="menumsgs" />
+
+        <p:menubar id="mainMenu" >
+            <p:menuitem value="Home" icon="ui-icon-home" title="Home" url="index.xhtml"/>
+            <p:menuitem value="Equipment" icon="ui-icon-power" title="Browse All Equipment" url="equipment.xhtml"/>               
+            <p:menuitem value="Calibrations" icon="ui-icon-comment" title="Browse All Calibration Records" url="crecords.xhtml"/> 
+            <p:submenu label="Calibration" icon="ui-icon-comment" rendered="false">
+                <p:menuitem value="Add New Calibration" title="Add New Calibration" 
+                            url="/addcalib.xhtml" icon="ui-icon-suitcase" 
+                            disabled="#{not loginManager.loggedin}" />            
+                <p:menuitem value="Edit Calibration" title="Edit Calibration" 
+                            url="/editcalib.xhtml" icon="ui-icon-comment" 
+                            disabled="true" />
+            </p:submenu>
+
+            <p:menuitem value="Reports" title="Reports"  icon="ui-icon-print" url="reports.xhtml" disabled="true" />
+
+            <p:menuitem value="Preferences" title="Preferences"  icon="ui-icon-gear" url="preferences.xhtml"  disabled="true"/>
+
+            <p:submenu label="Help" icon="ui-icon-help">
+                <p:menuitem value=" Online Help" title="Online Help" 
+                            icon="ui-icon-help" 
+                            url="help.xhtml"  disabled="true"/>
+                <p:menuitem value=" API Manual" title="API Manual" 
+                            icon="ui-icon-script" 
+                            url="api-manual.xhtml" disabled="true"/>
+                <p:menuitem value=" Report Problems" title="Report Problems/Suggestions" 
+                            icon="ui-icon-alert" target="_blank"
+                            url="https://controls.frib.msu.edu/controlshelp/" 
+                            rendered="true"/>              
+                <p:menuitem value=" About" id="aboutMenu" icon="ui-icon-info" 
+                            title="About Proteus: Calibration"  onclick="aboutPanelWid.show()"/>    
+            </p:submenu>             
+
+            <f:facet name="options">  
+
+            </f:facet>
+        </p:menubar>
+        <p:dialog id="aboutPanel"  header="#{msgs.title}" widgetVar="aboutPanelWid">     
+            <ui:include src="about.xhtml" />
+        </p:dialog>
+    </h:form>  
+</ui:composition>

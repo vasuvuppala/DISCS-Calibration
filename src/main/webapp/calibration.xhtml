@@ -1,0 +1,160 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="calibTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html" >
+
+    <ui:define name="content">
+        <f:view>
+            <f:event type="preRenderView" listener="#{calibrationDetail.viewHandler}" />
+            <h:form id="calibForm"> 
+                <p:growl id="cfmsgs" showDetail="true"/> 
+                <f:metadata>             
+                    <f:viewParam name="crid" value="#{calibrationDetail.calibrationRecID}" />                
+                </f:metadata>
+                <p:panelGrid columns="1" style="width: 100%" styleClass="noBorders"> 
+                    <f:facet name="header">  
+                        <h:outputText value="Calibration Receipt" />
+                    </f:facet>
+                    <p:row>
+                        <p:column>
+                            <p:panelGrid style="width: 100%">                              
+                                <p:row> 
+                                    <p:column> 
+                                        <h:outputText value="Calibration Date: " styleClass="calibRecptForm"/> 
+                                        <h:outputText value="#{calibrationDetail.selectedCalibrationRec.calibrationDate}" >
+                                            <f:convertDateTime pattern="yyyy-MM-dd" />
+                                        </h:outputText>
+                                    </p:column> 
+                                    <p:column> 
+                                        <h:outputText value="Performed By:  " styleClass="calibRecptForm"/>#{calibrationDetail.selectedCalibrationRec.performedBy}</p:column> 
+                                    <p:column> 
+                                        <h:outputText value="Notes:  " styleClass="calibRecptForm"/>#{calibrationDetail.selectedCalibrationRec.notes}</p:column>                                  
+                                </p:row>                      
+                            </p:panelGrid>
+                        </p:column>
+
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:panelGrid style="width: 100%"> 
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column colspan="6">
+                                            Equipment Information
+                                        </p:column>
+                                    </p:row>
+
+                                </f:facet>
+                                <p:row> 
+                                    <p:column> <h:outputText value="Model No: " styleClass="calibRecptForm"/> <h:outputText value="#{calibrationDetail.selectedEquipment.manufModel}" /></p:column> 
+                                    <p:column> <h:outputText value="Manufacturer:  " styleClass="calibRecptForm"/>#{calibrationDetail.selectedEquipment.manufacturer}</p:column> 
+                                    <p:column> <h:outputText value="Serial No:  " styleClass="calibRecptForm"/>#{calibrationDetail.selectedEquipment.serialNumber}</p:column> 
+                                    <p:column> <h:outputText value="Location:  " styleClass="calibRecptForm"/>#{calibrationDetail.selectedEquipment.location}</p:column>
+                                    <p:column> <h:outputText value="Custodian:  " styleClass="calibRecptForm"/>#{calibrationDetail.selectedEquipment.custodian}</p:column>
+                                    <p:column> <h:outputText value="Standard: " styleClass="calibRecptForm" /> #{calibrationDetail.selectedEquipment.calibStandard ? 'Yes': 'No'} </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2"> <h:outputText value="Description: " styleClass="calibRecptForm"/>#{calibrationDetail.selectedEquipment.description} </p:column>
+                                    <p:column> <h:outputText value="Date Last Svcd: " styleClass="calibRecptForm"/>#{calibrationDetail.selectedEquipment.dateLastServiced}</p:column>
+                                    <p:column> <h:outputText value="Next Due: " styleClass="calibRecptForm"/></p:column>
+                                    <p:column> <h:outputText value="Cal Cycle: " styleClass="calibRecptForm"/>#{calibrationDetail.selectedEquipment.calibCycle}</p:column>
+                                    <p:column> <h:outputText value="Equipment Status: " styleClass="calibRecptForm"/>#{calibrationDetail.selectedEquipment.active ? 'Active': 'Inactive'}</p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:dataTable id="otvtable" var="measurement" 
+                                         value="#{calibrationDetail.selectedCalibrationRec.calibrationMeasurementList}"
+                                         styleClass="spartanTable">  
+                                <f:facet name="header">
+                                    <h:outputText value="Out Of Tolerance Values" />
+                                </f:facet>
+                                <p:column id="step" headerText="Proc Step #">
+                                    <h:outputText value="#{measurement.calibrationMeasurementPK.step}" /> 
+                                </p:column>
+                                <p:column id="ftested" headerText="Function Tested">
+                                    <h:outputText value="#{measurement.functionTested}" /> 
+                                </p:column>
+                                <p:column id="nval" headerText="Nominal Value">
+                                    <h:outputText value="#{measurement.nominalValue}" /> 
+                                </p:column>
+                                <p:column id="mval" headerText="1st Measured Value">
+                                    <h:outputText value="#{measurement.measuredValue}" />
+                                </p:column>
+                                <p:column id="ltol" headerText="Lower Tol.">
+                                    <h:outputText value="#{measurement.lowerTolerance}" />
+                                </p:column>
+                                <p:column id="utol" headerText="Upper Tol.">
+                                    <h:outputText value="#{measurement.upperTolerance}" />
+                                </p:column>
+                            </p:dataTable>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:dataTable id="stdtable" var="cdev" 
+                                         value="#{calibrationDetail.selectedCalibrationRec.calibrationDeviceList}"
+                                         styleClass="spartanTable" >  
+                                <f:facet name="header">
+                                    <h:outputText value="Calibration Standards" />
+                                </f:facet>
+                                <p:column style="width:3%">  
+                                    <p:rowToggler />  
+                                </p:column> 
+                                <ui:param name="equipment" value="#{cdev.equipment}" />
+                                <p:column id="model" headerText="Model" style="width: 15%" >                  
+                                    <h:outputText value="#{equipment.manufModel}" />                                    
+                                </p:column>              
+                                <p:column id="desc" headerText="Description" >                  
+                                    <h:outputText value="#{equipment.description}" style="width: 30%"/>                              
+                                </p:column>
+                                <p:column id="manuf" headerText="Manufacturer"  >                  
+                                    <h:outputText value="#{equipment.manufacturer}" />                              
+                                </p:column>
+                                <p:column id="manufsn" headerText="Manuf Serial" >                  
+                                    <h:outputText value="#{equipment.manufSerialNumber}" />                              
+                                </p:column>
+                                <p:column id="servdate" headerText="Date Serviced" >                  
+                                    <h:outputText value="#{equipment.dateLastServiced}" > 
+                                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column id="cstandard" headerText="Std"  >   
+                                    <h:outputText styleClass="ui-icon ui-icon-check" rendered="#{equipment.calibStandard}" />                              
+                                </p:column>
+                                <p:rowExpansion>  
+                                    <p:dataTable id="calibRecs" var="calibrec" value="#{cdev.equipment.calibrationRecordList}" 
+                                                 emptyMessage="No Calibration Records Found." >
+                                        <f:facet name="header">
+                                            <h:outputText value="Calibration Records" />                       
+                                        </f:facet>
+                                        <p:column id="crdate" headerText="Date">                  
+                                            <h:outputText value="#{calibrec.calibrationDate}" >    
+                                                <f:convertDateTime pattern="yyyy-MM-dd" />
+                                            </h:outputText>
+                                        </p:column>    
+                                        <p:column id="crby" headerText="By">                  
+                                            <h:outputText value="#{calibrec.performedBy}" />                              
+                                        </p:column>
+                                        <p:column id="crnotes" headerText="Notes">                  
+                                            <h:outputText value="#{calibrec.notes}" />                              
+                                        </p:column>
+                                        <p:column id="crdet" headerText="Receipt">                  
+                                            <h:link value="receipt"  outcome="calibration.xhtml?crid=#{calibrec.calibrationRecordId}" />                              
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:rowExpansion> 
+                            </p:dataTable>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </f:view>
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,239 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="calibTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:h="http://java.sun.com/jsf/html" >
+    <ui:define name="content">
+        
+            <h:form id="addCalibForm"> 
+                <p:growl id="messages" showDetail="true"/>  
+                <ui:remove> -------------------- Add Form ------------------- </ui:remove>
+                <p:panel >
+                    <f:facet name="header">  
+                        <h:outputText value="Add Calibration Record" />
+                    </f:facet>
+
+                    <p:panelGrid styleClass="noBorders" style="width: 90%"> 
+                        <ui:remove>-------------------Equipment Info ------------</ui:remove>
+                        <c:set var="equipment" value="#{calibrationManager.selectedEquip}"/>
+                        <p:row>
+                            <p:column>
+                                <p:panelGrid id="equipInfo" style="width: 100%"> 
+                                    <f:facet name="header">
+                                        <p:row>
+                                            <p:column colspan="6">
+                                                Equipment Information
+                                            </p:column>
+                                        </p:row>
+                                    </f:facet>
+                                    <p:row> 
+                                        <p:column> <h:outputText value="Model No: " styleClass="calibRecptForm"/> <h:outputText value="#{equipment == null? '' : calibrationManager.selectedEquip.manufModel}" /></p:column> 
+                                        <p:column> <h:outputText value="Manufacturer:  " styleClass="calibRecptForm"/>#{equipment == null? '' : calibrationManager.selectedEquip.manufacturer}</p:column> 
+                                        <p:column> <h:outputText value="Serial No:  " styleClass="calibRecptForm"/>#{equipment == null? '' :equipment.serialNumber}</p:column> 
+                                        <p:column> <h:outputText value="Location:  " styleClass="calibRecptForm"/>#{equipment == null? '' :equipment.location}</p:column>
+                                        <p:column> <h:outputText value="Custodian:  " styleClass="calibRecptForm"/></p:column>
+                                        <p:column> <h:outputText value="Standard: " styleClass="calibRecptForm" /> #{equipment == null? '' : equipment.calibStandard ? 'Yes': 'No'} </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="2"> <h:outputText value="Description: " styleClass="calibRecptForm"/>#{equipment == null? '' :equipment.description} </p:column>
+                                        <p:column> <h:outputText value="Date Last Svcd: " styleClass="calibRecptForm"/>#{equipment == null? '': equipment.dateLastServiced}</p:column>
+                                        <p:column> <h:outputText value="Next Due: " styleClass="calibRecptForm"/></p:column>
+                                        <p:column> <h:outputText value="Cal Cycle: " styleClass="calibRecptForm"/>#{equipment == null? '': equipment.calibCycle}</p:column>
+                                        <p:column> <h:outputText value="Equipment Status: " styleClass="calibRecptForm"/>#{equipment.active ? 'Active': 'Inactive'}</p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <ui:remove>------------------- Calibration info ------------</ui:remove>
+                                <p:panelGrid id="calibinfo" style="width: 100%">                                       
+                                    <p:row> 
+                                        <p:column>
+                                            <p:outputLabel value="Equipment Serial#: " for="equip"/><br/>
+                                            <p:autoComplete id="equip" value="#{calibrationManager.selectedEquip}" 
+                                                            completeMethod="#{calibrationManager.completeEquipment}" 
+                                                            var="e" itemLabel="#{e.serialNumber}" 
+                                                            itemValue="#{e}" converter="#{equipConverter}"
+                                                            forceSelection="true" 
+                                                            rendered="#{calibrationManager.selectedEquip == null}">
+                                                <p:ajax event="itemSelect" listener="#{calibrationManager.handleSelect(event)}" update="equipInfo" />
+                                                <p:column headerText="Serial#">
+                                                    #{e.serialNumber}
+                                                </p:column >
+                                                <p:column headerText="Description">
+                                                    #{e.description}
+                                                </p:column>
+                                                <p:column headerText="Model">
+                                                    #{e.manufModel}
+                                                </p:column>
+                                            </p:autoComplete>
+                                            <p:inputText readonly="true" value="#{calibrationManager.selectedSerial}" 
+                                                         rendered="#{calibrationManager.selectedEquip != null}" />
+                                        </p:column>
+                                        <p:column> 
+                                            <p:outputLabel value="Calibration Date: " for="calDate"/><br/>
+                                            <p:calendar id="calDate" value="#{calibrationManager.inputCalDate}" navigator="true"  /> 
+                                        </p:column>                                                                                
+                                        <p:column> 
+                                            <p:outputLabel value="Notes: " for="calNotes"/> <br/>
+                                            <p:inputTextarea id="calNotes" value="#{calibrationManager.inputCalNotes}"
+                                                             rows="5" cols="50" counter="counter" maxlength="250" 
+                                                             counterTemplate="  {0} characters remaining " autoResize="false"/> <br/>
+                                            <h:outputText id="counter" />                                       
+                                        </p:column>                                 
+                                    </p:row>
+                                </p:panelGrid>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>     
+                                <h:form id="otvform">
+                                <ui:remove>-------------------Tolerance values ------------</ui:remove>
+                                <p:dataTable id="otvtable" var="measurement" 
+                                             value="#{calibrationManager.inputMeasurements}"
+                                             editable="true" editMode="cell"
+                                             emptyMessage="Enter a new mesasurement below:"
+                                             styleClass="spartanTable">  
+                                    <f:facet name="header">                                   
+                                        <h:outputText value="Out Of Tolerance Values" />
+                                    </f:facet>
+
+
+                                    <p:column id="step" headerText="Proc Step #">
+                                        <p:cellEditor>  
+                                            <f:facet name="output"><h:outputText  value="#{measurement.calibrationMeasurementPK.step}"  /></f:facet>
+                                            <f:facet name="input"><p:inputText value="#{measurement.calibrationMeasurementPK.step}" /></f:facet>  
+                                        </p:cellEditor> 
+
+                                    </p:column>
+                                    <p:column id="ftested" headerText="Function Tested">
+                                        <p:cellEditor> 
+                                            <f:facet name="output"><h:outputText value="#{measurement.functionTested}" /></f:facet> 
+                                            <f:facet name="input"><p:inputText value="#{measurement.functionTested}" /></f:facet>
+                                        </p:cellEditor> 
+                                    </p:column>
+                                    <p:column id="nval" headerText="Nominal Value">
+                                        <p:cellEditor> 
+                                            <f:facet name="output"><h:outputText value="#{measurement.nominalValue}" /> </f:facet>
+                                            <f:facet name="input"><p:inputText value="#{measurement.nominalValue}" /> </f:facet>
+                                        </p:cellEditor> 
+                                    </p:column>
+                                    <p:column id="mval" headerText="1st Measured Value">
+                                        <p:cellEditor>
+                                            <f:facet name="output"><h:outputText value="#{measurement.measuredValue}" /></f:facet>
+                                            <f:facet name="input"><p:inputText value="#{measurement.measuredValue}" /></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column id="ltol" headerText="Lower Tol.">
+                                        <p:cellEditor>
+                                            <f:facet name="output"><h:outputText value="#{measurement.lowerTolerance}" /></f:facet>
+                                            <f:facet name="input"><p:inputText value="#{measurement.lowerTolerance}" /></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column id="utol" headerText="Upper Tol.">
+                                        <p:cellEditor>
+                                            <f:facet name="output"><h:outputText value="#{measurement.upperTolerance}" /></f:facet>
+                                            <f:facet name="input"><p:inputText value="#{measurement.upperTolerance}" /></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <f:facet name="footer">                                 
+                                        <p:column >
+                                            <p:inputText  id="_step" value="#{calibrationManager.newMeasurement.calibrationMeasurementPK.step}" />
+                                            <p:watermark for="_step" value="Proc Step"/>
+                                        </p:column>
+                                        <p:column >
+                                            <p:inputText id="_ftested"  value="#{calibrationManager.newMeasurement.functionTested}" />
+                                            <p:watermark for="_ftested" value="Function Tested"/>
+                                        </p:column>
+                                        <p:column  >
+                                            <p:inputText id="_nval" value="#{calibrationManager.newMeasurement.nominalValue}" /> 
+                                            <p:watermark for="_nval" value="Nominal Value"/>
+                                        </p:column>
+                                        <p:column  >
+                                            <p:inputText id="_mval"  value="#{calibrationManager.newMeasurement.measuredValue}" />
+                                            <p:watermark for="_mval" value="Measured Value"/>
+                                        </p:column>
+                                        <p:column  >
+                                            <p:inputText id="_ltol" value="#{calibrationManager.newMeasurement.lowerTolerance}" />
+                                            <p:watermark for="_ltol" value="Lower Tol."/>
+                                        </p:column>
+                                        <p:column >
+                                            <p:inputText id="_utol" value="#{calibrationManager.newMeasurement.upperTolerance}" />
+                                            <p:watermark for="_utol" value="Upper Tol."/>
+                                        </p:column>
+                                        <p:commandButton title="Add new measurement" icon="ui-icon-plus" process="otvtable"
+                                                         actionListener="#{calibrationManager.addMeasurement}" update="otvtable"/>
+                                    </f:facet>
+                                </p:dataTable>
+                                </h:form>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <ui:remove>------------------- Standards  ------------</ui:remove>
+                                <p:dataTable id="stdtable" var="std" 
+                                             value="#{calibrationManager.standards}"
+                                             selection="#{calibrationManager.inputStandards}"
+                                             rowKey="#{std.physicalComponentId}"                                                
+                                             styleClass="spartanTable" >  
+                                    <f:facet name="header">
+                                        <h:outputText value="Calibration Standards" />
+                                    </f:facet>                               
+                                    <p:column selectionMode="multiple" width="5%" />
+                                    <p:column id="model" headerText="Model" style="width: 15%" >                  
+                                        <h:outputText value="#{std.manufModel}" />                                    
+                                    </p:column>              
+                                    <p:column id="desc" headerText="Description" >                  
+                                        <h:outputText value="#{std.description}" style="width: 30%"/>                              
+                                    </p:column>
+                                    <p:column id="manuf" headerText="Manufacturer"  >                  
+                                        <h:outputText value="#{std.manufacturer}" />                              
+                                    </p:column>
+                                    <p:column id="manufsn" headerText="Manuf Serial" >                  
+                                        <h:outputText value="#{std.manufSerialNumber}" />                              
+                                    </p:column>
+                                    <p:column id="servdate" headerText="Date Serviced" >                  
+                                        <h:outputText value="#{std.dateLastServiced}" > 
+                                            <f:convertDateTime pattern="yyyy-MM-dd" />
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column id="cstandard" headerText="Std"  rendered="false">   
+                                        <h:outputText styleClass="ui-icon ui-icon-check" rendered="#{std.calibStandard}" />                              
+                                    </p:column>
+                                </p:dataTable>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <f:facet name="footer">
+                        <p:commandButton value="Discard" icon="ui-icon-trash" type="button"
+                                         onclick="discardConfirmWid.show()"/>
+                        <p:commandButton value="Save" icon="ui-icon-disk" type="button"
+                                         onclick="saveConfirmWid.show()" style="float: right"/>
+
+                    </f:facet>
+                </p:panel>
+
+                <p:dialog id="discardConfirm" widgetVar="discardConfirmWid">
+                    <h:outputText value="Do you realy want to discard this measurement?" />
+                    <p:commandButton value="Cancel" icon="ui-icon-close" type="button" 
+                                     onclick="discardConfirmWid.hide()"/>
+                    <p:commandButton value="Discard" icon="ui-icon-check" type="submit"
+                                     actionListener="#{calibrationManager.resetInput}" 
+                                     update="@form messages" oncomplete="discardConfirmWid.hide()"/>
+                </p:dialog>     
+
+                <p:dialog id="saveConfirm" widgetVar="saveConfirmWid">
+                    <h:outputText value="Do you realy want to save this measurement?" />
+                    <p:commandButton value="Cancel" icon="ui-icon-close" type="button" onclick="saveConfirmWid.hide()"/>
+                    <p:commandButton value="Save" icon="ui-icon-check" process="calibinfo stdtable @this"
+                                     update="@form messages" actionListener="#{calibrationManager.saveCalibRecord}"
+                                     oncomplete="saveConfirmWid.hide()" />
+                </p:dialog>
+            </h:form>
+    
+    </ui:define>
+</ui:composition>

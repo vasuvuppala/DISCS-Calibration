@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="calibTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core" 
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:h="http://java.sun.com/jsf/html" >
+
+    <ui:define name="content">
+        <h:form id="crecForm"> 
+            <p:growl id="messages" showDetail="true"/> 
+            <p:dataTable id="crecTable" var="crec" value="#{crecordManager.crecords}" 
+                         paginator="true" rows="20" resizableColumns="true"                                   
+                         rowKey="#{crec.calibrationRecordId}"                        
+                         emptyMessage="No Calibration Records Found."                         
+                         filteredValue="#{crecordManager.filteredCRs}" 
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                         rowsPerPageTemplate="25,50,100"   >
+                <f:facet name="header">
+                    <h:outputText value="Calibration Records" />                       
+                </f:facet>
+                <p:column id="crdet" headerText="Receipt" width="5%">                                                                        
+                    <p:button  icon="ui-icon-document" title="view" 
+                               outcome="calibration.xhtml?crid=#{crec.calibrationRecordId}" 
+                               target="_blank"/>
+                </p:column>
+                <p:column id="cdate" headerText="Calibration Date" 
+                          sortBy="#{crec.calibrationDate}"  >                  
+                    <h:outputText value="#{crec.calibrationDate}" >
+                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                    </h:outputText>
+                </p:column>
+                <p:column id="cby" headerText="By" 
+                          sortBy="#{crec.performedBy}"  >                  
+                    <h:outputText value="#{crec.performedBy}" />                               
+                </p:column>
+                <p:column id="cnotes" headerText="Notes"  >                  
+                    <h:outputText value="#{crec.notes}" />                               
+                </p:column>
+
+                <c:set var="equipment"  value="#{crec.equipment}" />
+                <p:column id="model" headerText="Model" 
+                          sortBy="#{equipment.manufModel}"
+                          >                  
+                    <h:outputText value="#{equipment.manufModel}" />                                    
+                </p:column> 
+
+                <p:column id="manufsn" headerText="Serial #"  >                  
+                    <h:outputText value="#{equipment.manufSerialNumber}" />                              
+                </p:column>
+                <p:column id="manuf" headerText="Manufacturer" 
+                          sortBy="#{equipment.manufacturer}">                  
+                    <h:outputText value="#{equipment.manufacturer}" />                              
+                </p:column>         
+                <p:column id="desc" headerText="Description"
+                          >                  
+                    <h:outputText value="#{equipment.description}" />                              
+                </p:column>
+
+                <p:column id="servdate" headerText="Serviced" 
+                          sortBy="#{equipment.dateLastServiced}" >                  
+                    <h:outputText value="#{equipment.dateLastServiced}" > 
+                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                    </h:outputText>
+                </p:column>
+                <p:column id="location" headerText="Location" >                  
+                    <h:outputText value="#{equipment.location}" />                              
+                </p:column>
+                <p:column id="custodian" headerText="Custodian" >                  
+                    <h:outputText value="#{equipment.custodian}" />                              
+                </p:column>
+                <p:column id="cstandard" headerText="Std" 
+                          sortBy="#{equipment.calibStandard}"  >                  
+                    <h:outputText styleClass="ui-icon ui-icon-check" rendered="#{equipment.calibStandard}" />                              
+                </p:column>
+                <p:column id="active" headerText="Active" 
+                          sortBy="#{equipment.active}"  >                  
+                    <h:outputText styleClass="ui-icon ui-icon-check" rendered="#{equipment.active}" />                              
+                </p:column>  
+                <f:facet name="footer">  
+                    Total Records:  #{crecordManager.crecords.size()}  
+                </f:facet>
+            </p:dataTable>
+        </h:form>
+
+    </ui:define>
+</ui:composition>
