@@ -1,23 +1,25 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
-                template="calibTemplate.xhtml"
+                template="/template/calibTemplate.xhtml"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:fc="http://java.sun.com/jsf/composite/comps"
                 xmlns:h="http://java.sun.com/jsf/html" >
 
     <ui:define name="content">
         <h:form id="equipForm"> 
             <p:growl id="equipMsgs" showDetail="true"/> 
-            <p:dataTable id="equipTable" var="equipment" value="#{equipmentManager.equipments}" 
-                         paginator="true" rows="20" resizableColumns="true"                                   
-                         rowKey="#{equipment.serialNumber}"                        
+            <ui:remove> -------------------- Equipment ------------------- </ui:remove> 
+            <p:dataTable id="equipTable" var="eqp" value="#{deviceManager.devices}" 
+                         paginator="true"  rows="25" resizableColumns="true"                                   
+                         rowKey="#{eqp.device.deviceId}"                        
                          emptyMessage="No Equipment Found."
-                         selection="#{equipmentManager.selectedEquip}" 
-                         filteredValue="#{equipmentManager.filteredEquipments}" 
+                         selection="#{deviceManager.selectedEquip}" 
+                         filteredValue="#{deviceManager.filteredDevices}"  
                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                         rowsPerPageTemplate="25,50,100"   >
+                         rowStyleClass="#{eqp.dueStatus}"
+                         rowsPerPageTemplate="25,50,100" 
+                         >
                 <f:facet name="header">
                     <h:outputText value="Equipment" />                       
                 </f:facet>
@@ -25,63 +27,72 @@
                     <p:rowToggler />  
                 </p:column> 
 
-                <p:column id="model" headerText="Model" sortBy="#{equipment.manufModel}"
-                          filterBy="#{equipment.manufModel}"
-                          filterMatchMode="startsWith"  >                  
-                    <h:outputText value="#{equipment.manufModel}" />                                    
+                <p:column id="due" headerText="Due"   rendered="false">                  
+                     <h:outputText value="#{eqp.dueStatus}" />                                    
                 </p:column> 
-                <p:column id="serial" headerText="Serial" sortBy="#{equipment.serialNumber}"
-                          filterBy="#{equipment.serialNumber}"
-                          filterMatchMode="contains" style="width: 20%"
-                          rendered="false">
-                    <h:outputText value="#{equipment.serialNumber}" /> 
+                <p:column id="model" headerText="Model" sortBy="#{eqp.device.model.name}"
+                          filterBy="#{eqp.device.model.name}"
+                          filterMatchMode="startsWith"  >                  
+                    <h:outputText value="#{eqp.device.model.name}" />                                    
+                </p:column> 
+                <p:column id="serial" headerText="Serial" sortBy="#{eqp.device.serialNumber}"
+                          filterBy="#{eqp.device.serialNumber}"
+                          filterMatchMode="contains" style="width: 20%">
+                    <h:outputText value="#{eqp.device.serialNumber}" /> 
 
                 </p:column>
-                <p:column id="manufsn" headerText="Serial #" 
-                          filterBy="#{equipment.manufSerialNumber}"
-                          filterMatchMode="contains" >                  
-                    <h:outputText value="#{equipment.manufSerialNumber}" />                              
-                </p:column>
+                
                 <p:column id="manuf" headerText="Manufacturer" 
-                          filterBy="#{equipment.manufacturer}"
+                          filterBy="#{eqp.device.model.manufacturer}"
                           filterMatchMode="contains" >                  
-                    <h:outputText value="#{equipment.manufacturer}" />                              
+                    <h:outputText value="#{eqp.device.model.manufacturer}" />                              
                 </p:column>         
                 <p:column id="desc" headerText="Description" style="width: 30%"
-                          filterBy="#{equipment.description}"
+                          filterBy="#{eqp.device.description}"
                           filterMatchMode="contains" >                  
-                    <h:outputText value="#{equipment.description}" />                              
+                    <h:outputText value="#{eqp.device.description}" />                              
                 </p:column>
 
                 <p:column id="servdate" headerText="Last Serviced" 
-                          sortBy="#{equipment.dateLastServiced}" >                  
-                    <h:outputText value="#{equipment.dateLastServiced}" > 
-                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                          sortBy="#{eqp.lastServicedDate}">                  
+                    <h:outputText value="#{eqp.lastServicedDate}" > 
+                        <f:convertDateTime pattern="#{msgs.dateFormat}" />
                     </h:outputText>
                 </p:column>
+                <p:column id="dueDate" headerText="Next Due" 
+                          sortBy="#{eqp.nextDueDate}" >                  
+                    <h:outputText value="#{eqp.nextDueDate}" > 
+                        <f:convertDateTime pattern="#{msgs.dateFormat}" />
+                    </h:outputText>
+                </p:column>
+                 <p:column id="cycle" headerText="Cycle" width="5%">                  
+                     <h:outputText value="#{eqp.calibCycle}" title="in months" />                              
+                </p:column>
                 <p:column id="location" headerText="Location" >                  
-                    <h:outputText value="#{equipment.location}" />                              
+                    <h:outputText value="#{eqp.device.location}" />                              
                 </p:column>
                 <p:column id="custodian" headerText="Custodian" >                  
-                    <h:outputText value="#{equipment.custodian}" />                              
+                    <h:outputText value="#{eqp.device.custodian}" />                              
                 </p:column>
                 <p:column id="cstandard" headerText="Std" 
-                          sortBy="#{equipment.calibStandard}"  >                  
-                    <h:outputText styleClass="ui-icon ui-icon-check" rendered="#{equipment.calibStandard}" />                              
+                          sortBy="#{eqp.device.calibStandard}"  width="3%">                  
+                    <h:outputText styleClass="ui-icon ui-icon-check" rendered="#{eqp.device.calibStandard}" />                              
                 </p:column>
                 <p:column id="active" headerText="Active" 
-                          sortBy="#{equipment.active}"  >                  
-                    <h:outputText styleClass="ui-icon ui-icon-check" rendered="#{equipment.active}" />                              
+                          sortBy="#{eqp.device.active}" width="5%" >                  
+                    <h:outputText styleClass="ui-icon ui-icon-check" rendered="#{eqp.device.active}" />                              
                 </p:column>
+                
+                <ui:remove> -------------------- Calibration Records ------------------- </ui:remove> 
                 <p:rowExpansion>  
-                    <p:dataTable id="calibRecs" var="calibrec" value="#{equipment.calibrationRecordList}" 
+                    <p:dataTable id="calibRecs" var="calibrec" value="#{eqp.device.calibrationRecordList}" 
                                  emptyMessage="No Calibration Records Found."  transient="true">
                         <f:facet name="header">                            
                             <h:outputText value="Calibration Records" /> 
                         </f:facet>
                         <p:column id="crdate" headerText="Date">                  
                             <h:outputText value="#{calibrec.calibrationDate}" >  
-                                <f:convertDateTime pattern="yyyy-MM-dd" />
+                                <f:convertDateTime pattern="${msgs.dateFormat}" />
                             </h:outputText>
                         </p:column>    
                         <p:column id="crby" headerText="By">                  
@@ -91,34 +102,35 @@
                             <h:outputText value="#{calibrec.notes}" />                              
                         </p:column>
                         <p:column id="crdet" headerText="Receipt" width="10%">                                            
-                            <p:commandButton  icon="ui-icon-trash"  title="delete"  process="@this" 
+                            <p:commandLink  styleClass="ui-icon ui-icon-trash iconDisplay"  title="delete"  process="@this" 
                                               oncomplete="PF('delDiagWid').show()" 
-                                              disabled="#{! authManager.authorized}"
-                                              action="#{equipmentManager.setSelectedCR(calibrec)}">                              
-                            </p:commandButton>                              
-                            <p:button  icon="ui-icon-pencil"  title="edit" 
-                                       outcome="calibration.xhtml?crid=#{calibrec.calibrationRecordId}" 
+                                              disabled="#{! authManager.canManageCalibrations()}"
+                                              action="#{deviceManager.setSelectedCR(calibrec)}"/>                              
+                                                       
+                            <h:outputLink  styleClass="ui-icon ui-icon-pencil iconDisplay"  title="edit" 
+                                       value="calibration.xhtml?crid=#{calibrec.calibrationRecordId}" 
                                        target="_blank" disabled="true"/>
-                            <p:button  icon="ui-icon-document" title="view" 
-                                       outcome="calibration.xhtml?crid=#{calibrec.calibrationRecordId}" 
+                            <h:outputLink  styleClass="ui-icon ui-icon-document iconDisplay" title="view" 
+                                       value="calibration.xhtml?crid=#{calibrec.calibrationRecordId}" 
                                        target="_blank"/>
                         </p:column>
                         <f:facet name="footer">                              
                             <p:commandButton value="Add" icon="ui-icon-plus" ajax="false"
-                                             action="#{equipmentManager.addCalibrationRecord(equipment)}"
-                                             disabled="#{! authManager.authorized}"/> 
+                                             action="#{deviceManager.addCalibrationRecord(eqp.device)}"
+                                             disabled="#{! authManager.canManageCalibrations()}"/> 
                             <p:commandButton value="Edit" icon="ui-icon-pencil" ajax="false"
-                                             action="#{equipmentManager.addCalibrationRecord(equipment)}"
-                                             disabled="#{! authManager.authorized}"  rendered="false"/>
+                                             action="#{deviceManager.addCalibrationRecord(eqp.device)}"
+                                             disabled="#{! authManager.canManageCalibrations()}"  rendered="false"/>
                             <p:commandButton value="Delete" icon="ui-icon-trash" ajax="false"
-                                             action="#{equipmentManager.addCalibrationRecord(equipment)}"
-                                             disabled="#{! authManager.authorized}" rendered="false"/>
+                                             action="#{deviceManager.addCalibrationRecord(eqp.device)}"
+                                             disabled="#{! authManager.canManageCalibrations()}" rendered="false"/>
                         </f:facet>
                     </p:dataTable>
+                    <ui:remove> -------------------- Calibration Record Delete ------------------- </ui:remove> 
                     <p:dialog id="delDiag" widgetVar="delDiagWid">
                         <h:outputText value="Are you sure you want to deleted this record?" />
                         <p:commandButton value="Cancel" onclick="delDiagWid.hide()" type="button" />
-                        <p:commandButton value="Delete" actionListener="#{equipmentManager.delCalibrationRecord}" 
+                        <p:commandButton value="Delete" actionListener="#{deviceManager.delCalibrationRecord}" 
                                          update="calibRecs :equipForm:equipMsgs" 
                                          process="@this"
                                          oncomplete="delDiagWid.hide()" />
@@ -126,9 +138,56 @@
                     </p:dialog>
                 </p:rowExpansion>
                 <f:facet name="footer">  
-                    Total Records:  #{equipmentManager.equipments.size()}  
+                    Total Records:  #{deviceManager.devices.size()}  
                 </f:facet>
             </p:dataTable>
+            
+            <ui:remove> -------------------- Export ------------------- </ui:remove> 
+            <h:panelGrid columns="2" class="export-grid">  
+                <p:panel header="Export All Data" >  
+                    <h:commandLink>  
+                        <p:graphicImage value="resources/images/excel.png" title="Excel" />  
+                        <p:dataExporter type="xls" target="equipTable" fileName="calib"/>  
+                    </h:commandLink>  
+
+                    <h:commandLink>  
+                        <p:graphicImage value="resources/images/pdf.png" title="PDF" />  
+                        <p:dataExporter type="pdf" target="equipTable" fileName="calib"/>  
+                    </h:commandLink>  
+
+                    <h:commandLink>  
+                        <p:graphicImage value="resources/images/csv.png" title="CSV" />  
+                        <p:dataExporter type="csv" target="equipTable" fileName="calib" />  
+                    </h:commandLink>  
+
+                    <h:commandLink>  
+                        <p:graphicImage value="resources/images/xml.png" title="XML" />  
+                        <p:dataExporter type="xml" target="equipTable" fileName="calib" />  
+                    </h:commandLink>  
+                </p:panel>  
+
+                <p:panel header="Export Page Data" >  
+                    <h:commandLink>  
+                        <p:graphicImage value="resources/images/excel.png" title="Excel"  />  
+                        <p:dataExporter type="xls" target="equipTable" fileName="calib" pageOnly="true"/>  
+                    </h:commandLink>  
+
+                    <h:commandLink>  
+                        <p:graphicImage value="resources/images/pdf.png" title="PDF" />  
+                        <p:dataExporter type="pdf" target="equipTable" fileName="calib" pageOnly="true"/>  
+                    </h:commandLink>  
+
+                    <h:commandLink>  
+                        <p:graphicImage value="resources/images/csv.png" title="CSV"  />  
+                        <p:dataExporter type="csv" target="equipTable" fileName="calib" pageOnly="true"/>  
+                    </h:commandLink>  
+
+                    <h:commandLink>  
+                        <p:graphicImage value="resources/images/xml.png" title="XML"  />  
+                        <p:dataExporter type="xml" target="equipTable" fileName="calib" pageOnly="true"/>  
+                    </h:commandLink>  
+                </p:panel>  
+            </h:panelGrid>
         </h:form>
 
     </ui:define>

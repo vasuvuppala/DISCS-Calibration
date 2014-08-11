@@ -1,0 +1,51 @@
+
+
+Copyright (c) Facility for Rare Isotope Beam (FRIB)
+
+Release Notes: Proteus: Calibration Manager
+
+Overview: Calibration Manager is a tool for managing the calibration of devices. 
+
+
+Proteus: Calibration Version 0.4.0 Date: 2014-Jul-23
+
+ Summary of Changes from Previous Version:
+   - Device and model maintenance
+   - User and device groups
+   - User, roles, and authorization
+   - Improved reminder service 
+
+ Known Defects:
+  - cannot edit calibration records (have to delete and add)
+  - cannot see devices of all groups
+  - after login, page may need to be refreshed to see authorized menu items
+  
+Proteus: Calibration Version 0.3.0 Date: 2014-Jan-30
+
+ Summary of Changes from Previous Version:
+   - Last serviced date, due date, calibration cycle in Equipment page
+   - Indication of due soon and past due calibration numbers
+   - Color coding of past-due and due-soon devices
+   - Notifications about due-soon and past-due through emails
+   - Exports of equipment and calibration records
+
+ Known Defects:
+  -  cannot edit calibration records (have to delete and add)
+
+Proteus: Configuration Version 0.2 Date: 2013-Dec-08
+
+ Summary of Changes from Previous Version:
+   - Addition and deletion of calibration records
+   - calibration records page
+
+ Known Defects:
+  - cannot edit calibration records (have to delete and add)
+
+Proteus: Configuration Version 0.1 Date: 2013-Nov-20
+
+ Summary of Changes from Previous Version:
+   - Data from TED
+   - Equipments page with calibrations
+
+ Known Defects:
+ 

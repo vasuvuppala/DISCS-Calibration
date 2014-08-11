@@ -1,0 +1,231 @@
+
+/* 
+    Document   : Layout
+    Created on : Oct 16, 2013, 3:48:17 PM
+    Author     : Vasu V <vuppala@frib.msu.org>
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+body {
+    font-size: 12px;
+    font-family: Verdana, "Verdana CE",  Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif; 
+}
+
+/* to align a panelGrid to center */
+.centerPanel {
+    margin: 0 auto;
+}
+
+/* for all of primefaces componenets */
+.ui-widget, 
+.ui-widget .ui-widget {
+    font-size: 12px;
+}
+
+.ui-widget table {
+    font-size: 12px;
+}
+
+/* text wrap around in data table*/
+.ui-datatable td {
+    white-space: normal !important;
+}
+
+.title {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-size: 24px; 
+    font-style: normal;
+    font-weight: bold; 
+    text-decoration: none;
+}
+
+table.spcPadding td {
+    padding: 0 !important;
+}
+
+a {
+        text-decoration: underline;       
+        color:  cadetblue;
+}
+
+.ui-growl {
+    position:absolute;
+    top: 0%;
+    left:50%;
+}
+
+.headerWidget,
+.headerWidget tr,
+.headerWidget td {
+    background-color: transparent !important;
+    /* border-style: none !important;*/
+}
+
+.header
+{
+    font-style: normal;
+    vertical-align: middle;
+    /* left: 15px; */
+    /* padding: 10px; */
+    text-decoration: none;
+    background-image: url("#{resource['images:header-bg.png']}"); 
+    background-repeat: repeat;    
+    border: 1px solid LightGray;
+}
+
+.ui-clock {
+    background: none;
+    border: none;
+}
+
+
+.alignRight, td.alignRight {
+    text-align: right;
+}
+
+.noBorders>tbody>tr, .noBorders>tbody>tr>td {
+    /* background: none; */ 
+    border: none !important;
+    /* vertical-align: top; */
+}
+
+.box {
+    margin: 0px; 
+    padding: 10px;
+    border: 0px solid LightGray;
+    border-radius: 7px;
+    /* box-shadow: 0 0 7px 2px #888888; */
+    color: black;
+
+    /* text-align: left; */
+    /* width: 80%; */
+    /* background-color: #FFFFFF;  */
+}
+
+.boxf {
+    margin: 0px; 
+    padding: 10px;
+    border: 0px solid #000000;
+    color: black;
+    width: 98%;
+    margin: 0  auto;
+    /* background-color: #FFFFFF; */
+}
+
+.menu {    
+    background-color: transparent !important;
+}
+
+#top {
+    position: relative;   
+    /* color: black; */
+    /* padding: 5px; */
+    /* margin: 0px 0px 10px 0px; */
+    /* background-image: url('../images/header-bg.png'); */
+    /* background-repeat: repeat; */
+    /* border: 1px solid #000000; */
+    
+}
+
+#content {
+    margin: 5px; 
+    /* padding: 10px; */
+    width: 97%;
+    margin-left: auto;
+    margin-right: auto;
+    /* border: 0px solid LightGray; */
+    /* border-radius: 7px; */
+    /* box-shadow: 0 0 7px 2px #888888; */
+    /* color: black; */
+
+    /* text-align: left; */
+    /* width: 80%; */
+    /* background-color: #FFFFFF;  */
+}
+.beamUOF {
+    color:  #ff3333;
+    text-decoration: blink;
+}
+
+.beamMaint {
+    color:  #ff9933;
+}
+
+#bottom {
+    position: relative;
+    color:  #009999;
+    padding: 5px;
+    margin: 10px 0px 0px 0px;
+    text-align:  center;
+}
+
+#left {
+    float: left;
+    background-color: #ece3a5;
+    padding: 5px;
+    width: 150px;
+}
+
+#right {
+    float: right;
+    background-color: #ece3a5;
+    padding: 5px;
+    width: 150px;
+}
+
+.center_content {
+    position: relative;
+    background-color: #dddddd;
+    padding: 5px;
+}
+
+.left_content {
+    background-color: #dddddd;
+    padding: 5px;
+    margin-left: 170px;
+}
+
+.right_content {
+    background-color: #dddddd;
+    padding: 5px;
+    margin: 0px 170px 0px 170px;
+}
+
+.export-grid {
+    margin: 5px auto;
+}
+
+.beamName { 
+    font-weight:  bold;
+}
+.beamPos { 
+    display: inline-block; 
+    vertical-align:  middle;
+}
+
+.iconDisplay { 
+    display: inline-block; 
+}
+
+.logColumn {
+    padding: 1px !important;
+    margin: 0px !important;
+}
+
+.statusChange {  
+    font-weight: bold;
+}
+
+.thinPanel tr .thinPanel td {
+    border: none !important;
+    padding: 0 !important;
+}
+
+.DueSoon {
+    background-color:   cornsilk; 
+}
+
+.PastDue {
+    background-color:    salmon; 
+}

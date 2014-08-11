@@ -68,9 +68,9 @@ public class CalibrationRecord implements Serializable {
     @NotNull
     @Column(name = "version")
     private int version;
-    @JoinColumn(name = "physical_component_id", referencedColumnName = "physical_component_id")
-    @ManyToOne
-    private Equipment equipment;
+    @JoinColumn(name = "device", referencedColumnName = "device_id")
+    @ManyToOne(optional = false)
+    private Device device;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "calibrationRecord")
     private List<CalibrationDevice> calibrationDeviceList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "calibrationRecord")
@@ -130,12 +130,12 @@ public class CalibrationRecord implements Serializable {
         this.version = version;
     }
 
-    public Equipment getEquipment() {
-        return equipment;
+    public Device getDevice() {
+        return device;
     }
 
-    public void setEquipment(Equipment equipment) {
-        this.equipment = equipment;
+    public void setDevice(Device device) {
+        this.device = device;
     }
 
     @XmlTransient

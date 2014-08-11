@@ -14,19 +14,25 @@
     <!-- IMPLEMENTATION -->
     <!-- ToDo: Still not good. needs lots of improvements. too flaky  -->
     <cc:implementation> 
-        <h:form id="_loginForm">                
-            <p:growl id="_loginGrowl"  showDetail="true"/>            
-            <p:commandButton id="loginButton" type="button" 
-                             value="#{loginManager.loggedin ? loginManager.userid : msgs.loginBtn}" 
-                             icon="ui-icon-person" />         
 
-            <p:overlayPanel id="_loginAccPanel" for="loginButton" 
-                            widgetVar="_loginAccPanelWidget" style="border: 0px"  > 
+        <h:form id="_loginForm">
+            <p:growl id="_loginGrowl"  showDetail="true"/> 
+
+            <p:commandButton id="loginButton" type="button" 
+                             value="#{msgs.loginBtn}" 
+                             icon="ui-icon-person"  onclick="PF('_loginAccPanelWidget').show()"  
+                             rendered="#{not loginManager.loggedin}"/>         
+            <p:commandButton id="logoutButton" type="button" 
+                             value="#{loginManager.userid}" 
+                             icon="ui-icon-person"  onclick="PF('_logoutAccPanelWidget').show()"
+                             rendered="#{loginManager.loggedin}" /> 
+
+            <p:dialog id="_loginAccPanel" 
+                      widgetVar="_loginAccPanelWidget" style="border: 0px" > 
                 <p:blockUI block="_loginSignIn" trigger="_loginBtn">                   
                     <p:graphicImage value="/resources/images/ajax-loader.gif" style="background-color: transparent" />                   
                 </p:blockUI>
-                <p:panel id="_loginSignIn" rendered="#{!loginManager.loggedin}"  
-                         style="border: none"  >                
+                <p:panel id="_loginSignIn" style="border: none"  >                
                     <p:panelGrid >
                         <f:facet name="header">
                             <p:row>
@@ -47,10 +53,11 @@
                             <p:row>
                                 <p:column colspan="2">
                                     <p:commandButton  id="_loginBtn" value="#{msgs.loginBtn}" process="_loginSignIn"
-                                                      update="_loginGrowl _loginAccPanel loginButton"  
-                                                      style="float: right" action="#{loginManager.onLogin}" />                             
+                                                      update="@form"  
+                                                      style="float: right" action="#{loginManager.onLogin}" 
+                                                      oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('_loginAccPanelWidget').hide()"/>                             
                                     <p:commandButton  value="#{msgs.loginCancelBtn}" style="float: left" 
-                                                      type="button" onclick="_loginAccPanelWidget.hide()"/>                                   
+                                                      type="button" onclick="PF('_loginAccPanelWidget').hide()"/>                                   
                                 </p:column>
                             </p:row> 
                         </f:facet>
@@ -58,31 +65,33 @@
                     <p:watermark for="userid" value="#{msgs.loginUserWM}" /> 
                     <p:watermark for="passwd" value="#{msgs.loginPassWM}" />
                 </p:panel>
-                <p:panel id="_loginSignOut" rendered="#{loginManager.loggedin}" 
-                         style="border: none">
+            </p:dialog>
+
+            <p:dialog id="_logoutAccPanel" 
+                      widgetVar="_logoutAccPanelWidget" style="border: 0px" >
+                <p:panel id="_loginSignOut" style="border: none">
                     <p:panelGrid >
                         <p:row>
                             <p:column  colspan="2">  
-                                <h:outputText value="You are loggin in as #{loginManager.userid}" />
+                                <h:outputText value="You are logged in as #{loginManager.userid}" />
                             </p:column>    
                         </p:row>
                         <p:row>
-                            
+
                             <p:column> 
                                 <p:commandButton  value="#{msgs.loginCancelBtn}" style="float: right"  
-                                                  type="button" onclick="_loginAccPanelWidget.hide()"/>
+                                                  type="button" onclick="PF('_logoutAccPanelWidget').hide()"/>
                             </p:column>   
                             <p:column >  
                                 <!-- ToDo: use ajax but refersh current page -->
                                 <p:commandButton value="#{msgs.loginLogoutBtn}"  process="@this" 
-                                                 update="_loginGrowl _loginAccPanel loginButton #{cc.attrs.update}" action="#{loginManager.onLogout()}"
-                                                 style="float: left" ajax="true"/>  
+                                                 update="@form #{cc.attrs.update}" action="#{loginManager.onLogout()}"
+                                                 style="float: left" ajax="true" oncomplete="PF('_logoutAccPanelWidget').hide()"/>  
                             </p:column>
                         </p:row>
                     </p:panelGrid>
                 </p:panel>
-            </p:overlayPanel>
-
+            </p:dialog>
         </h:form>
     </cc:implementation>
 </html>

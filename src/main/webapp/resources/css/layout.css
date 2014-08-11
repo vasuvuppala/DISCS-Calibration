@@ -92,12 +92,12 @@ body {
     position: relative;
     color: black;
     /* border: 1px; */
-    /* padding: 5px; */
+    padding: 2px; 
     /* margin: 0px 0px 10px 0px; */
 }
 
 #content {
-    margin: 0px; 
+    margin: 2px; 
     /* padding: 10px; */
     width: 97%;
     margin-left: auto;
@@ -110,6 +110,10 @@ body {
     /* text-align: left; */
     /* width: 80%; */
     /* background-color: #FFFFFF;  */
+}
+
+.iconDisplay { 
+    display: inline-block; 
 }
 
 #bottom {
@@ -147,4 +151,17 @@ a {
     background: -ms-linear-gradient(left,  rgba(206,220,231,1) 0%,rgba(89,106,114,1) 100%); /* IE10+ */
     background: linear-gradient(to right,  rgba(206,220,231,1) 0%,rgba(89,106,114,1) 100%); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cedce7', endColorstr='#596a72',GradientType=1 ); /* IE6-9 */
+}
+
+
+.DueSoon {
+    background-color:   cornsilk; 
+}
+
+.PastDue {
+    background-color:    salmon; 
+}
+
+.export-grid {
+    margin: 5px auto;
 }

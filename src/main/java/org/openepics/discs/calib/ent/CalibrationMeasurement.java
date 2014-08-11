@@ -9,8 +9,10 @@ package org.openepics.discs.calib.ent;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -30,13 +32,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "CalibrationMeasurement.findAll", query = "SELECT c FROM CalibrationMeasurement c"),
-    @NamedQuery(name = "CalibrationMeasurement.findByCalibrationRecordId", query = "SELECT c FROM CalibrationMeasurement c WHERE c.calibrationMeasurementPK.calibrationRecordId = :calibrationRecordId"),
-    @NamedQuery(name = "CalibrationMeasurement.findByStep", query = "SELECT c FROM CalibrationMeasurement c WHERE c.calibrationMeasurementPK.step = :step"),
+    @NamedQuery(name = "CalibrationMeasurement.findById", query = "SELECT c FROM CalibrationMeasurement c WHERE c.id = :id"),
+    @NamedQuery(name = "CalibrationMeasurement.findByStep", query = "SELECT c FROM CalibrationMeasurement c WHERE c.step = :step"),
     @NamedQuery(name = "CalibrationMeasurement.findByVersion", query = "SELECT c FROM CalibrationMeasurement c WHERE c.version = :version")})
 public class CalibrationMeasurement implements Serializable {
     private static final long serialVersionUID = 1L;
-    @EmbeddedId
-    protected CalibrationMeasurementPK calibrationMeasurementPK;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 32)
+    @Column(name = "step")
+    private String step;
     @Basic(optional = false)
     @NotNull
     @Lob
@@ -71,19 +81,20 @@ public class CalibrationMeasurement implements Serializable {
     @NotNull
     @Column(name = "version")
     private int version;
-    @JoinColumn(name = "calibration_record_id", referencedColumnName = "calibration_record_id", insertable = false, updatable = false)
+    @JoinColumn(name = "calibration_record", referencedColumnName = "calibration_record_id")
     @ManyToOne(optional = false)
     private CalibrationRecord calibrationRecord;
 
     public CalibrationMeasurement() {
     }
 
-    public CalibrationMeasurement(CalibrationMeasurementPK calibrationMeasurementPK) {
-        this.calibrationMeasurementPK = calibrationMeasurementPK;
+    public CalibrationMeasurement(Integer id) {
+        this.id = id;
     }
 
-    public CalibrationMeasurement(CalibrationMeasurementPK calibrationMeasurementPK, String functionTested, String nominalValue, String measuredValue, String lowerTolerance, String upperTolerance, int version) {
-        this.calibrationMeasurementPK = calibrationMeasurementPK;
+    public CalibrationMeasurement(Integer id, String step, String functionTested, String nominalValue, String measuredValue, String lowerTolerance, String upperTolerance, int version) {
+        this.id = id;
+        this.step = step;
         this.functionTested = functionTested;
         this.nominalValue = nominalValue;
         this.measuredValue = measuredValue;
@@ -92,16 +103,20 @@ public class CalibrationMeasurement implements Serializable {
         this.version = version;
     }
 
-    public CalibrationMeasurement(int calibrationRecordId, String step) {
-        this.calibrationMeasurementPK = new CalibrationMeasurementPK(calibrationRecordId, step);
+    public Integer getId() {
+        return id;
     }
 
-    public CalibrationMeasurementPK getCalibrationMeasurementPK() {
-        return calibrationMeasurementPK;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public void setCalibrationMeasurementPK(CalibrationMeasurementPK calibrationMeasurementPK) {
-        this.calibrationMeasurementPK = calibrationMeasurementPK;
+    public String getStep() {
+        return step;
+    }
+
+    public void setStep(String step) {
+        this.step = step;
     }
 
     public String getFunctionTested() {
@@ -163,7 +178,7 @@ public class CalibrationMeasurement implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (calibrationMeasurementPK != null ? calibrationMeasurementPK.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -174,7 +189,7 @@ public class CalibrationMeasurement implements Serializable {
             return false;
         }
         CalibrationMeasurement other = (CalibrationMeasurement) object;
-        if ((this.calibrationMeasurementPK == null && other.calibrationMeasurementPK != null) || (this.calibrationMeasurementPK != null && !this.calibrationMeasurementPK.equals(other.calibrationMeasurementPK))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -182,7 +197,7 @@ public class CalibrationMeasurement implements Serializable {
 
     @Override
     public String toString() {
-        return "org.openepics.discs.calib.ent.CalibrationMeasurement[ calibrationMeasurementPK=" + calibrationMeasurementPK + " ]";
+        return "org.openepics.discs.calib.ent.CalibrationMeasurement[ id=" + id + " ]";
     }
     
 }

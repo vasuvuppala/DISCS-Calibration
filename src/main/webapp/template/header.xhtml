@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:fc="http://java.sun.com/jsf/composite/comps"
+                xmlns:f="http://java.sun.com/jsf/core">
+   
+        <p:panelGrid columns="3" style="width: 100%" styleClass="headerWidget header noBorders">
+            <p:panel style="float: left; border: 0px" styleClass="headerWidget">
+                <h:link outcome="home" styleClass="title">
+                    <h:outputText value="#{msgs.title}"  />
+                </h:link>
+            </p:panel>          
+            <p:panel style="float: right; border: 0px" styleClass="headerWidget">
+                <p:panelGrid styleClass="headerWidget noBorders" >          
+                    <p:row>                  
+                        <p:column> 
+                          <fc:logincomp/>
+                        </p:column>
+                    </p:row>                                                           
+                </p:panelGrid>
+            </p:panel>
+        </p:panelGrid>
+   
+</ui:composition>
+

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
-                template="calibTemplate.xhtml"
+                template="/template/calibTemplate.xhtml"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://java.sun.com/jsf/core" 
                 xmlns:c="http://java.sun.com/jsp/jstl/core"
@@ -16,19 +16,20 @@
                          emptyMessage="No Calibration Records Found."                         
                          filteredValue="#{crecordManager.filteredCRs}" 
                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                         rowsPerPageTemplate="25,50,100"   >
+                         rowsPerPageTemplate="25,50,100"   
+                         >
                 <f:facet name="header">
                     <h:outputText value="Calibration Records" />                       
                 </f:facet>
                 <p:column id="crdet" headerText="Receipt" width="5%">                                                                        
-                    <p:button  icon="ui-icon-document" title="view" 
-                               outcome="calibration.xhtml?crid=#{crec.calibrationRecordId}" 
+                    <h:outputLink  styleClass="ui-icon ui-icon-document icon-display" title="view" 
+                               value="calibration.xhtml?crid=#{crec.calibrationRecordId}" 
                                target="_blank"/>
                 </p:column>
                 <p:column id="cdate" headerText="Calibration Date" 
                           sortBy="#{crec.calibrationDate}"  >                  
                     <h:outputText value="#{crec.calibrationDate}" >
-                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                        <f:convertDateTime pattern="#{msgs.dateFormat}" />
                     </h:outputText>
                 </p:column>
                 <p:column id="cby" headerText="By" 
@@ -39,42 +40,36 @@
                     <h:outputText value="#{crec.notes}" />                               
                 </p:column>
 
-                <c:set var="equipment"  value="#{crec.equipment}" />
+                <c:set var="equipment"  value="#{crec.device}" />
                 <p:column id="model" headerText="Model" 
-                          sortBy="#{equipment.manufModel}"
+                          sortBy="#{equipment.model.name}"
                           >                  
-                    <h:outputText value="#{equipment.manufModel}" />                                    
+                    <h:outputText value="#{equipment.model.name}" />                                    
                 </p:column> 
 
                 <p:column id="manufsn" headerText="Serial #"  >                  
-                    <h:outputText value="#{equipment.manufSerialNumber}" />                              
+                    <h:outputText value="#{equipment.serialNumber}" />                              
                 </p:column>
                 <p:column id="manuf" headerText="Manufacturer" 
-                          sortBy="#{equipment.manufacturer}">                  
-                    <h:outputText value="#{equipment.manufacturer}" />                              
+                          sortBy="#{equipment.model.manufacturer}">                  
+                    <h:outputText value="#{equipment.model.manufacturer}" />                              
                 </p:column>         
                 <p:column id="desc" headerText="Description"
                           >                  
                     <h:outputText value="#{equipment.description}" />                              
                 </p:column>
-
-                <p:column id="servdate" headerText="Serviced" 
-                          sortBy="#{equipment.dateLastServiced}" >                  
-                    <h:outputText value="#{equipment.dateLastServiced}" > 
-                        <f:convertDateTime pattern="yyyy-MM-dd" />
-                    </h:outputText>
-                </p:column>
+             
                 <p:column id="location" headerText="Location" >                  
                     <h:outputText value="#{equipment.location}" />                              
                 </p:column>
                 <p:column id="custodian" headerText="Custodian" >                  
                     <h:outputText value="#{equipment.custodian}" />                              
                 </p:column>
-                <p:column id="cstandard" headerText="Std" 
+                <p:column id="cstandard" headerText="Std" width="3%"
                           sortBy="#{equipment.calibStandard}"  >                  
                     <h:outputText styleClass="ui-icon ui-icon-check" rendered="#{equipment.calibStandard}" />                              
                 </p:column>
-                <p:column id="active" headerText="Active" 
+                <p:column id="active" headerText="Active" width="5%"
                           sortBy="#{equipment.active}"  >                  
                     <h:outputText styleClass="ui-icon ui-icon-check" rendered="#{equipment.active}" />                              
                 </p:column>  
@@ -82,6 +77,52 @@
                     Total Records:  #{crecordManager.crecords.size()}  
                 </f:facet>
             </p:dataTable>
+            <ui:remove> -------------------- Export ------------------- </ui:remove> 
+            <h:panelGrid columns="2" class="export-grid">  
+                <p:panel header="Export All Data" >  
+                    <h:commandLink>  
+                        <p:graphicImage value="resources/images/excel.png" title="Excel" />  
+                        <p:dataExporter type="xls" target="crecTable" fileName="calib"/>  
+                    </h:commandLink>  
+
+                    <h:commandLink>  
+                        <p:graphicImage value="resources/images/pdf.png" title="PDF" />  
+                        <p:dataExporter type="pdf" target="crecTable" fileName="calib"/>  
+                    </h:commandLink>  
+
+                    <h:commandLink>  
+                        <p:graphicImage value="resources/images/csv.png" title="CSV" />  
+                        <p:dataExporter type="csv" target="crecTable" fileName="calib" />  
+                    </h:commandLink>  
+
+                    <h:commandLink>  
+                        <p:graphicImage value="resources/images/xml.png" title="XML" />  
+                        <p:dataExporter type="xml" target="crecTable" fileName="calib" />  
+                    </h:commandLink>  
+                </p:panel>  
+
+                <p:panel header="Export Page Data" >  
+                    <h:commandLink>  
+                        <p:graphicImage value="resources/images/excel.png" title="Excel"  />  
+                        <p:dataExporter type="xls" target="crecTable" fileName="calib" pageOnly="true"/>  
+                    </h:commandLink>  
+
+                    <h:commandLink>  
+                        <p:graphicImage value="resources/images/pdf.png" title="PDF" />  
+                        <p:dataExporter type="pdf" target="crecTable" fileName="calib" pageOnly="true"/>  
+                    </h:commandLink>  
+
+                    <h:commandLink>  
+                        <p:graphicImage value="resources/images/csv.png" title="CSV"  />  
+                        <p:dataExporter type="csv" target="crecTable" fileName="calib" pageOnly="true"/>  
+                    </h:commandLink>  
+
+                    <h:commandLink>  
+                        <p:graphicImage value="resources/images/xml.png" title="XML"  />  
+                        <p:dataExporter type="xml" target="crecTable" fileName="calib" pageOnly="true"/>  
+                    </h:commandLink>  
+                </p:panel>  
+            </h:panelGrid>
         </h:form>
 
     </ui:define>

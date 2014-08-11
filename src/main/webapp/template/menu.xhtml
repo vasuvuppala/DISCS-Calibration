@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:fc="http://java.sun.com/jsf/composite/comps"
+    xmlns:h="http://java.sun.com/jsf/html">
+
+    <h:form id="menuform">
+        <p:growl id="menumsgs" />
+
+        <p:menubar id="mainMenu" >
+            <p:menuitem value="Home" icon="ui-icon-home" title="Home" url="/index.xhtml"/>
+            <p:menuitem value="Equipment" icon="ui-icon-power" title="Browse All Equipment" url="/equipment.xhtml"/>               
+            <p:menuitem value="Calibrations" icon="ui-icon-comment" title="Browse All Calibration Records" url="/crecords.xhtml"/> 
+            <p:menuitem value="Reports" title="Reports"  icon="ui-icon-print" url="reports.xhtml" disabled="true" />
+            <p:submenu label="Manage" icon="ui-icon-comment" >
+                <p:menuitem value="Devices" title="Manage Devices" 
+                            url="/manage/device/index.xhtml" icon="ui-icon-suitcase" 
+                            disabled="#{not authManager.canManageDevices()}" />            
+                <p:menuitem value="Models" title="Manage Models" 
+                            url="/manage/model/index.xhtml" icon="ui-icon-comment" 
+                            disabled="#{not authManager.canManageDevices()}" />
+            </p:submenu>
+
+            <p:menuitem value="Preferences" title="Preferences"  icon="ui-icon-gear" url="/preferences.xhtml"  disabled="true"/>
+
+            <p:submenu label="Admin" icon="ui-icon-note" rendered="true">               
+                <p:menuitem value="Audit Records" title="Browse Audit Records" 
+                            url="/audit/" icon="ui-icon-note" />
+                <p:menuitem value="Authorization" title="Manage Authorizations" 
+                            url="/browse/audit/" icon="ui-icon-note"  disabled="true"/>
+            </p:submenu>
+
+            <p:submenu label="Help" icon="ui-icon-help">
+                <p:menuitem value=" Online Help" title="Online Help" 
+                            icon="ui-icon-help" 
+                            url="help.xhtml"  disabled="true"/>
+                <p:menuitem value=" API Manual" title="API Manual" 
+                            icon="ui-icon-script" 
+                            url="api-manual.xhtml" disabled="true"/>
+                <p:menuitem value=" Report Problems" title="Report Problems/Suggestions" 
+                            icon="ui-icon-alert" target="_blank"
+                            url="https://controls.frib.msu.edu/controlshelp/" 
+                            rendered="true"/>              
+                <p:menuitem value=" About" id="aboutMenu" icon="ui-icon-info" 
+                            title="About Proteus: Calibration"  onclick="PF('aboutPanelWid').show()"/>    
+            </p:submenu>             
+
+            <f:facet name="options">  
+               
+            </f:facet>
+        </p:menubar>       
+    </h:form>  
+    <p:dialog id="aboutPanel"  header="#{msgs.title}" widgetVar="aboutPanelWid">     
+        <ui:include src="about.xhtml" />
+    </p:dialog>
+</ui:composition>

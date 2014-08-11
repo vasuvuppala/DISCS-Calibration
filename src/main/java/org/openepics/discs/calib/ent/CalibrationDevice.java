@@ -9,8 +9,10 @@ package org.openepics.discs.calib.ent;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -28,46 +30,44 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "CalibrationDevice.findAll", query = "SELECT c FROM CalibrationDevice c"),
-    @NamedQuery(name = "CalibrationDevice.findByCalibrationRecordId", query = "SELECT c FROM CalibrationDevice c WHERE c.calibrationDevicePK.calibrationRecordId = :calibrationRecordId"),
-    @NamedQuery(name = "CalibrationDevice.findByPhysicalComponentId", query = "SELECT c FROM CalibrationDevice c WHERE c.calibrationDevicePK.physicalComponentId = :physicalComponentId"),
+    @NamedQuery(name = "CalibrationDevice.findById", query = "SELECT c FROM CalibrationDevice c WHERE c.id = :id"),
     @NamedQuery(name = "CalibrationDevice.findByVersion", query = "SELECT c FROM CalibrationDevice c WHERE c.version = :version")})
 public class CalibrationDevice implements Serializable {
     private static final long serialVersionUID = 1L;
-    @EmbeddedId
-    protected CalibrationDevicePK calibrationDevicePK;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Column(name = "version")
     private int version;
-    @JoinColumn(name = "calibration_record_id", referencedColumnName = "calibration_record_id", insertable = false, updatable = false)
+    @JoinColumn(name = "calibration_record", referencedColumnName = "calibration_record_id")
     @ManyToOne(optional = false)
     private CalibrationRecord calibrationRecord;
-    @JoinColumn(name = "physical_component_id", referencedColumnName = "physical_component_id", insertable = false, updatable = false)
+    @JoinColumn(name = "device", referencedColumnName = "device_id")
     @ManyToOne(optional = false)
-    private Equipment equipment;
+    private Device device;
 
     public CalibrationDevice() {
     }
 
-    public CalibrationDevice(CalibrationDevicePK calibrationDevicePK) {
-        this.calibrationDevicePK = calibrationDevicePK;
+    public CalibrationDevice(Integer id) {
+        this.id = id;
     }
 
-    public CalibrationDevice(CalibrationDevicePK calibrationDevicePK, int version) {
-        this.calibrationDevicePK = calibrationDevicePK;
+    public CalibrationDevice(Integer id, int version) {
+        this.id = id;
         this.version = version;
     }
 
-    public CalibrationDevice(int calibrationRecordId, int physicalComponentId) {
-        this.calibrationDevicePK = new CalibrationDevicePK(calibrationRecordId, physicalComponentId);
+    public Integer getId() {
+        return id;
     }
 
-    public CalibrationDevicePK getCalibrationDevicePK() {
-        return calibrationDevicePK;
-    }
-
-    public void setCalibrationDevicePK(CalibrationDevicePK calibrationDevicePK) {
-        this.calibrationDevicePK = calibrationDevicePK;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public int getVersion() {
@@ -86,18 +86,18 @@ public class CalibrationDevice implements Serializable {
         this.calibrationRecord = calibrationRecord;
     }
 
-    public Equipment getEquipment() {
-        return equipment;
+    public Device getDevice() {
+        return device;
     }
 
-    public void setEquipment(Equipment equipment) {
-        this.equipment = equipment;
+    public void setDevice(Device device) {
+        this.device = device;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (calibrationDevicePK != null ? calibrationDevicePK.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -108,7 +108,7 @@ public class CalibrationDevice implements Serializable {
             return false;
         }
         CalibrationDevice other = (CalibrationDevice) object;
-        if ((this.calibrationDevicePK == null && other.calibrationDevicePK != null) || (this.calibrationDevicePK != null && !this.calibrationDevicePK.equals(other.calibrationDevicePK))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -116,7 +116,7 @@ public class CalibrationDevice implements Serializable {
 
     @Override
     public String toString() {
-        return "org.openepics.discs.calib.ent.CalibrationDevice[ calibrationDevicePK=" + calibrationDevicePK + " ]";
+        return "org.openepics.discs.calib.ent.CalibrationDevice[ id=" + id + " ]";
     }
     
 }

@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/template/calibTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"                
+                xmlns:h="http://java.sun.com/jsf/html" >
+
+    <ui:define name="content">
+        <p:growl id="messages" showDetail="true"/> 
+        <h:form id="searchForm"> 
+            <ui:remove> -------------------- Equipment ------------------- </ui:remove> 
+            <p:dataTable id="searchTable" var="model" value="#{modelManager.models}"                                                             
+                         rowKey="#{model.modelId}"                        
+                         emptyMessage="No Models Found."
+                         selectionMode="single"
+                         selection="#{modelManager.selectedModel}" 
+                         filteredValue="#{modelManager.filteredModels}"     
+                         paginator="true"  rows="25" resizableColumns="true"
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" >
+
+                <ui:remove>  scrollable="true" liveScroll="true" scrollRows="25" scrollHeight="600"  </ui:remove>
+
+                <p:ajax event="rowSelect" listener="#{modelManager.onSelect}" update="editButton delButton :deviceEditForm" />
+
+                <f:facet name="header">
+                    <h:outputText value="Manage Models" />                       
+                </f:facet>              
+                <p:column id="model" headerText="Model" sortBy="#{model.name}"
+                          filterBy="#{model.name}"
+                          filterMatchMode="startsWith"  >                  
+                    <h:outputText value="#{model.name}" />                                    
+                </p:column>                             
+                <p:column id="manuf" headerText="Manufacturer" 
+                          filterBy="#{model.manufacturer}"
+                          filterMatchMode="contains" >                  
+                    <h:outputText value="#{model.manufacturer}" />                              
+                </p:column>         
+                <p:column id="desc" headerText="Description" style="width: 30%"
+                          filterBy="#{model.description}"
+                          filterMatchMode="contains" >                  
+                    <h:outputText value="#{model.description}" />                              
+                </p:column>
+                
+                <p:column id="location" headerText="Manual" >  
+                    <h:outputLink value="#{model.manualUri}" target="_blank">
+                        <h:outputText value="#{model.manualName}" />
+                    </h:outputLink>                                                 
+                </p:column>
+               
+                <p:column id="cycle" headerText="Cycle" width="5%">                  
+                    <h:outputText value="#{model.calibrationCycle}" title="in months" />                              
+                </p:column>
+                <f:facet id="crudMenu" name="footer">
+                    <p:commandButton id="delButton" value="Delete" icon="ui-icon-trash" 
+                                     process="@this" update=":messages"  oncomplete="PF('deleteConfirm').show()" 
+                                     disabled="#{not modelManager.selectionMade}"/>
+                    <p:commandButton id="addButton" value="Add" icon="ui-icon-plus" actionListener="#{modelManager.onAdd}"
+                                     process="@this" update=":messages"  oncomplete="PF('editDialog').show()" />
+                    <p:commandButton id="editButton" value="Edit" icon="ui-icon-pencil" 
+                                     process="@this" update=":messages"  oncomplete="PF('editDialog').show()" 
+                                     disabled="#{not modelManager.selectionMade}"/>                 
+                </f:facet> 
+            </p:dataTable>             
+        </h:form>
+
+        <ui:remove> -------------------------- Add/Edit ------------------- </ui:remove>
+        <p:dialog  id="deviceEditPanel" header="Add/Edit a Device" widgetVar="editDialog" dynamic="true">
+            <h:form id="deviceEditForm">
+                <p:panelGrid id="itemEditPanel" >
+                    <p:row>
+                        <p:column><h:outputLabel value="Name" /></p:column>
+                        <p:column><h:inputText  value="#{modelManager.selectedModel.name}" required="true"/> </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column><h:outputLabel value="Manufacturer" /></p:column>
+                        <p:column><h:inputText  value="#{modelManager.selectedModel.manufacturer}" rendered="true"/> </p:column>
+                    </p:row>                  
+                    <p:row>                       
+                        <p:column><h:outputLabel value="Description" /></p:column>
+                        <p:column><p:inputTextarea id="desc" value="#{modelManager.selectedModel.description}" 
+                                                   required="true"   rows="5" cols="50"  /> </p:column>
+                    </p:row>                
+                    <p:row>
+                        <p:column><h:outputLabel value="Manual Name" /></p:column>
+                        <p:column><h:inputText  value="#{modelManager.selectedModel.manualName}"/> </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column><h:outputLabel value="Manual URI" /></p:column>
+                        <p:column><h:inputText  value="#{modelManager.selectedModel.manualUri}"/> </p:column>
+                    </p:row>                  
+                     <p:row>
+                        <p:column><h:outputLabel value="Cycle (months)" /></p:column>
+                        <p:column><h:inputText  value="#{modelManager.selectedModel.calibrationCycle}" title="in months"/> </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <p:toolbar>
+                    <f:facet name="right" >                      
+                        <p:commandButton value="Save" icon="ui-icon-disk" 
+                                         update=":searchForm:searchTable :messages" 
+                                         process="@form" actionListener="#{modelManager.onSave}"
+                                         oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('editDialog').hide()" /> 
+                        <p:separator /> 
+                        <p:commandButton value="Cancel" icon="ui-icon-close"                                         
+                                         process="@this"  onclick="PF('editDialog').hide()" />
+                    </f:facet>
+                </p:toolbar> 
+            </h:form>  
+        </p:dialog>
+
+        <ui:remove> -------------------------- Delete Confirm ------------------- </ui:remove>
+        <p:dialog widgetVar="deleteConfirm">  
+            <f:facet name="header">  
+                <h:outputText value="Delete Device"/> 
+            </f:facet>
+            <h:form id="deviceDelForm">
+                <h:outputText value="Do you really want to delete this device?" />
+
+                <p:separator /> 
+                <p:commandButton value="Yes" style="float: left"  
+                                 icon="ui-icon-check"
+                                 process="@this" update=":searchForm:searchTable :messages"
+                                 oncomplete="PF('deleteConfirm').hide()"                                                                
+                                 actionListener="#{modelManager.onDelete}"/> 
+                <p:commandButton  type="cancel" value="No" style="float: right"
+                                  icon="ui-icon-close"
+                                  update=":messages" process="@this"                                  
+                                  onclick="PF('deleteConfirm').hide()"  />  
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>
