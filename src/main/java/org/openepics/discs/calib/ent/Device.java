@@ -89,9 +89,12 @@ public class Device implements Serializable {
     @Column(name = "version")
     private int version;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "device")
-    private List<CalibrationRecord> calibrationRecordList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "device")
     private List<CalibrationDevice> calibrationDeviceList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "device")
+    private List<CalibrationRecord> calibrationRecordList;
+    @JoinColumn(name = "owner", referencedColumnName = "user_id")
+    @ManyToOne
+    private Sysuser owner;
     @JoinColumn(name = "device_group", referencedColumnName = "group_id")
     @ManyToOne(optional = false)
     private DeviceGroup deviceGroup;
@@ -202,6 +205,15 @@ public class Device implements Serializable {
     }
 
     @XmlTransient
+    public List<CalibrationDevice> getCalibrationDeviceList() {
+        return calibrationDeviceList;
+    }
+
+    public void setCalibrationDeviceList(List<CalibrationDevice> calibrationDeviceList) {
+        this.calibrationDeviceList = calibrationDeviceList;
+    }
+
+    @XmlTransient
     public List<CalibrationRecord> getCalibrationRecordList() {
         return calibrationRecordList;
     }
@@ -210,13 +222,12 @@ public class Device implements Serializable {
         this.calibrationRecordList = calibrationRecordList;
     }
 
-    @XmlTransient
-    public List<CalibrationDevice> getCalibrationDeviceList() {
-        return calibrationDeviceList;
+    public Sysuser getOwner() {
+        return owner;
     }
 
-    public void setCalibrationDeviceList(List<CalibrationDevice> calibrationDeviceList) {
-        this.calibrationDeviceList = calibrationDeviceList;
+    public void setOwner(Sysuser owner) {
+        this.owner = owner;
     }
 
     public DeviceGroup getDeviceGroup() {

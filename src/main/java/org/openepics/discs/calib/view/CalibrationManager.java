@@ -15,9 +15,7 @@
  */
 package org.openepics.discs.calib.view;
 
-import org.openepics.discs.calib.util.DevicePlus;
-import org.openepics.discs.calib.ejb.CalibrationEJB;
-import org.openepics.discs.calib.util.Utility;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,9 +31,16 @@ import javax.faces.event.ActionEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.openepics.discs.calib.ejb.CalibrationEJB;
 import org.openepics.discs.calib.ent.*;
+import org.openepics.discs.calib.util.AppProperties;
+import org.openepics.discs.calib.util.BlobStore;
+import org.openepics.discs.calib.util.DevicePlus;
 import org.openepics.discs.calib.util.UserSession;
+import org.openepics.discs.calib.util.Utility;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.model.UploadedFile;
 
 /**
  *
@@ -50,7 +55,9 @@ public class CalibrationManager implements Serializable {
     private static final Logger logger = Logger.getLogger("org.openepics.discs.calibration");
     @Inject
     UserSession userSession;
-
+    @Inject
+    private BlobStore blobStore;
+    
     private List<Device> physicalComponents;
     private Device selectedEquip;
     private final DevicePlus selectedEplus = new DevicePlus();
@@ -65,6 +72,10 @@ public class CalibrationManager implements Serializable {
     private Date inputCalDate;
     private String inputCalNotes;
     private String selectedSerial;
+    private List<Artifact> inputArtifacts;
+    //
+    //
+    private String uploadedFileName;
 
     /**
      * Creates a new instance of CalibrationManager
@@ -222,6 +233,39 @@ public class CalibrationManager implements Serializable {
         }
     }
 
+    public void handleFileUpload(FileUploadEvent event) {
+        // Utility.showMessage(FacesMessage.SEVERITY_INFO, "Succesful", msg);
+        logger.log(Level.INFO,"Entering handleFileUpload");
+        InputStream istream;       
+        
+        try {        
+            UploadedFile uploadedFile = event.getFile();
+            uploadedFileName = uploadedFile.getFileName();         
+            istream = uploadedFile.getInputstream();
+            // logger.log(Level.INFO,"Uploaded file name {0}", uploadedFileName);
+            // Utility.showMessage(FacesMessage.SEVERITY_INFO, "File ", "Name: " + uploadedFileName);
+            logger.log(Level.INFO,"calling blobstore");
+            String fileId = blobStore.storeFile(istream);
+            
+            // create an artifact
+            Artifact artifact = new Artifact();
+            artifact.setName(uploadedFileName);
+            artifact.setType(AppProperties.ARTIFACT_DOC);
+            artifact.setResource(fileId);
+            inputArtifacts.add(artifact);
+            
+            istream.close();
+            Utility.showMessage(FacesMessage.SEVERITY_INFO, "File uploaded", "Name: " + uploadedFileName);
+            // ileUploaded = true;
+        } catch (Exception e) {
+            Utility.showMessage(FacesMessage.SEVERITY_ERROR, "Error Uploading file", e.getMessage());
+            logger.severe(e.getMessage());
+            // fileUploaded = false;
+        } finally {
+
+        }
+    }
+    
     public Device getSelectedEquip() {
         return selectedEquip;
     }

@@ -57,10 +57,17 @@ public class AuditEJB {
     }
     
     // ----------- Audit record ---------------------------------------
-    public void makeAuditEntry(EntityType entType, EntityTypeOperation oper, String key, String entry) {
-        AuditRecord arec = new AuditRecord(new Date(), oper, userSession.getUserId(), entry);
+    // public void makeAuditEntry(EntityType entType, EntityTypeOperation oper, String key, String entry) {
+    public void makeAuditEntry(String entType, String oper, String key, String entry) {
+        AuditRecord arec = new AuditRecord();
+        // AuditRecord arec = new AuditRecord(new Date(), oper, userSession.getUserId(), entry);
+        
         arec.setEntityType(entType);
+        arec.setOper(oper);
         arec.setEntityKey(key);
+        arec.setUser(userSession.getUserId());
+        arec.setEntry(entry);
+               
         em.persist(arec);
     }
 }

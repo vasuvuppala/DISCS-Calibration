@@ -18,7 +18,6 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -69,9 +68,15 @@ public class Sysuser implements Serializable {
     @Column(name = "version")
     private int version;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "sysuser")
+    private List<UserGroup> userGroupList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sysuser")
     private List<UserRole> userRoleList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "sysuser")
-    private UserPreference userPreference;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sysuser")
+    private List<Subscription> subscriptionList;
+    @OneToMany(mappedBy = "owner")
+    private List<Device> deviceList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sysuser")
+    private List<UserPreference> userPreferenceList;
 
     public Sysuser() {
     }
@@ -136,6 +141,15 @@ public class Sysuser implements Serializable {
     }
 
     @XmlTransient
+    public List<UserGroup> getUserGroupList() {
+        return userGroupList;
+    }
+
+    public void setUserGroupList(List<UserGroup> userGroupList) {
+        this.userGroupList = userGroupList;
+    }
+
+    @XmlTransient
     public List<UserRole> getUserRoleList() {
         return userRoleList;
     }
@@ -144,12 +158,31 @@ public class Sysuser implements Serializable {
         this.userRoleList = userRoleList;
     }
 
-    public UserPreference getUserPreference() {
-        return userPreference;
+    @XmlTransient
+    public List<Subscription> getSubscriptionList() {
+        return subscriptionList;
     }
 
-    public void setUserPreference(UserPreference userPreference) {
-        this.userPreference = userPreference;
+    public void setSubscriptionList(List<Subscription> subscriptionList) {
+        this.subscriptionList = subscriptionList;
+    }
+
+    @XmlTransient
+    public List<Device> getDeviceList() {
+        return deviceList;
+    }
+
+    public void setDeviceList(List<Device> deviceList) {
+        this.deviceList = deviceList;
+    }
+
+    @XmlTransient
+    public List<UserPreference> getUserPreferenceList() {
+        return userPreferenceList;
+    }
+
+    public void setUserPreferenceList(List<UserPreference> userPreferenceList) {
+        this.userPreferenceList = userPreferenceList;
     }
 
     @Override

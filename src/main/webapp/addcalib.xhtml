@@ -1,5 +1,9 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- 
+    Add calibration record
+
+-->
 <ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
                 template="/template/calibTemplate.xhtml"
                 xmlns:p="http://primefaces.org/ui"
@@ -201,16 +205,14 @@
                                 <p:column id="manufsn" headerText="Serial" >                  
                                     <h:outputText value="#{std.serialNumber}" />                              
                                 </p:column>
-                                <p:column id="servdate" headerText="Date Serviced"  rendered="false">                  
-                                    <h:outputText value="#{std.dateLastServiced}" > 
-                                        <f:convertDateTime pattern="yyyy-MM-dd" />
-                                    </h:outputText>
-                                </p:column>
-                                <p:column id="cstandard" headerText="Std"  rendered="false">   
-                                    <h:outputText styleClass="ui-icon ui-icon-check" rendered="#{std.calibStandard}" />                              
-                                </p:column>
+                                
                             </p:dataTable>
                         </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:fileUpload mode="advanced" dragDropSupport="true"  label="Docs" auto="true"
+                                          update=":logMessages newEntry" sizeLimit="#{msgs.uploadSize}" 
+                                          process="@this" fileUploadListener="#{logManager.handleFileUpload}" />
                     </p:row>
                 </p:panelGrid>
                 <f:facet name="footer">

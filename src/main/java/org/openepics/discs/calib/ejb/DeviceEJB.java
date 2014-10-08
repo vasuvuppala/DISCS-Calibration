@@ -134,7 +134,8 @@ public class DeviceEJB {
         // device.setDateModified(new Date());
         // device.setModifiedBy("test");       
         device = em.merge(device);
-        auditEJB.makeAuditEntry(EntityType.DEVICE, EntityTypeOperation.UPDATE, device.getSerialNumber(), "created or updated");
+        // auditEJB.makeAuditEntry(EntityType.DEVICE, EntityTypeOperation.UPDATE, device.getSerialNumber(), "created or updated");
+        auditEJB.makeAuditEntry("DEVICE", "UPDATE", device.getSerialNumber(), "created or updated");
         return device;
         
     }
@@ -142,6 +143,7 @@ public class DeviceEJB {
     public void deleteDevice(Device device) {
         Device ct = em.find(Device.class,device.getDeviceId());       
         em.remove(ct);    
-        auditEJB.makeAuditEntry(EntityType.DEVICE, EntityTypeOperation.DELETE, device.getSerialNumber(), "deleted");
+        // auditEJB.makeAuditEntry(EntityType.DEVICE, EntityTypeOperation.DELETE, device.getSerialNumber(), "deleted");
+        auditEJB.makeAuditEntry("DEVICE", "DELETE", device.getSerialNumber(), "deleted");
     }
 }

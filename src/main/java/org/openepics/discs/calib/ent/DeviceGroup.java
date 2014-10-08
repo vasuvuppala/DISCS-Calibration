@@ -51,6 +51,10 @@ public class DeviceGroup implements Serializable {
     @Size(max = 255)
     @Column(name = "description")
     private String description;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sysgroup")
+    private List<UserGroup> userGroupList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sysgroup")
+    private List<Subscription> subscriptionList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "deviceGroup")
     private List<Device> deviceList;
 
@@ -88,6 +92,24 @@ public class DeviceGroup implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @XmlTransient
+    public List<UserGroup> getUserGroupList() {
+        return userGroupList;
+    }
+
+    public void setUserGroupList(List<UserGroup> userGroupList) {
+        this.userGroupList = userGroupList;
+    }
+
+    @XmlTransient
+    public List<Subscription> getSubscriptionList() {
+        return subscriptionList;
+    }
+
+    public void setSubscriptionList(List<Subscription> subscriptionList) {
+        this.subscriptionList = subscriptionList;
     }
 
     @XmlTransient

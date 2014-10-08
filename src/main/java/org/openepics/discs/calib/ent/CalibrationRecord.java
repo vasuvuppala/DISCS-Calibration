@@ -68,13 +68,15 @@ public class CalibrationRecord implements Serializable {
     @NotNull
     @Column(name = "version")
     private int version;
-    @JoinColumn(name = "device", referencedColumnName = "device_id")
-    @ManyToOne(optional = false)
-    private Device device;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "calibrationRecord")
     private List<CalibrationDevice> calibrationDeviceList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "calibrationRecord")
     private List<CalibrationMeasurement> calibrationMeasurementList;
+    @JoinColumn(name = "device", referencedColumnName = "device_id")
+    @ManyToOne(optional = false)
+    private Device device;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "calibrationRecord")
+    private List<Artifact> artifactList;
 
     public CalibrationRecord() {
     }
@@ -130,14 +132,6 @@ public class CalibrationRecord implements Serializable {
         this.version = version;
     }
 
-    public Device getDevice() {
-        return device;
-    }
-
-    public void setDevice(Device device) {
-        this.device = device;
-    }
-
     @XmlTransient
     public List<CalibrationDevice> getCalibrationDeviceList() {
         return calibrationDeviceList;
@@ -154,6 +148,23 @@ public class CalibrationRecord implements Serializable {
 
     public void setCalibrationMeasurementList(List<CalibrationMeasurement> calibrationMeasurementList) {
         this.calibrationMeasurementList = calibrationMeasurementList;
+    }
+
+    public Device getDevice() {
+        return device;
+    }
+
+    public void setDevice(Device device) {
+        this.device = device;
+    }
+
+    @XmlTransient
+    public List<Artifact> getArtifactList() {
+        return artifactList;
+    }
+
+    public void setArtifactList(List<Artifact> artifactList) {
+        this.artifactList = artifactList;
     }
 
     @Override

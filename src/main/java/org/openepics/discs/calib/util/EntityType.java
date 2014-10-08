@@ -1,7 +1,7 @@
 package org.openepics.discs.calib.util;
 
 /**
- * @author Andraz Pozar <andraz.pozar@cosylab.com>
+ * ToDo: Not used yet; Use enums for entity types
  *
  */
 public enum EntityType {

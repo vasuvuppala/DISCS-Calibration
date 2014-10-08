@@ -165,7 +165,8 @@ public class CalibrationEJB {
         // update the equipment
         cr.getDevice().getCalibrationRecordList().add(cr);
         em.merge(cr.getDevice());
-        auditEJB.makeAuditEntry(EntityType.CALIBRATION_RECORD, EntityTypeOperation.CREATE, cr.getDevice().getSerialNumber(), "created calibration record");
+        // auditEJB.makeAuditEntry(EntityType.CALIBRATION_RECORD, EntityTypeOperation.CREATE, cr.getDevice().getSerialNumber(), "created calibration record");
+        auditEJB.makeAuditEntry("CALIBRATION_RECORD", "CREATE", cr.getDevice().getSerialNumber(), "created calibration record");
 
         return cr;
     }
@@ -195,6 +196,6 @@ public class CalibrationEJB {
         // em.merge(e);
         logger.log(Level.INFO, "removing calibration record from db: " + cr.getCalibrationRecordId());
         em.remove(cr);
-        auditEJB.makeAuditEntry(EntityType.CALIBRATION_RECORD, EntityTypeOperation.DELETE, cr.getDevice().getSerialNumber(), "deleted calibration record");
+        auditEJB.makeAuditEntry("CALIBRATION_RECORD", "DELETE", cr.getDevice().getSerialNumber(), "deleted calibration record");
     }
 }

@@ -18,8 +18,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -27,45 +25,30 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author vuppala
  */
 @Entity
-@Table(name = "user_preference")
+@Table(name = "user_group")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "UserPreference.findAll", query = "SELECT u FROM UserPreference u"),
-    @NamedQuery(name = "UserPreference.findById", query = "SELECT u FROM UserPreference u WHERE u.id = :id"),
-    @NamedQuery(name = "UserPreference.findByPrefName", query = "SELECT u FROM UserPreference u WHERE u.prefName = :prefName"),
-    @NamedQuery(name = "UserPreference.findByPrefValue", query = "SELECT u FROM UserPreference u WHERE u.prefValue = :prefValue")})
-public class UserPreference implements Serializable {
+    @NamedQuery(name = "UserGroup.findAll", query = "SELECT u FROM UserGroup u"),
+    @NamedQuery(name = "UserGroup.findById", query = "SELECT u FROM UserGroup u WHERE u.id = :id")})
+public class UserGroup implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 32)
-    @Column(name = "pref_name")
-    private String prefName;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 128)
-    @Column(name = "pref_value")
-    private String prefValue;
+    @JoinColumn(name = "sysgroup", referencedColumnName = "group_id")
+    @ManyToOne(optional = false)
+    private DeviceGroup sysgroup;
     @JoinColumn(name = "sysuser", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
     private Sysuser sysuser;
 
-    public UserPreference() {
+    public UserGroup() {
     }
 
-    public UserPreference(Integer id) {
+    public UserGroup(Integer id) {
         this.id = id;
-    }
-
-    public UserPreference(Integer id, String prefName, String prefValue) {
-        this.id = id;
-        this.prefName = prefName;
-        this.prefValue = prefValue;
     }
 
     public Integer getId() {
@@ -76,20 +59,12 @@ public class UserPreference implements Serializable {
         this.id = id;
     }
 
-    public String getPrefName() {
-        return prefName;
+    public DeviceGroup getSysgroup() {
+        return sysgroup;
     }
 
-    public void setPrefName(String prefName) {
-        this.prefName = prefName;
-    }
-
-    public String getPrefValue() {
-        return prefValue;
-    }
-
-    public void setPrefValue(String prefValue) {
-        this.prefValue = prefValue;
+    public void setSysgroup(DeviceGroup sysgroup) {
+        this.sysgroup = sysgroup;
     }
 
     public Sysuser getSysuser() {
@@ -110,10 +85,10 @@ public class UserPreference implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof UserPreference)) {
+        if (!(object instanceof UserGroup)) {
             return false;
         }
-        UserPreference other = (UserPreference) object;
+        UserGroup other = (UserGroup) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -122,7 +97,7 @@ public class UserPreference implements Serializable {
 
     @Override
     public String toString() {
-        return "org.openepics.discs.calib.ent.UserPreference[ id=" + id + " ]";
+        return "org.openepics.discs.calib.ent.UserGroup[ id=" + id + " ]";
     }
     
 }

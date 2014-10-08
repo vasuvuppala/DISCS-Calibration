@@ -39,6 +39,13 @@ public class AppProperties {
     public static final String ROLE_GROUP_ADMIN = "GroupAdmin";
     public static final String ROLE_ADMIN = "Admin";
     
+    // Blob store
+    public static  final String BLOBSTORE_ROOT = "BlobStoreRoot";
+    
+    // Artifact
+    public static  final String ARTIFACT_DOC = "file"; // ToDo: use enum instead
+    public static  final String ARTIFACT_TR = "uri";  // ToDo: use enum instead
+    
     public void AppProperties(){       
     }
     

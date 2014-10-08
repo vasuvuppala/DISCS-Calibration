@@ -6,19 +6,15 @@
 
 package org.openepics.discs.calib.ent;
 
-import org.openepics.discs.calib.util.EntityTypeOperation;
-import org.openepics.discs.calib.util.EntityType;
 import java.io.Serializable;
 import java.util.Date;
-
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -57,29 +53,36 @@ public class AuditRecord implements Serializable {
     private Date logTime;
     @Basic(optional = false)
     @NotNull
-    @Enumerated(EnumType.STRING)
+    @Size(min = 1, max = 16)
     @Column(name = "oper")
-    private EntityTypeOperation oper;
+    private String oper;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 64)
-    @Column(name = "`user`")
+    @Column(name = "user")
     private String user;
-    @Enumerated(EnumType.STRING)
+    @Size(max = 32)
     @Column(name = "entity_type")
-    private EntityType entityType;
+    private String entityType;
     @Size(max = 64)
     @Column(name = "entity_key")
     private String entityKey;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "entry", columnDefinition="TEXT")
+    @Lob
+    @Size(min = 1, max = 65535)
+    @Column(name = "entry")
     private String entry;
 
-    protected AuditRecord() {
+    public AuditRecord() {
     }
 
-    public AuditRecord(Date logTime, EntityTypeOperation oper, String user, String entry) {
+    public AuditRecord(Integer auditRecordId) {
+        this.auditRecordId = auditRecordId;
+    }
+
+    public AuditRecord(Integer auditRecordId, Date logTime, String oper, String user, String entry) {
+        this.auditRecordId = auditRecordId;
         this.logTime = logTime;
         this.oper = oper;
         this.user = user;
@@ -90,6 +93,10 @@ public class AuditRecord implements Serializable {
         return auditRecordId;
     }
 
+    public void setAuditRecordId(Integer auditRecordId) {
+        this.auditRecordId = auditRecordId;
+    }
+
     public Date getLogTime() {
         return logTime;
     }
@@ -98,11 +105,11 @@ public class AuditRecord implements Serializable {
         this.logTime = logTime;
     }
 
-    public EntityTypeOperation getOper() {
+    public String getOper() {
         return oper;
     }
 
-    public void setOper(EntityTypeOperation oper) {
+    public void setOper(String oper) {
         this.oper = oper;
     }
 
@@ -114,11 +121,11 @@ public class AuditRecord implements Serializable {
         this.user = user;
     }
 
-    public EntityType getEntityType() {
+    public String getEntityType() {
         return entityType;
     }
 
-    public void setEntityType(EntityType entityType) {
+    public void setEntityType(String entityType) {
         this.entityType = entityType;
     }
 
@@ -147,18 +154,20 @@ public class AuditRecord implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        if (!(object instanceof AuditRecord)) return false;
-
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof AuditRecord)) {
+            return false;
+        }
         AuditRecord other = (AuditRecord) object;
-        if (this.auditRecordId == null && other.auditRecordId != null) return false;
-        if (this.auditRecordId != null) return this.auditRecordId.equals(other.auditRecordId);
-
-        return this==object;
+        if ((this.auditRecordId == null && other.auditRecordId != null) || (this.auditRecordId != null && !this.auditRecordId.equals(other.auditRecordId))) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public String toString() {
-        return "org.openepics.discs.conf.ent.AuditRecord[ auditRecordId=" + auditRecordId + " ]";
+        return "org.openepics.discs.calib.ent.AuditRecord[ auditRecordId=" + auditRecordId + " ]";
     }
-
+    
 }
