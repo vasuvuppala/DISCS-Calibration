@@ -16,6 +16,7 @@
 package org.openepics.discs.calib.ejb;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -56,8 +57,9 @@ public class ReminderSvc {
     }
 
     // ToDo: Make scheduling configurable.
-    //@Schedule(second = "0", minute = "*/1", hour = "*", month = "*", year = "*")
-    @Schedule(second = "0", minute = "0", hour = "12", month = "*", year = "*")
+     
+    // @Schedule(second = "0", minute = "*/1", hour = "*", month = "*", year = "*")  
+    @Schedule(second = "0", minute = "0", hour = "12", month = "*", year = "*") 
     public void runService() {
         try {
             if (inProgress) {
@@ -79,6 +81,7 @@ public class ReminderSvc {
                     logger.info("Reminder service: no calibrations due for group " + group.getName());
                 } else {
                     String subject = "Calibrations Reminder: For Group " + group.getName();
+                    logger.info("Sendind reminder to " + Arrays.toString(recipients));
                     sendMail(FROM_ADDRESS, recipients, subject, message);
                 }
             }
