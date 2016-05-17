@@ -6,6 +6,10 @@ Release Notes: Proteus: Calibration Manager
 
 Overview: Calibration Manager is a tool for managing the calibration of devices. 
 
+Proteus: Calibration Version 0.5.1 Date: 2014-Oct-27
+
+ Summary of Changes from Previous Version:
+   - Email reminders are sent to the group not to everyone
 
 Proteus: Calibration Version 0.4.0 Date: 2014-Jul-23
 

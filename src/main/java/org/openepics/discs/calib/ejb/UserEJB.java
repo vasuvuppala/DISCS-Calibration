@@ -76,12 +76,20 @@ public class UserEJB {
     
     /**
      * Finds users who are subscribed to reminders
+     * TODO: This is pretty bad. change schema to have relation between users and groups.
      *
      * @author vuppala
      * @return all users
      */
     public List<Sysuser> reminderSubscribers(DeviceGroup group) {
-        return findUsers();  //ToDo: send only those in the group and subscribers
+        List<Sysuser> users;
+        String gid = group.getGroupId().toString();
+        
+        TypedQuery<Sysuser> query = em.createQuery("SELECT u.sysuser FROM UserPreference u WHERE u.prefName = 'DefaultGroup' AND u.prefValue = :gid", Sysuser.class)
+                .setParameter("gid", gid);
+        users = query.getResultList();
+        logger.log(Level.INFO, "subscribers found: " + users.size());
+        return users;       
     }
 
     /**
