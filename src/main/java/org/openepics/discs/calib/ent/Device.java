@@ -88,9 +88,9 @@ public class Device implements Serializable {
     @NotNull
     @Column(name = "version")
     private int version;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "device")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "device")
     private List<CalibrationDevice> calibrationDeviceList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "device")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "device")
     private List<CalibrationRecord> calibrationRecordList;
     @JoinColumn(name = "owner", referencedColumnName = "user_id")
     @ManyToOne

@@ -51,11 +51,11 @@ public class DeviceGroup implements Serializable {
     @Size(max = 255)
     @Column(name = "description")
     private String description;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sysgroup")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "sysgroup")
     private List<UserGroup> userGroupList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sysgroup")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "sysgroup")
     private List<Subscription> subscriptionList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "deviceGroup")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "deviceGroup")
     private List<Device> deviceList;
 
     public DeviceGroup() {

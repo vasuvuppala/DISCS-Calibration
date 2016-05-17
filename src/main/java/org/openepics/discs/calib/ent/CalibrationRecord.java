@@ -68,14 +68,14 @@ public class CalibrationRecord implements Serializable {
     @NotNull
     @Column(name = "version")
     private int version;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "calibrationRecord")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "calibrationRecord")
     private List<CalibrationDevice> calibrationDeviceList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "calibrationRecord")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "calibrationRecord")
     private List<CalibrationMeasurement> calibrationMeasurementList;
     @JoinColumn(name = "device", referencedColumnName = "device_id")
     @ManyToOne(optional = false)
     private Device device;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "calibrationRecord")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "calibrationRecord")
     private List<Artifact> artifactList;
 
     public CalibrationRecord() {

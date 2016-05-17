@@ -84,7 +84,7 @@ public class DeviceModel implements Serializable {
     @NotNull
     @Column(name = "version")
     private int version;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "model")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "model")
     private List<Device> deviceList;
 
     public DeviceModel() {

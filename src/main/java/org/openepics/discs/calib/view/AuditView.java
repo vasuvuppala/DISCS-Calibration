@@ -6,6 +6,7 @@
 
 package org.openepics.discs.calib.view;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,7 +26,7 @@ import org.openepics.discs.calib.util.Utility;
  */
 @Named
 @ViewScoped
-public class AuditView {
+public class AuditView implements Serializable {
     @EJB
     private AuditEJB auditEJB;
     private static final Logger logger = Logger.getLogger(AuditView.class.getName());

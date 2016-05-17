@@ -67,15 +67,15 @@ public class Sysuser implements Serializable {
     @NotNull
     @Column(name = "version")
     private int version;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sysuser")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "sysuser")
     private List<UserGroup> userGroupList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sysuser")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "sysuser")
     private List<UserRole> userRoleList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sysuser")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "sysuser")
     private List<Subscription> subscriptionList;
     @OneToMany(mappedBy = "owner")
     private List<Device> deviceList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sysuser")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "sysuser")
     private List<UserPreference> userPreferenceList;
 
     public Sysuser() {

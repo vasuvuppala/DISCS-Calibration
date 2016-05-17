@@ -58,7 +58,7 @@ public class Role implements Serializable {
     @NotNull
     @Column(name = "version")
     private int version;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "role")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "role")
     private List<UserRole> userRoleList;
 
     public Role() {

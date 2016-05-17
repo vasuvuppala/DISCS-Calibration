@@ -16,6 +16,7 @@
 
 package org.openepics.discs.calib.view;
 
+import java.io.Serializable;
 import org.openepics.discs.calib.ejb.CalibrationEJB;
 import java.util.List;
 import java.util.logging.Level;
@@ -32,7 +33,7 @@ import javax.inject.Named;
  */
 @Named
 @ViewScoped
-public class CrecordManager {
+public class CrecordManager implements Serializable {
 
     @EJB
     private CalibrationEJB calibrationEJB;
