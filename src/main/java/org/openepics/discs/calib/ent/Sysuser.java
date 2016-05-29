@@ -46,35 +46,45 @@ public class Sysuser implements Serializable {
     @Basic(optional = false)
     @Column(name = "user_id")
     private Integer userId;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 64)
     @Column(name = "unique_name")
     private String uniqueName;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 128)
     @Column(name = "name")
     private String name;
+    
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Size(max = 64)
     @Column(name = "email")
     private String email;
+    
     @Size(max = 255)
     @Column(name = "comment")
     private String comment;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "version")
     private int version;
+    
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "sysuser")
     private List<UserGroup> userGroupList;
+    
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "sysuser")
     private List<UserRole> userRoleList;
+    
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "sysuser")
     private List<Subscription> subscriptionList;
-    @OneToMany(mappedBy = "owner")
-    private List<Device> deviceList;
+    
+//    @OneToMany(mappedBy = "owner")
+//    private List<Device> deviceList;
+    
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "sysuser")
     private List<UserPreference> userPreferenceList;
 
@@ -167,14 +177,14 @@ public class Sysuser implements Serializable {
         this.subscriptionList = subscriptionList;
     }
 
-    @XmlTransient
-    public List<Device> getDeviceList() {
-        return deviceList;
-    }
-
-    public void setDeviceList(List<Device> deviceList) {
-        this.deviceList = deviceList;
-    }
+//    @XmlTransient
+//    public List<Device> getDeviceList() {
+//        return deviceList;
+//    }
+//
+//    public void setDeviceList(List<Device> deviceList) {
+//        this.deviceList = deviceList;
+//    }
 
     @XmlTransient
     public List<UserPreference> getUserPreferenceList() {

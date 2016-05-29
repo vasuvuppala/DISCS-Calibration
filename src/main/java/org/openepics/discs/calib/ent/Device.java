@@ -56,48 +56,63 @@ public class Device implements Serializable {
     @Basic(optional = false)
     @Column(name = "device_id")
     private Integer deviceId;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 64)
     @Column(name = "serial_number")
     private String serialNumber;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "description")
     private String description;
+    
     @Size(max = 64)
     @Column(name = "location")
     private String location;
+    
     @Column(name = "calib_standard")
     private Boolean calibStandard;
+    
     @Size(max = 32)
     @Column(name = "custodian")
     private String custodian;
+    
     @Column(name = "calib_cycle")
     private Integer calibCycle;
+    
     @Column(name = "date_modified")
     @Temporal(TemporalType.DATE)
     private Date dateModified;
+    
     @Column(name = "active")
     private Boolean active;
+    
     @Size(max = 64)
     @Column(name = "modified_by")
     private String modifiedBy;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "version")
     private int version;
+    
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "device")
     private List<CalibrationDevice> calibrationDeviceList;
+    
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "device")
     private List<CalibrationRecord> calibrationRecordList;
-    @JoinColumn(name = "owner", referencedColumnName = "user_id")
-    @ManyToOne
-    private Sysuser owner;
+    
+//    @JoinColumn(name = "owner", referencedColumnName = "user_id")
+//    @ManyToOne
+//    private Sysuser owner;
+    
     @JoinColumn(name = "device_group", referencedColumnName = "group_id")
     @ManyToOne(optional = false)
     private DeviceGroup deviceGroup;
+    
     @JoinColumn(name = "model", referencedColumnName = "model_id")
     @ManyToOne(optional = false)
     private DeviceModel model;
@@ -222,13 +237,13 @@ public class Device implements Serializable {
         this.calibrationRecordList = calibrationRecordList;
     }
 
-    public Sysuser getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Sysuser owner) {
-        this.owner = owner;
-    }
+//    public Sysuser getOwner() {
+//        return owner;
+//    }
+//
+//    public void setOwner(Sysuser owner) {
+//        this.owner = owner;
+//    }
 
     public DeviceGroup getDeviceGroup() {
         return deviceGroup;

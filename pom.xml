@@ -3,11 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.openepics.discs</groupId>
-    <artifactId>calib</artifactId>
+    <artifactId>discs-calib</artifactId>
     <version>0.5.1</version>
     <packaging>war</packaging>
-
-    <name>calib</name>
+    <name>DISCS Calibration</name>
 
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
@@ -18,7 +17,7 @@
         <dependency>
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
-            <version>5.0</version>
+            <version>5.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>

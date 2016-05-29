@@ -44,29 +44,35 @@ public class Artifact implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 8)
     @Column(name = "type")
     private String type;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 64)
     @Column(name = "name")
     private String name;
+    
     @Size(max = 255)
     @Column(name = "description")
     private String description;
+    
     @Basic(optional = false)
     @NotNull
     @Lob
     @Size(min = 1, max = 65535)
     @Column(name = "resource")
     private String resource;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "version")
     private int version;
+    
     @JoinColumn(name = "calibration_record", referencedColumnName = "calibration_record_id")
     @ManyToOne(optional = false)
     private CalibrationRecord calibrationRecord;

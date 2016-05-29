@@ -46,27 +46,33 @@ public class AuditRecord implements Serializable {
     @Basic(optional = false)
     @Column(name = "audit_record_id")
     private Integer auditRecordId;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "log_time")
     @Temporal(TemporalType.TIMESTAMP)
     private Date logTime;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 16)
     @Column(name = "oper")
     private String oper;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 64)
     @Column(name = "user")
     private String user;
+    
     @Size(max = 32)
     @Column(name = "entity_type")
     private String entityType;
+    
     @Size(max = 64)
     @Column(name = "entity_key")
     private String entityKey;
+    
     @Basic(optional = false)
     @NotNull
     @Lob
