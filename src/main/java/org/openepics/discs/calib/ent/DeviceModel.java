@@ -53,37 +53,47 @@ public class DeviceModel implements Serializable {
     @Basic(optional = false)
     @Column(name = "model_id")
     private Integer modelId;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "manufacturer")
     private String manufacturer;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 64)
     @Column(name = "name")
     private String name;
+    
     @Size(max = 255)
     @Column(name = "description")
     private String description;
+    
     @Size(max = 255)
     @Column(name = "manual_uri")
     private String manualUri;
+    
     @Size(max = 255)
     @Column(name = "manual_name")
     private String manualName;
+    
     @Column(name = "calibration_cycle")
     private Integer calibrationCycle;
+    
     @Size(max = 64)
     @Column(name = "modified_by")
     private String modifiedBy;
+    
     @Column(name = "date_modified")
     @Temporal(TemporalType.DATE)
     private Date dateModified;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "version")
     private int version;
+    
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "model")
     private List<Device> deviceList;
 

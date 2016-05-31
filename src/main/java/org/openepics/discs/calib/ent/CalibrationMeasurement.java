@@ -42,45 +42,53 @@ public class CalibrationMeasurement implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 32)
     @Column(name = "step")
     private String step;
+    
     @Basic(optional = false)
     @NotNull
     @Lob
     @Size(min = 1, max = 65535)
     @Column(name = "function_tested")
     private String functionTested;
+    
     @Basic(optional = false)
     @NotNull
     @Lob
     @Size(min = 1, max = 65535)
     @Column(name = "nominal_value")
     private String nominalValue;
+    
     @Basic(optional = false)
     @NotNull
     @Lob
     @Size(min = 1, max = 65535)
     @Column(name = "measured_value")
     private String measuredValue;
+    
     @Basic(optional = false)
     @NotNull
     @Lob
     @Size(min = 1, max = 65535)
     @Column(name = "lower_tolerance")
     private String lowerTolerance;
+    
     @Basic(optional = false)
     @NotNull
     @Lob
     @Size(min = 1, max = 65535)
     @Column(name = "upper_tolerance")
     private String upperTolerance;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "version")
     private int version;
+    
     @JoinColumn(name = "calibration_record", referencedColumnName = "calibration_record_id")
     @ManyToOne(optional = false)
     private CalibrationRecord calibrationRecord;

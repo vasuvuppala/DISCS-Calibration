@@ -43,7 +43,7 @@ public class ReminderSvc {
     @EJB
     private UserEJB userEJB;
 
-    private static final Logger logger = Logger.getLogger("org.openepics.discs.calibration");
+    private static final Logger LOGGER = Logger.getLogger(ReminderSvc.class.getName());
 
     //ToDo: Make the following configuratble
     private static final String FROM_ADDRESS = "calibrations@frib.msu.edu";
@@ -63,11 +63,11 @@ public class ReminderSvc {
     public void runService() {
         try {
             if (inProgress) {
-                logger.severe("reminder service already running. skipping.");
+                LOGGER.severe("reminder service already running. skipping.");
                 return;
             }
             inProgress = true;
-            logger.info("Proteus Calibration: Reminder service started. Time is " + new Date().toString());
+            LOGGER.info("Proteus Calibration: Reminder service started. Time is " + new Date().toString());
             // Thread.sleep(120000L);
             // Find due calibrations for each group
             List<DeviceGroup> groups = calibrationEJB.findGroups();
@@ -78,16 +78,16 @@ public class ReminderSvc {
                     recipients = RECIPIENTS;
                 }
                 if (message == null || message.isEmpty()) {
-                    logger.info("Reminder service: no calibrations due for group " + group.getName());
+                    LOGGER.info("Reminder service: no calibrations due for group " + group.getName());
                 } else {
                     String subject = "Calibrations Reminder: For Group " + group.getName();
-                    logger.info("Sendind reminder to " + Arrays.toString(recipients));
+                    LOGGER.info("Sendind reminder to " + Arrays.toString(recipients));
                     sendMail(FROM_ADDRESS, recipients, subject, message);
                 }
             }
             inProgress = false;
         } catch (Exception e) {
-            logger.severe("error in reminder svc");
+            LOGGER.severe("error in reminder svc");
         }
     }
 
@@ -145,7 +145,7 @@ public class ReminderSvc {
         try {
             Email email = new SimpleEmail();
 
-            logger.info("sending email ...");
+            LOGGER.info("sending email ...");
             email.setHostName("exchange.nscl.msu.edu");
             email.setSmtpPort(25);
             // email.setSmtpPort(465);
@@ -159,7 +159,7 @@ public class ReminderSvc {
             email.addTo(to);
             email.send();
         } catch (Exception e) {
-            logger.severe("error while sending email");
+            LOGGER.severe("error while sending email");
         }
     }
 }

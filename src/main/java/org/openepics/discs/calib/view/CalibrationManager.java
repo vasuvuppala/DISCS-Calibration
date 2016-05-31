@@ -33,7 +33,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.openepics.discs.calib.ejb.CalibrationEJB;
 import org.openepics.discs.calib.ent.*;
-import org.openepics.discs.calib.util.AppProperties;
 import org.openepics.discs.calib.util.BlobStore;
 import org.openepics.discs.calib.util.DevicePlus;
 import org.openepics.discs.calib.util.UserSession;
@@ -52,7 +51,7 @@ public class CalibrationManager implements Serializable {
 
     @EJB
     private CalibrationEJB calibrationEJB;
-    private static final Logger logger = Logger.getLogger("org.openepics.discs.calibration");
+    private static final Logger LOGGER = Logger.getLogger(CalibrationManager.class.getName());
     @Inject
     UserSession userSession;
     @Inject
@@ -91,7 +90,7 @@ public class CalibrationManager implements Serializable {
             this.resetInputs();
             this.checkFlash();
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Could not initialize Calibration Manager.");
+            LOGGER.log(Level.SEVERE, "Could not initialize Calibration Manager.");
             System.err.println(e);
         }
     }
@@ -113,13 +112,13 @@ public class CalibrationManager implements Serializable {
 
         if (flashSerial == null || flashSerial.isEmpty()) {
             Utility.showMessage(FacesMessage.SEVERITY_INFO, "No serial number passed from the previous view (Flash)", "Must have an non-null serial number");
-            logger.log(Level.INFO, "No serial number passed from the previous view (Flash)");
+            LOGGER.log(Level.INFO, "No serial number passed from the previous view (Flash)");
         } else {
             selectedSerial = flashSerial;
             selectedEquip = findDevice(selectedSerial);
             if (selectedEquip == null) {
                 Utility.showMessage(FacesMessage.SEVERITY_ERROR, "No equipment found. Invalid serial number from previous view (Flash)", selectedSerial);
-                logger.log(Level.INFO, "No equipment found. Invalid serial number from previous view (Flash): " + selectedSerial);
+                LOGGER.log(Level.INFO, "No equipment found. Invalid serial number from previous view (Flash): " + selectedSerial);
             }
             selectedEplus.init(selectedEquip);
         }
@@ -139,12 +138,12 @@ public class CalibrationManager implements Serializable {
 
     private boolean validate() {
         if (selectedEquip == null) {
-            logger.log(Level.INFO, "Invalid equipment.");
+            LOGGER.log(Level.INFO, "Invalid equipment.");
             Utility.showMessage(FacesMessage.SEVERITY_ERROR, "Invalid equipment", "Please enter a valid serial number.");
             return false;
         }
         if (!userSession.isLoggedIn()) { //ToDo: This should be checked at EJB layer. 
-            logger.log(Level.INFO, "Not logged in. Cannot add calibration");
+            LOGGER.log(Level.INFO, "Not logged in. Cannot add calibration");
             Utility.showMessage(FacesMessage.SEVERITY_ERROR, "You are not logged in. Cannot Add Calibration Record.", "PLease sign in");
             return false;
         }
@@ -164,7 +163,7 @@ public class CalibrationManager implements Serializable {
             cr.setPerformedBy(userSession.getUserId());
 
             if (inputStandards == null || inputStandards.length == 0) {
-                logger.log(Level.INFO, "No standard selected");
+                LOGGER.log(Level.INFO, "No standard selected");
                 Utility.showMessage(FacesMessage.SEVERITY_INFO, "No standard selected", "You muist select a standard");
                 return;
             }
@@ -228,14 +227,14 @@ public class CalibrationManager implements Serializable {
             }
         }
         if (selectedEquip == null) {
-            logger.log(Level.INFO, "Strangely selectedEquip is null");
+            LOGGER.log(Level.INFO, "Strangely selectedEquip is null");
             Utility.showMessage(FacesMessage.SEVERITY_INFO, "No selected equipment", "This is strange, possibly a bug.");
         }
     }
 
     public void handleFileUpload(FileUploadEvent event) {
         // Utility.showMessage(FacesMessage.SEVERITY_INFO, "Succesful", msg);
-        logger.log(Level.INFO,"Entering handleFileUpload");
+        LOGGER.log(Level.INFO,"Entering handleFileUpload");
         InputStream istream;       
         
         try {        
@@ -244,14 +243,13 @@ public class CalibrationManager implements Serializable {
             istream = uploadedFile.getInputstream();
             // logger.log(Level.INFO,"Uploaded file name {0}", uploadedFileName);
             // Utility.showMessage(FacesMessage.SEVERITY_INFO, "File ", "Name: " + uploadedFileName);
-            logger.log(Level.INFO,"calling blobstore");
+            LOGGER.log(Level.INFO,"calling blobstore");
             String fileId = blobStore.storeFile(istream);
             
             // create an artifact
             Artifact artifact = new Artifact();
-            artifact.setName(uploadedFileName);
-            artifact.setType(AppProperties.ARTIFACT_DOC);
-            artifact.setResource(fileId);
+            artifact.setURN(uploadedFileName);
+            artifact.setURL(fileId);
             inputArtifacts.add(artifact);
             
             istream.close();
@@ -259,7 +257,7 @@ public class CalibrationManager implements Serializable {
             // ileUploaded = true;
         } catch (Exception e) {
             Utility.showMessage(FacesMessage.SEVERITY_ERROR, "Error Uploading file", e.getMessage());
-            logger.severe(e.getMessage());
+            LOGGER.severe(e.getMessage());
             // fileUploaded = false;
         } finally {
 

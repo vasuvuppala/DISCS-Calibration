@@ -16,7 +16,6 @@
 package org.openepics.discs.calib.ejb;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,8 +26,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import org.openepics.discs.calib.util.DevicePlus;
 import org.openepics.discs.calib.ent.*;
-import org.openepics.discs.calib.util.EntityType;
-import org.openepics.discs.calib.util.EntityTypeOperation;
 
 /**
  *
@@ -37,8 +34,8 @@ import org.openepics.discs.calib.util.EntityTypeOperation;
 @Stateless
 public class DeviceEJB {
 
-    private static final Logger logger = Logger.getLogger(DeviceEJB.class.getName());
-    @PersistenceContext(unitName = "org.openepics.discs.calibration")
+    private static final Logger LOGGER = Logger.getLogger(DeviceEJB.class.getName());
+    @PersistenceContext
     private EntityManager em;
     @EJB AuditEJB auditEJB; // ToDo: check about transactions cross EJBS and db connections
 
@@ -54,7 +51,7 @@ public class DeviceEJB {
 
         queryComp = em.createNamedQuery("Device.findAll", Device.class);
         devs = queryComp.getResultList();
-        logger.log(Level.INFO, "Number of components: {0}", devs.size());
+        LOGGER.log(Level.INFO, "Number of components: {0}", devs.size());
 
         return devs;
     }
@@ -78,7 +75,7 @@ public class DeviceEJB {
                 .setParameter("group", group);
         
         devs = queryComp.getResultList();
-        logger.log(Level.INFO, "Number of devices for the given group: {0}", devs.size());
+        LOGGER.log(Level.INFO, "Number of devices for the given group: {0}", devs.size());
 
         return devs;
     }
@@ -101,7 +98,7 @@ public class DeviceEJB {
             ep.init(e);
             equips.add(ep);
         }
-        logger.log(Level.INFO, "Processed equipments: ", equips.size());
+        LOGGER.log(Level.INFO, "Processed equipments: ", equips.size());
 
         return equips;
     }
@@ -118,7 +115,7 @@ public class DeviceEJB {
 
         queryComp = em.createNamedQuery("Device.findByCalibStandard", Device.class).setParameter("calibStandard", true);
         components = queryComp.getResultList();
-        logger.log(Level.INFO, "Number of standards: {0}", components.size());
+        LOGGER.log(Level.INFO, "Number of standards: {0}", components.size());
 
         return components;
     }
@@ -135,7 +132,7 @@ public class DeviceEJB {
         // device.setModifiedBy("test");       
         device = em.merge(device);
         // auditEJB.makeAuditEntry(EntityType.DEVICE, EntityTypeOperation.UPDATE, device.getSerialNumber(), "created or updated");
-        auditEJB.makeAuditEntry("DEVICE", "UPDATE", device.getSerialNumber(), "created or updated");
+        auditEJB.makeAuditEntry(EntityType.DEVICE, EntityTypeOperation.UPDATE,  device.getSerialNumber(), "created or updated");
         return device;
         
     }
@@ -143,7 +140,7 @@ public class DeviceEJB {
     public void deleteDevice(Device device) {
         Device ct = em.find(Device.class,device.getDeviceId());       
         em.remove(ct);    
-        // auditEJB.makeAuditEntry(EntityType.DEVICE, EntityTypeOperation.DELETE, device.getSerialNumber(), "deleted");
-        auditEJB.makeAuditEntry("DEVICE", "DELETE", device.getSerialNumber(), "deleted");
+        auditEJB.makeAuditEntry(EntityType.DEVICE, EntityTypeOperation.DELETE, device.getSerialNumber(), "deleted");
+        // auditEJB.makeAuditEntry("DEVICE", "DELETE", device.getSerialNumber(), "deleted");
     }
 }

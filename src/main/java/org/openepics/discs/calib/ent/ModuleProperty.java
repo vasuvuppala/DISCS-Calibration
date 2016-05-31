@@ -37,6 +37,7 @@ public class ModuleProperty implements Serializable {
     @Size(min = 1, max = 64)
     @Column(name = "name")
     private String name;
+    
     @Size(max = 128)
     @Column(name = "value")
     private String value;

@@ -7,15 +7,15 @@
 package org.openepics.discs.calib.ent;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -32,13 +32,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Artifact.findAll", query = "SELECT a FROM Artifact a"),
-    @NamedQuery(name = "Artifact.findById", query = "SELECT a FROM Artifact a WHERE a.id = :id"),
-    @NamedQuery(name = "Artifact.findByType", query = "SELECT a FROM Artifact a WHERE a.type = :type"),
-    @NamedQuery(name = "Artifact.findByName", query = "SELECT a FROM Artifact a WHERE a.name = :name"),
-    @NamedQuery(name = "Artifact.findByDescription", query = "SELECT a FROM Artifact a WHERE a.description = :description"),
-    @NamedQuery(name = "Artifact.findByVersion", query = "SELECT a FROM Artifact a WHERE a.version = :version")})
+    @NamedQuery(name = "Artifact.findById", query = "SELECT a FROM Artifact a WHERE a.id = :id")
+    })
 public class Artifact implements Serializable {
     private static final long serialVersionUID = 1L;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
@@ -47,15 +45,9 @@ public class Artifact implements Serializable {
     
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 8)
-    @Column(name = "type")
-    private String type;
-    
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 64)
-    @Column(name = "name")
-    private String name;
+    @Size(min = 1, max = 128)
+    @Column(name = "urn")
+    private String URN;
     
     @Size(max = 255)
     @Column(name = "description")
@@ -64,19 +56,18 @@ public class Artifact implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Lob
-    @Size(min = 1, max = 65535)
-    @Column(name = "resource")
-    private String resource;
+    @Size(min = 1, max = 2048)
+    @Column(name = "url")
+    private String URL;
     
     @Basic(optional = false)
     @NotNull
     @Column(name = "version")
     private int version;
     
-    @JoinColumn(name = "calibration_record", referencedColumnName = "calibration_record_id")
-    @ManyToOne(optional = false)
-    private CalibrationRecord calibrationRecord;
-
+    @ManyToMany(targetEntity = CalibrationRecord.class, mappedBy="artifacts")
+    private List<CalibrationRecord> calibrationRecords;
+    
     public Artifact() {
     }
 
@@ -84,12 +75,15 @@ public class Artifact implements Serializable {
         this.id = id;
     }
 
-    public Artifact(Integer id, String type, String name, String resource, int version) {
-        this.id = id;
-        this.type = type;
-        this.name = name;
-        this.resource = resource;
-        this.version = version;
+    /** Constructs a new artifact
+     * @param urn the name of the artifact
+     * @param description the user specified description
+     * @param url the user specified URL
+     */
+    public Artifact(String urn, String description, String url) {
+        this.URN = urn;
+        this.description = description;
+        this.URL = url;
     }
 
     public Integer getId() {
@@ -100,20 +94,20 @@ public class Artifact implements Serializable {
         this.id = id;
     }
 
-    public String getType() {
-        return type;
+    public String getURN() {
+        return URN;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setURN(String URN) {
+        this.URN = URN;
     }
 
-    public String getName() {
-        return name;
+    public String getURL() {
+        return URL;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setURL(String URL) {
+        this.URL = URL;
     }
 
     public String getDescription() {
@@ -122,15 +116,7 @@ public class Artifact implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getResource() {
-        return resource;
-    }
-
-    public void setResource(String resource) {
-        this.resource = resource;
-    }
+    } 
 
     public int getVersion() {
         return version;
@@ -140,13 +126,13 @@ public class Artifact implements Serializable {
         this.version = version;
     }
 
-    public CalibrationRecord getCalibrationRecord() {
-        return calibrationRecord;
+    public List<CalibrationRecord> getCalibrationRecords() {
+        return calibrationRecords;
     }
 
-    public void setCalibrationRecord(CalibrationRecord calibrationRecord) {
-        this.calibrationRecord = calibrationRecord;
-    }
+    public void setCalibrationRecords(List<CalibrationRecord> calibrationRecords) {
+        this.calibrationRecords = calibrationRecords;
+    }  
 
     @Override
     public int hashCode() {

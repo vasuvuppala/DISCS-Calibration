@@ -33,8 +33,8 @@ import org.openepics.discs.calib.ent.*;
 @Stateless
 public class ModelEJB {
 
-    private static final Logger logger = Logger.getLogger(ModelEJB.class.getName());
-    @PersistenceContext(unitName = "org.openepics.discs.calibration")
+    private static final Logger LOGGER = Logger.getLogger(ModelEJB.class.getName());
+    @PersistenceContext
     private EntityManager em;
 
     /**
@@ -49,7 +49,7 @@ public class ModelEJB {
 
         queryComp = em.createNamedQuery("DeviceModel.findAll", DeviceModel.class);
         models = queryComp.getResultList();
-        logger.log(Level.INFO, "Number of components: {0}", models.size());
+        LOGGER.log(Level.INFO, "Number of components: {0}", models.size());
 
         return models;
     }

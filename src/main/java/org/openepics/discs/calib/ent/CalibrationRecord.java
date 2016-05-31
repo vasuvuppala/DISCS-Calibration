@@ -17,7 +17,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -45,38 +47,51 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "CalibrationRecord.findByVersion", query = "SELECT c FROM CalibrationRecord c WHERE c.version = :version")})
 public class CalibrationRecord implements Serializable {
     private static final long serialVersionUID = 1L;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "calibration_record_id")
     private Integer calibrationRecordId;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "calibration_date")
     @Temporal(TemporalType.DATE)
     private Date calibrationDate;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 64)
     @Column(name = "performed_by")
     private String performedBy;
+    
     @Lob
     @Size(max = 65535)
     @Column(name = "notes")
     private String notes;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "version")
     private int version;
+    
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "calibrationRecord")
     private List<CalibrationDevice> calibrationDeviceList;
+    
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "calibrationRecord")
     private List<CalibrationMeasurement> calibrationMeasurementList;
+    
     @JoinColumn(name = "device", referencedColumnName = "device_id")
     @ManyToOne(optional = false)
     private Device device;
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "calibrationRecord")
-    private List<Artifact> artifactList;
+    
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = Artifact.class)
+    @JoinTable(name = "calibrec_artifact",
+               joinColumns = {@JoinColumn(name = "artifact", referencedColumnName = "id")},
+               inverseJoinColumns = {@JoinColumn(name = "calib_record", referencedColumnName = "calibration_record_id")} 
+    )
+    private List<Artifact> artifacts;
 
     public CalibrationRecord() {
     }
@@ -159,12 +174,12 @@ public class CalibrationRecord implements Serializable {
     }
 
     @XmlTransient
-    public List<Artifact> getArtifactList() {
-        return artifactList;
+    public List<Artifact> getArtifacts() {
+        return artifacts;
     }
 
     public void setArtifactList(List<Artifact> artifactList) {
-        this.artifactList = artifactList;
+        this.artifacts = artifactList;
     }
 
     @Override

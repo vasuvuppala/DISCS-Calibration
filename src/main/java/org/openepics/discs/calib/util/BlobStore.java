@@ -35,7 +35,7 @@ import javax.inject.Inject;
  */
 public class BlobStore implements Serializable {
 
-    private static final Logger logger = Logger.getLogger(BlobStore.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(BlobStore.class.getName());
     private static String blobStoreRoot = "/var/blobstore/calibration";
     private boolean validStore = true; // is the blob store valid?
 
@@ -56,7 +56,7 @@ public class BlobStore implements Serializable {
         File folder = new File(blobStoreRoot);
         if (!folder.exists()) {
             if (!folder.mkdirs()) {
-                logger.log(Level.SEVERE, "Could not create blob store root {0}", blobStoreRoot);
+                LOGGER.log(Level.SEVERE, "Could not create blob store root {0}", blobStoreRoot);
                 validStore = false;
             }
         }
@@ -86,7 +86,7 @@ public class BlobStore implements Serializable {
         File folder = new File(pathName);
         if (!folder.exists()) {
             if (!folder.mkdirs()) {
-                logger.log(Level.SEVERE, "Could not create blob directory {0}", pathName);
+                LOGGER.log(Level.SEVERE, "Could not create blob directory {0}", pathName);
                 return null;
             }
         }
@@ -95,11 +95,11 @@ public class BlobStore implements Serializable {
         String fullPath = blobStoreRoot + separator + blobId;
         File newFile = new File(fullPath);
         if (newFile.exists()) {
-            logger.log(Level.SEVERE, "Blob already exists! Name collision {0}", fullPath);
+            LOGGER.log(Level.SEVERE, "Blob already exists! Name collision {0}", fullPath);
             return null;
         }
         
-        logger.log(Level.INFO, "New Blob Id {0}", blobId);
+        LOGGER.log(Level.INFO, "New Blob Id {0}", blobId);
 
         return blobId;
     }

@@ -34,8 +34,9 @@ import org.openepics.discs.calib.util.AppProperties;
 @Stateless
 public class UserEJB {
 
-    private static final Logger logger = Logger.getLogger(UserEJB.class.getName());
-    @PersistenceContext(unitName = "org.openepics.discs.calibration")
+    private static final Logger LOGGER = Logger.getLogger(UserEJB.class.getName());
+    
+    @PersistenceContext
     private EntityManager em;
 
     /**
@@ -50,12 +51,12 @@ public class UserEJB {
         List<Sysuser> users = query.getResultList();
 
         if (users == null || users.isEmpty()) {
-            logger.log(Level.WARNING, "UserEJB: No employees found with id {0}", userId);
+            LOGGER.log(Level.WARNING, "UserEJB: No employees found with id {0}", userId);
             return null;
         }
 
         if (users.size() > 1) {
-            logger.log(Level.WARNING, "UserEJB: there are more than 1 users with the same login id {0}", userId);
+            LOGGER.log(Level.WARNING, "UserEJB: there are more than 1 users with the same login id {0}", userId);
         }
         return users.get(0);
     }
@@ -70,7 +71,7 @@ public class UserEJB {
         List<Sysuser> users;
         TypedQuery<Sysuser> query = em.createNamedQuery("Sysuser.findAll", Sysuser.class);
         users = query.getResultList();
-        logger.log(Level.INFO, "users found: " + users.size());
+        LOGGER.log(Level.INFO, "users found: " + users.size());
         return users;
     }
     
@@ -88,7 +89,7 @@ public class UserEJB {
         TypedQuery<Sysuser> query = em.createQuery("SELECT u.sysuser FROM UserPreference u WHERE u.prefName = 'DefaultGroup' AND u.prefValue = :gid", Sysuser.class)
                 .setParameter("gid", gid);
         users = query.getResultList();
-        logger.log(Level.INFO, "subscribers found: " + users.size());
+        LOGGER.log(Level.INFO, "subscribers found: " + users.size());
         return users;       
     }
 
@@ -102,7 +103,7 @@ public class UserEJB {
         List<Role> roles;
         TypedQuery<Role> query = em.createNamedQuery("Role.findAll", Role.class);
         roles = query.getResultList();
-        logger.log(Level.INFO, "roles found: " + roles.size());
+        LOGGER.log(Level.INFO, "roles found: " + roles.size());
         return roles;
     }
 
@@ -123,7 +124,7 @@ public class UserEJB {
             return null;
         } else {
             if (roles.size() > 1) {
-                logger.log(Level.WARNING, "Multiple roles found for " + name);
+                LOGGER.log(Level.WARNING, "Multiple roles found for " + name);
             }
             return roles.get(0);
         }
@@ -139,7 +140,7 @@ public class UserEJB {
         List<UserRole> uroles;
         TypedQuery<UserRole> query = em.createNamedQuery("UserRole.findAll", UserRole.class);
         uroles = query.getResultList();
-        logger.log(Level.INFO, "user roles found: " + uroles.size());
+        LOGGER.log(Level.INFO, "user roles found: " + uroles.size());
         return uroles;
     }
     
@@ -163,12 +164,12 @@ public class UserEJB {
         pvals = query.getResultList();
         
         if (pvals == null || pvals.isEmpty()) {
-            logger.log(Level.WARNING, "No default group found for user " + user.getUniqueName());
+            LOGGER.log(Level.WARNING, "No default group found for user " + user.getUniqueName());
             return findDefaultGroup();
         }
-        logger.log(Level.INFO, "pref values found: " + pvals.size());
+        LOGGER.log(Level.INFO, "pref values found: " + pvals.size());
         if (pvals.size() > 1) {
-            logger.log(Level.WARNING, "UserEJB.findDefaultGroup: there are more than 1 default groups for {0}", user.getUniqueName());
+            LOGGER.log(Level.WARNING, "UserEJB.findDefaultGroup: there are more than 1 default groups for {0}", user.getUniqueName());
         }
 
         String prefValue = pvals.get(0);
@@ -201,7 +202,7 @@ public class UserEJB {
         groups = query.getResultList();
 
         if (groups.isEmpty()) {
-            logger.log(Level.WARNING, "No groups found");
+            LOGGER.log(Level.WARNING, "No groups found");
             return null;
         } else {
             return groups.get(0);
@@ -227,7 +228,7 @@ public class UserEJB {
             return false;
         } else {
             if (uroles.size() > 1) {
-                logger.log(Level.WARNING, "UserEJB.hasRole: multiple user-roles");
+                LOGGER.log(Level.WARNING, "UserEJB.hasRole: multiple user-roles");
             }
             return true;
         }

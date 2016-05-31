@@ -37,9 +37,11 @@ public class Subscription implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
+    
     @JoinColumn(name = "sysgroup", referencedColumnName = "group_id")
     @ManyToOne(optional = false)
     private DeviceGroup sysgroup;
+    
     @JoinColumn(name = "sysuser", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
     private Sysuser sysuser;

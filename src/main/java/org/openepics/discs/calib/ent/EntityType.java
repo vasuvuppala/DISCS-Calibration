@@ -1,4 +1,4 @@
-package org.openepics.discs.calib.util;
+package org.openepics.discs.calib.ent;
 
 /**
  * ToDo: Not used yet; Use enums for entity types

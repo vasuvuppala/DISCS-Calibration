@@ -29,14 +29,15 @@ import org.openepics.discs.calib.util.UserSession;
  */
 @Stateless
 public class AuthEJB {
-    private static final Logger logger = Logger.getLogger(AuthEJB.class.getName());
-    @PersistenceContext(unitName = "org.openepics.discs.calibration")
+    private static final Logger LOGGER = Logger.getLogger(AuthEJB.class.getName());
+    
+    @PersistenceContext
     private EntityManager em;
     @Inject
     private UserSession userSession;
     
     public boolean canAccessManageMenu() {
-        logger.log(Level.INFO,"AuthEJB: checking create log auth for {0}", userSession.getUserId());
+        LOGGER.log(Level.INFO,"AuthEJB: checking create log auth for {0}", userSession.getUserId());
         return userSession.getSysuser() != null;
     }
     

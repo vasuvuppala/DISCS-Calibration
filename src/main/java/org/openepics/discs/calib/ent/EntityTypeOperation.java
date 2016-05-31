@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.openepics.discs.calib.util;
+package org.openepics.discs.calib.ent;
 
 /**
  * @author Andraz Pozar <andraz.pozar@cosylab.com>

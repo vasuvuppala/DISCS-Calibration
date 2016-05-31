@@ -48,34 +48,42 @@ public class UserRole implements Serializable {
     @Basic(optional = false)
     @Column(name = "user_role_id")
     private Integer userRoleId;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "canDelegate")
     private boolean canDelegate;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "isRoleManager")
     private boolean isRoleManager;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "startTime")
     @Temporal(TemporalType.TIMESTAMP)
     private Date startTime;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "endTime")
     @Temporal(TemporalType.TIMESTAMP)
     private Date endTime;
+    
     @Size(max = 255)
     @Column(name = "comment")
     private String comment;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "version")
     private int version;
+    
     @JoinColumn(name = "role", referencedColumnName = "role_id")
     @ManyToOne(optional = false)
     private Role role;
+    
     @JoinColumn(name = "sysuser", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
     private Sysuser sysuser;

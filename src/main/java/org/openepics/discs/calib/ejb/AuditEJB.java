@@ -15,7 +15,6 @@
  */
 package org.openepics.discs.calib.ejb;
 
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,8 +24,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import org.openepics.discs.calib.ent.*;
-import org.openepics.discs.calib.util.EntityType;
-import org.openepics.discs.calib.util.EntityTypeOperation;
 import org.openepics.discs.calib.util.UserSession;
 
 /**
@@ -36,8 +33,9 @@ import org.openepics.discs.calib.util.UserSession;
 @Stateless
 public class AuditEJB {
 
-    private static final Logger logger = Logger.getLogger(AuditEJB.class.getName());
-    @PersistenceContext(unitName = "org.openepics.discs.calibration")
+    private static final Logger LOGGER = Logger.getLogger(AuditEJB.class.getName());
+    
+    @PersistenceContext
     private EntityManager em;
     @Inject UserSession userSession;
     
@@ -47,7 +45,7 @@ public class AuditEJB {
         TypedQuery<AuditRecord> query;
         query = em.createNamedQuery("AuditRecord.findAll", AuditRecord.class);
         arecs = query.getResultList();
-        logger.log(Level.INFO, "Number of audit records: {0}", arecs.size());
+        LOGGER.log(Level.INFO, "Number of audit records: {0}", arecs.size());
 
         return arecs;
     }
@@ -58,7 +56,7 @@ public class AuditEJB {
     
     // ----------- Audit record ---------------------------------------
     // public void makeAuditEntry(EntityType entType, EntityTypeOperation oper, String key, String entry) {
-    public void makeAuditEntry(String entType, String oper, String key, String entry) {
+    public void makeAuditEntry(EntityType entType, EntityTypeOperation oper, String key, String entry) {
         AuditRecord arec = new AuditRecord();
         // AuditRecord arec = new AuditRecord(new Date(), oper, userSession.getUserId(), entry);
         

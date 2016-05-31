@@ -28,7 +28,7 @@ import javax.inject.Named;
 @Named
 public class AppProperties {
     
-    private static final Logger logger = Logger.getLogger(AppProperties.class.getName()); 
+    private static final Logger LOGGER = Logger.getLogger(AppProperties.class.getName()); 
     @Resource(name="org.openepics.discs.calib.props")
     private Properties properties;
     
@@ -42,10 +42,6 @@ public class AppProperties {
     // Blob store
     public static  final String BLOBSTORE_ROOT = "BlobStoreRoot";
     
-    // Artifact
-    public static  final String ARTIFACT_DOC = "file"; // ToDo: use enum instead
-    public static  final String ARTIFACT_TR = "uri";  // ToDo: use enum instead
-    
     public void AppProperties(){       
     }
     
@@ -56,20 +52,4 @@ public class AppProperties {
         
         return properties.getProperty(name);
     }
-
-    /*
-    public static Properties getProperties(String jndiName) {
-    Properties properties = null;
-    try {
-    InitialContext context = new InitialContext();
-    properties = (Properties) context.lookup(jndiName);
-    context.close();
-    } catch (NamingException e) {
-    logger.log(Level.SEVERE,"Naming error occurred while initializing properties from JNDI.", e);
-    return null;
-    }
-    return properties;
-    }
-     */
-    
 }

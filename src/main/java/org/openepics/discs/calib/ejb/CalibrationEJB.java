@@ -25,8 +25,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import org.openepics.discs.calib.ent.*;
-import org.openepics.discs.calib.util.EntityType;
-import org.openepics.discs.calib.util.EntityTypeOperation;
 
 /**
  *
@@ -35,13 +33,12 @@ import org.openepics.discs.calib.util.EntityTypeOperation;
 @Stateless
 public class CalibrationEJB {
 
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
-    private static final Logger logger = Logger.getLogger("org.openepics.discs.calibration");
-    @PersistenceContext(unitName = "org.openepics.discs.calibration")
+    private static final Logger LOGGER = Logger.getLogger(CalibrationEJB.class.getName());
+
+    @PersistenceContext
     private EntityManager em;
     @EJB
-    AuditEJB auditEJB; // ToDo: check about transactions cross EJBS and db connections
+    AuditEJB auditEJB;
 
     /**
      * Finds all physical components.
@@ -55,7 +52,7 @@ public class CalibrationEJB {
 
         queryComp = em.createNamedQuery("Device.findAll", Device.class);
         components = queryComp.getResultList();
-        logger.log(Level.INFO, "Number of components: {0}", components.size());
+        LOGGER.log(Level.INFO, "Number of components: {0}", components.size());
 
         return components;
     }
@@ -72,7 +69,7 @@ public class CalibrationEJB {
 
         queryComp = em.createNamedQuery("DeviceGroup.findAll", DeviceGroup.class);
         groups = queryComp.getResultList();
-        logger.log(Level.INFO, "Number of groups: {0}", groups.size());
+        LOGGER.log(Level.INFO, "Number of groups: {0}", groups.size());
 
         return groups;
     }
@@ -89,7 +86,7 @@ public class CalibrationEJB {
 
         queryComp = em.createNamedQuery("Device.findByCalibStandard", Device.class).setParameter("calibStandard", true);
         components = queryComp.getResultList();
-        logger.log(Level.INFO, "Number of standards: {0}", components.size());
+        LOGGER.log(Level.INFO, "Number of standards: {0}", components.size());
 
         return components;
     }
@@ -100,7 +97,7 @@ public class CalibrationEJB {
 
         queryComp = em.createNamedQuery("CalibrationRecord.findAll", CalibrationRecord.class);
         crecs = queryComp.getResultList();
-        logger.log(Level.INFO, "Number of components: {0}", crecs.size());
+        LOGGER.log(Level.INFO, "Number of components: {0}", crecs.size());
 
         return crecs;
     }
@@ -138,14 +135,14 @@ public class CalibrationEJB {
     public CalibrationRecord addCalibRecord(CalibrationRecord cr, Device[] standards, List<CalibrationMeasurement> measurements) {
         //logger.info("CalibrationManager.addCalibRecord: entering");
         if (cr == null) {
-            logger.log(Level.SEVERE, "CcalibrationRecord is null!");
+            LOGGER.log(Level.SEVERE, "CcalibrationRecord is null!");
             return cr;
         }
         em.persist(cr);
 
         for (Device p : standards) {
             if (p == null) {
-                logger.log(Level.SEVERE, "standard is null!");
+                LOGGER.log(Level.SEVERE, "standard is null!");
                 continue;
             }
             Device dev = em.find(Device.class, p.getDeviceId());
@@ -166,7 +163,7 @@ public class CalibrationEJB {
         cr.getDevice().getCalibrationRecordList().add(cr);
         em.merge(cr.getDevice());
         // auditEJB.makeAuditEntry(EntityType.CALIBRATION_RECORD, EntityTypeOperation.CREATE, cr.getDevice().getSerialNumber(), "created calibration record");
-        auditEJB.makeAuditEntry("CALIBRATION_RECORD", "CREATE", cr.getDevice().getSerialNumber(), "created calibration record");
+        auditEJB.makeAuditEntry(EntityType.CALIBRATION_RECORD, EntityTypeOperation.CREATE, cr.getDevice().getSerialNumber(), "created calibration record");
 
         return cr;
     }
@@ -176,26 +173,26 @@ public class CalibrationEJB {
 
         cr = em.find(CalibrationRecord.class, crid);
         if (cr == null) {
-            logger.log(Level.SEVERE, "Calibration record from db is null!");
+            LOGGER.log(Level.SEVERE, "Calibration record from db is null!");
             throw new Exception("No calibration record with key found from db");
         }
 
-        logger.log(Level.SEVERE, "Delete calibration record id: " + crid);
+        LOGGER.log(Level.SEVERE, "Delete calibration record id: {0}", crid);
 
         for (CalibrationDevice cd : cr.getCalibrationDeviceList()) {
-            logger.log(Level.INFO, "removing calibration device: " + cd.getDevice().getSerialNumber());
+            LOGGER.log(Level.INFO, "removing calibration device: {0}", cd.getDevice().getSerialNumber());
             em.remove(cd);
         }
         for (CalibrationMeasurement measurement : cr.getCalibrationMeasurementList()) {
-            logger.log(Level.INFO, "removing measurement: " + measurement.getStep());
+            LOGGER.log(Level.INFO, "removing measurement: {0}", measurement.getStep());
             em.remove(measurement);
         }
-        logger.log(Level.INFO, "removing calibration record from equipment: " + cr.getCalibrationRecordId());
+        LOGGER.log(Level.INFO, "removing calibration record from equipment: {0}", cr.getCalibrationRecordId());
         Device e = cr.getDevice();
         e.getCalibrationRecordList().remove(cr);
         // em.merge(e);
-        logger.log(Level.INFO, "removing calibration record from db: " + cr.getCalibrationRecordId());
+        LOGGER.log(Level.INFO, "removing calibration record from db: {0}", cr.getCalibrationRecordId());
         em.remove(cr);
-        auditEJB.makeAuditEntry("CALIBRATION_RECORD", "DELETE", cr.getDevice().getSerialNumber(), "deleted calibration record");
+        auditEJB.makeAuditEntry(EntityType.CALIBRATION_RECORD, EntityTypeOperation.DELETE, cr.getDevice().getSerialNumber(), "deleted calibration record");
     }
 }

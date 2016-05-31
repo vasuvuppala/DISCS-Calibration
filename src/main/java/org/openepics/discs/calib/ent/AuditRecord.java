@@ -11,6 +11,8 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -55,9 +57,9 @@ public class AuditRecord implements Serializable {
     
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 16)
     @Column(name = "oper")
-    private String oper;
+    @Enumerated(EnumType.STRING)
+    private EntityTypeOperation oper;
     
     @Basic(optional = false)
     @NotNull
@@ -65,9 +67,10 @@ public class AuditRecord implements Serializable {
     @Column(name = "user")
     private String user;
     
-    @Size(max = 32)
+    @Basic(optional = false)
     @Column(name = "entity_type")
-    private String entityType;
+    @Enumerated(EnumType.STRING)
+    private EntityType entityType;
     
     @Size(max = 64)
     @Column(name = "entity_key")
@@ -87,7 +90,7 @@ public class AuditRecord implements Serializable {
         this.auditRecordId = auditRecordId;
     }
 
-    public AuditRecord(Integer auditRecordId, Date logTime, String oper, String user, String entry) {
+    public AuditRecord(Integer auditRecordId, Date logTime, EntityTypeOperation oper, String user, String entry) {
         this.auditRecordId = auditRecordId;
         this.logTime = logTime;
         this.oper = oper;
@@ -111,14 +114,6 @@ public class AuditRecord implements Serializable {
         this.logTime = logTime;
     }
 
-    public String getOper() {
-        return oper;
-    }
-
-    public void setOper(String oper) {
-        this.oper = oper;
-    }
-
     public String getUser() {
         return user;
     }
@@ -127,11 +122,19 @@ public class AuditRecord implements Serializable {
         this.user = user;
     }
 
-    public String getEntityType() {
+    public EntityTypeOperation getOper() {
+        return oper;
+    }
+
+    public void setOper(EntityTypeOperation oper) {
+        this.oper = oper;
+    }
+
+    public EntityType getEntityType() {
         return entityType;
     }
 
-    public void setEntityType(String entityType) {
+    public void setEntityType(EntityType entityType) {
         this.entityType = entityType;
     }
 

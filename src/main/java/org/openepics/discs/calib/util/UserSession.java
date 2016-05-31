@@ -36,7 +36,7 @@ public class UserSession implements Serializable {
 
     @EJB
     private UserEJB userEJB;
-    private static final Logger logger = Logger.getLogger(UserSession.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(UserSession.class.getName());
 
     private String userId; // user id
     private String token;   // auth token
@@ -59,7 +59,7 @@ public class UserSession implements Serializable {
         try {
             // group = userEJB.defaultFacility(); // Default facility adn logbook  for users who are not logged in          
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "UserSession: Can not initialize: {0}", e.getMessage());
+            LOGGER.log(Level.SEVERE, "UserSession: Can not initialize: {0}", e.getMessage());
         }
     }
 

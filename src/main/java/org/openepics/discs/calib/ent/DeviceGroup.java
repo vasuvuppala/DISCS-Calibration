@@ -43,18 +43,23 @@ public class DeviceGroup implements Serializable {
     @Basic(optional = false)
     @Column(name = "group_id")
     private Integer groupId;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 64)
     @Column(name = "name")
     private String name;
+    
     @Size(max = 255)
     @Column(name = "description")
     private String description;
+    
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "sysgroup")
     private List<UserGroup> userGroupList;
+    
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "sysgroup")
     private List<Subscription> subscriptionList;
+    
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "deviceGroup")
     private List<Device> deviceList;
 

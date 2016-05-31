@@ -46,11 +46,13 @@ public class UserPreference implements Serializable {
     @Size(min = 1, max = 32)
     @Column(name = "pref_name")
     private String prefName;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 128)
     @Column(name = "pref_value")
     private String prefValue;
+    
     @JoinColumn(name = "sysuser", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
     private Sysuser sysuser;
