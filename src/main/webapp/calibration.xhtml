@@ -156,10 +156,33 @@
                                         </p:column>
                                         <p:column id="crdet" headerText="Receipt">
                                             <h:outputLink  styleClass="ui-icon ui-icon-document iconDisplay"
-                                             value="calibration.xhtml?crid=#{calibrec.calibrationRecordId}" />                              
+                                                           value="calibration.xhtml?crid=#{calibrec.calibrationRecordId}" />                              
                                         </p:column>
                                     </p:dataTable>
                                 </p:rowExpansion> 
+                            </p:dataTable>
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column>
+                            <p:dataTable id="artfTable" var="artifact" 
+                                         value="#{calibrationDetail.selectedCalibrationRec.artifacts}"
+                                         styleClass="spartanTable" >  
+                                <f:facet name="header">
+                                    <h:outputText value="Artifacts" />
+                                </f:facet>
+
+                                <p:column  headerText="Name" style="width: 25%" >                  
+                                    <h:outputText value="#{artifact.URN}" />                                    
+                                </p:column>              
+                                <p:column headerText="Description" >                  
+                                    <h:outputText value="#{artifact.description}" />                              
+                                </p:column>
+                                <p:column headerText="Link" style="width: 15%" >                  
+                                    <p:link href="#{artifact.URL}" value="link" target="_blank"/>
+                                    <h:outputText value="#{artifact.URL}" />                              
+                                </p:column>                            
                             </p:dataTable>
                         </p:column>
                     </p:row>

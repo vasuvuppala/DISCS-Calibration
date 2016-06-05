@@ -42,6 +42,7 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.model.UploadedFile;
 
 /**
+ * Calibration Record Management view
  *
  * @author Vasu V <vuppala@frib.msu.org>
  */
@@ -49,14 +50,16 @@ import org.primefaces.model.UploadedFile;
 @ViewScoped
 public class CalibrationManager implements Serializable {
 
+    private static final Logger LOGGER = Logger.getLogger(CalibrationManager.class.getName());
+
     @EJB
     private CalibrationEJB calibrationEJB;
-    private static final Logger LOGGER = Logger.getLogger(CalibrationManager.class.getName());
+
     @Inject
     UserSession userSession;
     @Inject
     private BlobStore blobStore;
-    
+
     private List<Device> physicalComponents;
     private Device selectedEquip;
     private final DevicePlus selectedEplus = new DevicePlus();
@@ -71,9 +74,8 @@ public class CalibrationManager implements Serializable {
     private Date inputCalDate;
     private String inputCalNotes;
     private String selectedSerial;
-    private List<Artifact> inputArtifacts;
-    //
-    //
+
+    // for artifacts
     private String uploadedFileName;
 
     /**
@@ -87,8 +89,8 @@ public class CalibrationManager implements Serializable {
         try {
             physicalComponents = calibrationEJB.findDevices();
             standards = calibrationEJB.standards();
-            this.resetInputs();
-            this.checkFlash();
+            resetInputs();
+            checkFlash();
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Could not initialize Calibration Manager.");
             System.err.println(e);
@@ -96,7 +98,7 @@ public class CalibrationManager implements Serializable {
     }
 
     private void resetInputs() {
-        inputMeasurements = new ArrayList<CalibrationMeasurement>();
+        inputMeasurements = new ArrayList<>();
         newMeasurement = new CalibrationMeasurement();
         inputCalDate = null;
         inputCalNotes = null;
@@ -125,7 +127,7 @@ public class CalibrationManager implements Serializable {
     }
 
     public List<Device> completeDevice(String query) {
-        List<Device> suggestions = new ArrayList<Device>();
+        List<Device> suggestions = new ArrayList<>();
 
         for (Device p : physicalComponents) {
             if (p.getSerialNumber().contains(query)) {
@@ -234,24 +236,24 @@ public class CalibrationManager implements Serializable {
 
     public void handleFileUpload(FileUploadEvent event) {
         // Utility.showMessage(FacesMessage.SEVERITY_INFO, "Succesful", msg);
-        LOGGER.log(Level.INFO,"Entering handleFileUpload");
-        InputStream istream;       
-        
-        try {        
+        LOGGER.log(Level.INFO, "Entering handleFileUpload");
+        InputStream istream;
+
+        try {
             UploadedFile uploadedFile = event.getFile();
-            uploadedFileName = uploadedFile.getFileName();         
+            uploadedFileName = uploadedFile.getFileName();
             istream = uploadedFile.getInputstream();
             // logger.log(Level.INFO,"Uploaded file name {0}", uploadedFileName);
             // Utility.showMessage(FacesMessage.SEVERITY_INFO, "File ", "Name: " + uploadedFileName);
-            LOGGER.log(Level.INFO,"calling blobstore");
+            LOGGER.log(Level.INFO, "calling blobstore");
             String fileId = blobStore.storeFile(istream);
-            
+
             // create an artifact
             Artifact artifact = new Artifact();
             artifact.setURN(uploadedFileName);
             artifact.setURL(fileId);
-            inputArtifacts.add(artifact);
-            
+            // inputArtifacts.add(artifact);
+
             istream.close();
             Utility.showMessage(FacesMessage.SEVERITY_INFO, "File uploaded", "Name: " + uploadedFileName);
             // ileUploaded = true;
@@ -263,7 +265,7 @@ public class CalibrationManager implements Serializable {
 
         }
     }
-    
+
     public Device getSelectedEquip() {
         return selectedEquip;
     }
@@ -347,5 +349,4 @@ public class CalibrationManager implements Serializable {
     public DevicePlus getSelectedEplus() {
         return selectedEplus;
     }
-
 }

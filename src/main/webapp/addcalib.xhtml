@@ -104,14 +104,15 @@
                     <p:row>
                         <p:column>
                             <ui:remove>-------------------Tolerance values ------------</ui:remove>
+                            <h:outputText value="Out Of Tolerance Values: " styleClass="paraHeading"/>
                             <p:dataTable id="otvtable" var="measurement" 
                                          value="#{calibrationManager.inputMeasurements}"
                                          editable="true" editMode="cell"
                                          emptyMessage="Enter a new mesasurement below:"
                                          styleClass="spartanTable">  
-                                <f:facet name="header">                                   
-                                    <h:outputText value="Out Of Tolerance Values" />
-                                </f:facet>
+                                <!--                                <f:facet name="header">                                   
+                                                                    <h:outputText value="Out Of Tolerance Values" />
+                                                                </f:facet>-->
 
                                 <p:column id="step" headerText="Proc Step #">
                                     <p:cellEditor>  
@@ -184,14 +185,15 @@
                     <p:row>
                         <p:column>
                             <ui:remove>------------------- Standards  ------------</ui:remove>
+                            <h:outputText value="Calibration Standards: " styleClass="paraHeading"/>
                             <p:dataTable id="stdTable" var="std" 
                                          value="#{calibrationManager.standards}"
                                          selection="#{calibrationManager.inputStandards}"
                                          rowKey="#{std.deviceId}"                                                
                                          styleClass="spartanTable" >  
-                                <f:facet name="header">
-                                    <h:outputText value="Calibration Standards" />
-                                </f:facet>                               
+                                <!--                                <f:facet name="header">
+                                                                    <h:outputText value="Calibration Standards" />
+                                                                </f:facet>                               -->
                                 <p:column selectionMode="multiple" width="5%" />
                                 <p:column id="model" headerText="Model" style="width: 15%" >                  
                                     <h:outputText value="#{std.model.name}" />                                    
@@ -205,14 +207,49 @@
                                 <p:column id="manufsn" headerText="Serial" >                  
                                     <h:outputText value="#{std.serialNumber}" />                              
                                 </p:column>
-                                
+
                             </p:dataTable>
                         </p:column>
                     </p:row>
                     <p:row>
-                        <p:fileUpload mode="advanced" dragDropSupport="true"  label="Docs" auto="true"
-                                          update=":logMessages newEntry" sizeLimit="#{msgs.uploadSize}" 
-                                          process="@this" fileUploadListener="#{logManager.handleFileUpload}" />
+                        <p:column>
+                            <ui:remove>------------------- Artifacts  ------------</ui:remove>
+
+                            <h:outputText value="Artifacts: " styleClass="paraHeading"/>
+                            <p:commandLink value="Add" title="Add a new artifact" update=":artifactInputDlg" process="@this" 
+                                           actionListener="#{artifactManager.onAddCommand}" oncomplete="PF('artifactInputWid').show()"
+                                           disabled="#{not true}"/>                        
+                            <p:dataTable id="artifactTable" var="artif"  rowKey="#{artif.artifact.id}" 
+                                         value="#{artifactManager.entities}"  styleClass="spartanTable" >  
+                                <p:column   style="width: 2%" >
+                                    <p:commandLink title="Delete" styleClass="fa fa-trash iconDisplay" process="@this" 
+                                                   actionListener="#{artifactManager.onDeleteCommand(artif)}" update="artifactTable" 
+                                                   disabled="#{not true}"/>
+                                    <!--                                    <p:commandLink title="Delete" styleClass="fa fa-trash iconDisplay" update=":artifactInputDlg" process="@this" 
+                                                                                     actionListener="#{artifactManager.onDeleteCommand(artif)}" oncomplete="PF('artifactInputWid').show()" 
+                                                                                     disabled="#{not true}"/>-->
+                                </p:column>
+                                <p:column  headerText="Name" style="width: 25%" >                  
+                                    <h:outputText value="#{artif.artifact.URN}" styleClass="#{artif.operation == 'DELETE' ? 'deleted' : ''}"/>                                    
+                                </p:column>              
+                                <p:column headerText="Description" >                  
+                                    <h:outputText value="#{artif.artifact.description}" styleClass="#{artif.operation == 'DELETE' ? 'deleted' : ''}"/>                              
+                                </p:column>
+                                <p:column headerText="Link" style="width: 15%" >                  
+                                    <p:link href="#{artif.artifact.URL}" value="link" target="_blank" styleClass="#{artif.operation == 'DELETE' ? 'deleted' : ''}"/>
+                                    <h:outputText value="#{artifact.URL}" />                              
+                                </p:column> 
+                                <p:column   style="width: 2%" >                             
+                                    <p:commandLink title="Edit" styleClass="fa fa-pencil iconDisplay"   
+                                                   update=":artifactInputDlg"  process="@this"                                          
+                                                   actionListener="#{artifactManager.onEditCommand(artif)}"
+                                                   oncomplete="PF('artifactInputWid').show()" 
+                                                   disabled="#{artif.operation == 'DELETE'}" />
+                                </p:column>
+                            </p:dataTable>
+
+
+                        </p:column>
                     </p:row>
                 </p:panelGrid>
                 <f:facet name="footer">
@@ -240,5 +277,91 @@
                                  oncomplete="PF('saveConfirmWid').hide()" />
             </p:dialog>
         </h:form> 
+
+        <p:dialog id="artifactInputDlg" widgetVar="artifactInputWid">
+            <h:form id="objectInputForm">              
+                <p:panelGrid>
+                    <f:facet name="header">
+                        <p:row>
+                            <p:column colspan="2">
+                                <h:outputText value="New Artifact" rendered="#{artifactManager.inputAction == 'CREATE'}"/>
+                                <h:outputText value="Update Existing Process" rendered="#{artifactManager.inputAction == 'UPDATE'}"/>
+                                <h:outputText value="Delete Process" rendered="#{artifactManager.inputAction == 'DELETE'}"/>
+                            </p:column>                
+                        </p:row>
+                    </f:facet>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="procName" value="Name"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="procName" value="#{artifactManager.inputAction == 'CREATE'? artifactManager.inputEntity.artifact.URN : artifactManager.selectedEntity.artifact.URN}" 
+                                         required="true" 
+                                         validatorMessage="Name required" disabled="#{artifactManager.inputAction == 'DELETE'}"/>                             
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="procDesc"  value="Description" />
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="procDesc" value="#{artifactManager.inputAction == 'CREATE'? artifactManager.inputEntity.artifact.description : artifactManager.selectedEntity.artifact.description}" 
+                                         required="true" 
+                                         validatorMessage="Description required" disabled="#{artifactManager.inputAction == 'DELETE'}"/>                            
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel  value="File/URL" />
+                        </p:column>
+                        <p:column>
+                            <p:inputSwitch value="#{artifactManager.fileSelected}"  offLabel="URL" onLabel="File">
+                                <p:ajax update="inURL inFile"  process="@this"/>
+                            </p:inputSwitch>
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="inURL"  value="URL" />
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="inURL" value="#{artifactManager.inputAction == 'CREATE'? artifactManager.inputEntity.artifact.URL : artifactManager.selectedEntity.artifact.URL}" 
+                                         required="true" 
+                                         validatorMessage="URL required" disabled="#{artifactManager.fileSelected}"/>                            
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="inFile"  value="File" />
+                        </p:column>
+                        <p:column>
+                            <p:fileUpload id="inFile" mode="simple" auto="true"  skinSimple="true"
+                                          update="" sizeLimit="#{msgs.uploadSize}" 
+                                          process="@this" fileUploadListener="#{artifactManager.uploadedFile}" 
+                                          disabled="#{not artifactManager.fileSelected}"/>
+                        </p:column>
+                    </p:row>
+
+                    <f:facet name="footer">
+                        <p:row>
+                            <p:column colspan="2">
+                                <p:commandButton type="button" icon="ui-icon-close" value="Cancel" style="float: left;" 
+                                                 onclick="PF('artifactInputWid').hide()"/>
+                                <p:commandButton icon="ui-icon-disk" value="Save" style="float: right;"
+                                                 action="#{artifactManager.saveEntity()}"  
+                                                 oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('artifactInputWid').hide()"
+                                                 process="@form"  update="@form :calibInputForm:artifactTable" rendered="#{artifactManager.inputAction != 'DELETE'}"/>
+                                <p:commandButton icon="ui-icon-trash" value="Confirm" style="float: right;"
+                                                 action="#{artifactManager.deleteEntity()}" 
+                                                 oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('artifactInputWid').hide()"
+                                                 process="@form" update=":calibInputForm:artifactTable" rendered="#{artifactManager.inputAction == 'DELETE'}"/>                                
+                            </p:column>                
+                        </p:row>
+                    </f:facet>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
     </ui:define>
 </ui:composition>

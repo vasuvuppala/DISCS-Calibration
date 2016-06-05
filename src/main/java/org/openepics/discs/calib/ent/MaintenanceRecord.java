@@ -37,26 +37,24 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author vuppala
  */
 @Entity
-@Table(name = "calibration_record")
+@Table(name = "maint_record")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "CalibrationRecord.findAll", query = "SELECT c FROM CalibrationRecord c"),
-    @NamedQuery(name = "CalibrationRecord.findByCalibrationRecordId", query = "SELECT c FROM CalibrationRecord c WHERE c.calibrationRecordId = :calibrationRecordId"),
-    @NamedQuery(name = "CalibrationRecord.findByCalibrationDate", query = "SELECT c FROM CalibrationRecord c WHERE c.calibrationDate = :calibrationDate"),
-    @NamedQuery(name = "CalibrationRecord.findByPerformedBy", query = "SELECT c FROM CalibrationRecord c WHERE c.performedBy = :performedBy"),
-    @NamedQuery(name = "CalibrationRecord.findByVersion", query = "SELECT c FROM CalibrationRecord c WHERE c.version = :version")})
-public class CalibrationRecord implements Serializable {
+    @NamedQuery(name = "MaintenanceRecord.findAll", query = "SELECT c FROM MaintenanceRecord c"),
+    @NamedQuery(name = "MaintenanceRecord.findById", query = "SELECT c FROM MaintenanceRecord c WHERE c.id = :id")
+})
+public class MaintenanceRecord implements Serializable {
     private static final long serialVersionUID = 1L;
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "calibration_record_id")
-    private Integer calibrationRecordId;
+    @Column(name = "id")
+    private Integer id;
     
     @Basic(optional = false)
     @NotNull
-    @Column(name = "calibration_date")
+    @Column(name = "maint_date")
     @Temporal(TemporalType.DATE)
     private Date calibrationDate;
     
@@ -74,45 +72,35 @@ public class CalibrationRecord implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "version")
-    private int version;
+    private int version;  
     
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "calibrationRecord")
-    private List<CalibrationDevice> calibrationDeviceList;
-    
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "calibrationRecord")
-    private List<CalibrationMeasurement> calibrationMeasurementList;
-    
-    @JoinColumn(name = "device", referencedColumnName = "device_id")
     @ManyToOne(optional = false)
+    @JoinColumn(name = "device")
     private Device device;
     
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "calib_artifact",
-               joinColumns = @JoinColumn(name = "calib_record"),
+    @JoinTable(name = "maint_artifact",
+               joinColumns = @JoinColumn(name = "maint_record"),
                inverseJoinColumns = @JoinColumn(name = "artifact") 
     )
     private List<Artifact> artifacts;
 
-    public CalibrationRecord() {
+    public MaintenanceRecord() {
     }
 
-    public CalibrationRecord(Integer calibrationRecordId) {
-        this.calibrationRecordId = calibrationRecordId;
-    }
-
-    public CalibrationRecord(Integer calibrationRecordId, Date calibrationDate, String performedBy, int version) {
-        this.calibrationRecordId = calibrationRecordId;
+    public MaintenanceRecord(Integer id, Date calibrationDate, String performedBy, int version) {
+        this.id = id;
         this.calibrationDate = calibrationDate;
         this.performedBy = performedBy;
         this.version = version;
     }
 
     public Integer getCalibrationRecordId() {
-        return calibrationRecordId;
+        return id;
     }
 
     public void setCalibrationRecordId(Integer calibrationRecordId) {
-        this.calibrationRecordId = calibrationRecordId;
+        this.id = calibrationRecordId;
     }
 
     public Date getCalibrationDate() {
@@ -147,24 +135,6 @@ public class CalibrationRecord implements Serializable {
         this.version = version;
     }
 
-    @XmlTransient
-    public List<CalibrationDevice> getCalibrationDeviceList() {
-        return calibrationDeviceList;
-    }
-
-    public void setCalibrationDeviceList(List<CalibrationDevice> calibrationDeviceList) {
-        this.calibrationDeviceList = calibrationDeviceList;
-    }
-
-    @XmlTransient
-    public List<CalibrationMeasurement> getCalibrationMeasurementList() {
-        return calibrationMeasurementList;
-    }
-
-    public void setCalibrationMeasurementList(List<CalibrationMeasurement> calibrationMeasurementList) {
-        this.calibrationMeasurementList = calibrationMeasurementList;
-    }
-
     public Device getDevice() {
         return device;
     }
@@ -185,18 +155,18 @@ public class CalibrationRecord implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (calibrationRecordId != null ? calibrationRecordId.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof CalibrationRecord)) {
+        if (!(object instanceof MaintenanceRecord)) {
             return false;
         }
-        CalibrationRecord other = (CalibrationRecord) object;
-        if ((this.calibrationRecordId == null && other.calibrationRecordId != null) || (this.calibrationRecordId != null && !this.calibrationRecordId.equals(other.calibrationRecordId))) {
+        MaintenanceRecord other = (MaintenanceRecord) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -204,7 +174,7 @@ public class CalibrationRecord implements Serializable {
 
     @Override
     public String toString() {
-        return "org.openepics.discs.calib.ent.CalibrationRecord[ calibrationRecordId=" + calibrationRecordId + " ]";
+        return "org.openepics.discs.calib.ent.CalibrationRecord[ calibrationRecordId=" + id + " ]";
     }
     
 }

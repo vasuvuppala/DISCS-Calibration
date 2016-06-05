@@ -105,6 +105,9 @@ public class Device implements Serializable {
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "device")
     private List<CalibrationRecord> calibrationRecordList;
     
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "device")
+    private List<MaintenanceRecord> maintRecordList;
+    
 //    @JoinColumn(name = "owner", referencedColumnName = "user_id")
 //    @ManyToOne
 //    private Sysuser owner;
@@ -259,6 +262,14 @@ public class Device implements Serializable {
 
     public void setModel(DeviceModel model) {
         this.model = model;
+    }
+
+    public List<MaintenanceRecord> getMaintRecordList() {
+        return maintRecordList;
+    }
+
+    public void setMaintRecordList(List<MaintenanceRecord> maintRecordList) {
+        this.maintRecordList = maintRecordList;
     }
 
     @Override

@@ -74,6 +74,15 @@ a {
     border: 1px solid LightGray;
 }
 
+.paraHeading {
+    font-weight: normal;
+    font-size:  larger;
+}
+
+.deleted {
+    text-decoration: line-through !important;
+}
+
 .ui-clock {
     background: none;
     border: none;
@@ -206,6 +215,7 @@ a {
 
 .iconDisplay { 
     display: inline-block; 
+    text-decoration: none;
 }
 
 .logColumn {

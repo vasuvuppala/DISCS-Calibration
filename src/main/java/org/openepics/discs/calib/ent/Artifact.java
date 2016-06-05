@@ -65,9 +65,6 @@ public class Artifact implements Serializable {
     @Column(name = "version")
     private int version;
     
-    @ManyToMany(targetEntity = CalibrationRecord.class, mappedBy="artifacts")
-    private List<CalibrationRecord> calibrationRecords;
-    
     public Artifact() {
     }
 
@@ -125,14 +122,6 @@ public class Artifact implements Serializable {
     public void setVersion(int version) {
         this.version = version;
     }
-
-    public List<CalibrationRecord> getCalibrationRecords() {
-        return calibrationRecords;
-    }
-
-    public void setCalibrationRecords(List<CalibrationRecord> calibrationRecords) {
-        this.calibrationRecords = calibrationRecords;
-    }  
 
     @Override
     public int hashCode() {
