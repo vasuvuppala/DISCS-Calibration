@@ -85,7 +85,7 @@ public class Sysuser implements Serializable {
 //    @OneToMany(mappedBy = "owner")
 //    private List<Device> deviceList;
     
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "sysuser")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "authUser")
     private List<UserPreference> userPreferenceList;
 
     public Sysuser() {

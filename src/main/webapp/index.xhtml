@@ -1,16 +1,54 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
-                template="/template/calibTemplate.xhtml"
-                xmlns:p="http://primefaces.org/ui"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:h="http://java.sun.com/jsf/html" >
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template/template.xhtml">
 
     <ui:define name="content">
-        <h:form id="equipForm"> 
-            <p:panel header="Welcome" styleClass="noBorders" >
-                Welcome to Proteus: Calibration System. It manages calibration records for devices. 
-            </p:panel>
-        </h:form>
+         <p:panel header="Proteus: CCDB" styleClass="userManual">            
+            <h2 id='introduction'>
+                Introduction
+                <p:graphicImage title="Gestaltism"  value="#{resource['images/gestalt.png']}" style='float: right' rendered="true"/>             
+            </h2>
+             <p>
+                During the design and construction of an experimental physics 
+                facility (EPF), a heterogeneous set of engineering disciplines, 
+                methods, and tools is used, making subsequent exploitation of 
+                data difficult. Distributed Information Services for Control Systems (<h:outputLink value="#{msgs.discs}" target="_blank">DISCS</h:outputLink>) 
+                is a framework for building high-level applications for commissioning, operation, 
+                and maintenance of an EPF. It provides programmatic as well as graphical interfaces 
+                to its data and services.
+                
+                Proteus: Calibration is a module in DISCS; it is a software tool that 
+                assists in managing calibration records of devices.                    
+                        
+            </p>
+           
+            <h2 id='terminology'>
+                Terminology
+            </h2>
+
+            <ui:include src='terminology.xhtml'/>
+            
+            <h2 id='features'>
+                Features
+            </h2>
+            <p>CCDB assists in managing the following information: </p>
+            <ul>
+                <li><h:panelGroup styleClass="fa fa fa-tablet" /> Device Types: Properties, artifacts (documents or links), and classification</li>
+                <li><h:panelGroup styleClass="fa fa fa-cogs" /> Devices: Artifacts, properties, installation, and tags</li>
+                <li><h:panelGroup styleClass="fa fa fa-server" /> Slots: Artifacts, properties, tags, hierarchy, installation, and alignment</li>
+                <li><h:panelGroup styleClass="fa fa fa-list-alt" /> Checklists: Inspection status of devices or slots</li>
+                <li><h:panelGroup styleClass="fa fa fa-thumbs-o-up" /> Approvals: Status of reviews such as DHR and ARR</li>               
+                <li><h:panelGroup styleClass="fa fa fa-road" /> Beampaths: Path of the beam between any two elements</li>               
+            </ul>
+
+            <h2 id='api'>
+                API                
+            </h2>
+            <p>Most of the information in Proteus: Calibration can be Calibration's Application Programming Interface (API). The API is described in 
+                <p:link href='/help/api' target="_blank">The CCDB API Manual</p:link>.</p>
+        </p:panel>
     </ui:define>
 </ui:composition>

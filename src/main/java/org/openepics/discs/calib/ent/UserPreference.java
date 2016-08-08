@@ -21,6 +21,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.openepics.discs.calib.auth.AuthUser;
 
 /**
  *
@@ -53,9 +54,9 @@ public class UserPreference implements Serializable {
     @Column(name = "pref_value")
     private String prefValue;
     
-    @JoinColumn(name = "sysuser", referencedColumnName = "user_id")
+    @JoinColumn(name = "auth_user", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
-    private Sysuser sysuser;
+    private AuthUser authUser;
 
     public UserPreference() {
     }
@@ -94,12 +95,12 @@ public class UserPreference implements Serializable {
         this.prefValue = prefValue;
     }
 
-    public Sysuser getSysuser() {
-        return sysuser;
+    public AuthUser getAuthUser() {
+        return authUser;
     }
 
-    public void setSysuser(Sysuser sysuser) {
-        this.sysuser = sysuser;
+    public void setAuthUser(AuthUser sysuser) {
+        this.authUser = sysuser;
     }
 
     @Override
