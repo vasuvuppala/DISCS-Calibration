@@ -25,17 +25,7 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.openepics.discs.hourlog.ejb.FacilityEJB;
-import org.openepics.discs.hourlog.ent.Sysuser;
-import org.openepics.discs.hourlog.ent.Facility;
-import org.openepics.discs.hourlog.ent.Logbook;
-import org.openepics.discs.hourlog.ent.AuthRole;
-import org.openepics.discs.hourlog.ent.UserPreference;
-import org.openepics.discs.hourlog.prefs.PreferenceName;
-import org.openepics.discs.hourlog.prefs.PreferencesEJB;
-import org.openepics.discs.hourlog.util.AppProperties;
-import org.openepics.discs.hourlog.util.Utility;
-import org.openepics.discs.hourlog.log.LogbookServiceCredential;
+
 
 /**
  * The session.
@@ -45,12 +35,9 @@ import org.openepics.discs.hourlog.log.LogbookServiceCredential;
 @Named
 @SessionScoped
 public class UserSession implements Serializable {
-    @EJB
-    private FacilityEJB facilityEJB;   
+      
     @EJB
     private AuthEJB authEJB;
-    @EJB
-    private PreferencesEJB prefEJB;
     
     @Inject 
     private AppProperties appProperties;
@@ -61,10 +48,9 @@ public class UserSession implements Serializable {
     private String token;   // auth token
     private AuthRole role; // current role   
     private Sysuser user; // the user record. ToDo:  keep this in the session?
-    private Facility facility; // current facility: ToDo: keep this in the session?    
-    private List<Logbook> selectedLogbooks;;  // logbooks selected by the user
+    
     private String currentTheme; // current GUI theme
-    private LogbookServiceCredential logbookCredential; // user credetials to access the logbook service
+   
 
     public UserSession() {
         this.selectedLogbooks = new ArrayList<>();
