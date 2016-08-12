@@ -29,20 +29,10 @@ import javax.inject.Named;
 @RequestScoped
 public class AuthView implements Serializable {
     
-    @EJB(beanName = "LocalAuthManager")
+    @EJB
     private AuthManager authManager;
     
-    public boolean canGenerateReports() {
-        return authManager.canGenerateReports();
-    }
     
-    public boolean canManageFacility() {
-        return authManager.canManageFacility();
-    }
-    
-    public boolean canOperateShift() {
-        return authManager.canOperateShift();
-    }
     
     public boolean isValidUser() {
         return authManager.isValidUser();

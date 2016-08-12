@@ -38,10 +38,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "AuthPermission.findAll", query = "SELECT a FROM AuthPermission a"),
-    @NamedQuery(name = "AuthPermission.findByPrivilegeId", query = "SELECT a FROM AuthPermission a WHERE a.privilegeId = :privilegeId"),
     @NamedQuery(name = "AuthPermission.findByVersion", query = "SELECT a FROM AuthPermission a WHERE a.version = :version")})
+
 public class AuthPermission implements Serializable {
     private static final long serialVersionUID = 1L;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
@@ -139,7 +140,7 @@ public class AuthPermission implements Serializable {
 
     @Override
     public String toString() {
-        return "org.openepics.discs.hourlog.ent.AuthPermission[ id=" + id + " ]";
+        return "org.openepics.discs.calib.ent.AuthPermission[ id=" + id + " ]";
     }
     
 }

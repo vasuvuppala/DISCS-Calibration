@@ -289,7 +289,7 @@ public class AuthEJB {
         } else {
             em.merge(user);
         }
-        LOGGER.log(Level.FINE, "HourLogEJB#saveUser: User saved - {0}", user.getUserId());
+        LOGGER.log(Level.FINE, " User saved - {0}", user.getId());
     }
 
     /**

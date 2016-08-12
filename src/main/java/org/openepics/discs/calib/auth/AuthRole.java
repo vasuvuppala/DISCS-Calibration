@@ -47,17 +47,18 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "AuthRole.findByVersion", query = "SELECT a FROM AuthRole a WHERE a.version = :version")})
 public class AuthRole implements Serializable {
     private static final long serialVersionUID = 1L;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "role_id")
-    private Integer roleId;
+    @Column(name = "id")
+    private Long id;
     
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 64)
-    @Column(name = "role_name")
-    private String roleName;
+    @Column(name = "name")
+    private String name;
     
     @Basic(optional = false)
     @NotNull
@@ -79,31 +80,31 @@ public class AuthRole implements Serializable {
     public AuthRole() {
     }
 
-    public AuthRole(Integer roleId) {
-        this.roleId = roleId;
+    public AuthRole(Long roleId) {
+        this.id = roleId;
     }
 
-    public AuthRole(Integer roleId, String roleName, String description, int version) {
-        this.roleId = roleId;
-        this.roleName = roleName;
+    public AuthRole(Long roleId, String roleName, String description, int version) {
+        this.id = roleId;
+        this.name = roleName;
         this.description = description;
         this.version = version;
     }
 
-    public Integer getRoleId() {
-        return roleId;
+    public Long getId() {
+        return id;
     }
 
-    public void setRoleId(Integer roleId) {
-        this.roleId = roleId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getRoleName() {
-        return roleName;
+        return name;
     }
 
     public void setRoleName(String roleName) {
-        this.roleName = roleName;
+        this.name = roleName;
     }
 
     public String getDescription() {
@@ -145,7 +146,7 @@ public class AuthRole implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (roleId != null ? roleId.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -156,7 +157,7 @@ public class AuthRole implements Serializable {
             return false;
         }
         AuthRole other = (AuthRole) object;
-        if ((this.roleId == null && other.roleId != null) || (this.roleId != null && !this.roleId.equals(other.roleId))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -164,7 +165,7 @@ public class AuthRole implements Serializable {
 
     @Override
     public String toString() {
-        return "org.openepics.discs.hourlog.ent.AuthRole[ roleId=" + roleId + " ]";
+        return "org.openepics.discs.calib.ent.AuthRole[ id=" + id + " ]";
     }
     
 }

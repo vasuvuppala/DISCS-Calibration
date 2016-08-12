@@ -54,36 +54,44 @@ public class AuthUserRole implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "user_role_id")
-    private Integer userRoleId;
+    @Column(name = "id")
+    private Long id;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "can_delegate")
     private boolean canDelegate;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "is_role_manager")
     private boolean isRoleManager;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "start_time")
     @Temporal(TemporalType.TIMESTAMP)
     private Date startTime;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "end_time")
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.TIMESTAMP
+    )
     private Date endTime;
     @Size(max = 255)
     @Column(name = "comment")
     private String comment;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "version")
     private int version;
+    
     @JoinColumn(name = "user", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
     private AuthUser user;
+    
     @JoinColumn(name = "role", referencedColumnName = "role_id")
     @ManyToOne(optional = false)
     private AuthRole role;
@@ -91,12 +99,12 @@ public class AuthUserRole implements Serializable {
     public AuthUserRole() {
     }
 
-    public AuthUserRole(Integer userRoleId) {
-        this.userRoleId = userRoleId;
+    public AuthUserRole(Long userRoleId) {
+        this.id = userRoleId;
     }
 
-    public AuthUserRole(Integer userRoleId, boolean canDelegate, boolean isRoleManager, Date startTime, Date endTime, int version) {
-        this.userRoleId = userRoleId;
+    public AuthUserRole(Long userRoleId, boolean canDelegate, boolean isRoleManager, Date startTime, Date endTime, int version) {
+        this.id = userRoleId;
         this.canDelegate = canDelegate;
         this.isRoleManager = isRoleManager;
         this.startTime = startTime;
@@ -104,12 +112,12 @@ public class AuthUserRole implements Serializable {
         this.version = version;
     }
 
-    public Integer getUserRoleId() {
-        return userRoleId;
+    public Long getId() {
+        return id;
     }
 
-    public void setUserRoleId(Integer userRoleId) {
-        this.userRoleId = userRoleId;
+    public void setUserRoleId(Long userRoleId) {
+        this.id = userRoleId;
     }
 
     public boolean getCanDelegate() {
@@ -179,7 +187,7 @@ public class AuthUserRole implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (userRoleId != null ? userRoleId.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -190,7 +198,7 @@ public class AuthUserRole implements Serializable {
             return false;
         }
         AuthUserRole other = (AuthUserRole) object;
-        if ((this.userRoleId == null && other.userRoleId != null) || (this.userRoleId != null && !this.userRoleId.equals(other.userRoleId))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -198,7 +206,7 @@ public class AuthUserRole implements Serializable {
 
     @Override
     public String toString() {
-        return "org.openepics.discs.hourlog.ent.AuthUserRole[ userRoleId=" + userRoleId + " ]";
+        return "org.openepics.discs.hourlog.ent.AuthUserRole[ userRoleId=" + id + " ]";
     }
     
 }

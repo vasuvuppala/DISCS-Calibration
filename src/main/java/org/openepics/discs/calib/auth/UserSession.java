@@ -15,8 +15,6 @@
 package org.openepics.discs.calib.auth;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -25,6 +23,9 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.openepics.discs.calib.ent.UserPreference;
+import org.openepics.discs.calib.util.AppProperties;
+import org.openepics.discs.calib.util.Utility;
 
 
 /**
@@ -45,15 +46,12 @@ public class UserSession implements Serializable {
     private static final Logger logger = Logger.getLogger(UserSession.class.getName());
 
     private String userId; // user unique login name
-    private String token;   // auth token
-    private AuthRole role; // current role   
-    private Sysuser user; // the user record. ToDo:  keep this in the session?
-    
+    private AuthUser user; // the user record. ToDo:  keep this in the session?    
     private String currentTheme; // current GUI theme
    
 
     public UserSession() {
-        this.selectedLogbooks = new ArrayList<>();
+        
     }
     
     public void UserSession() {
@@ -68,9 +66,7 @@ public class UserSession implements Serializable {
     @PostConstruct
     public void init() {
         try {
-            facility = facilityEJB.defaultFacility(); // Default facility and logbook  for users who are not logged in
-            // logbook = facility.getOpsLogbook();
-            selectedLogbooks.add(facility.getOpsLogbook());
+            
             currentTheme = prefEJB.defaultThemeName();
             logger.log(Level.SEVERE, "UserSession: Deployment evnironment is {0}", appProperties.inProduction()? "Production": "Non-Production");           
         } catch (Exception e) {
@@ -89,7 +85,7 @@ public class UserSession implements Serializable {
      */
     public void start(String userId, AuthRole role)  {
         this.userId = userId;
-        this.role = role;
+        
         user = authEJB.findUser(userId);
         
         if (user != null) {
@@ -97,10 +93,7 @@ public class UserSession implements Serializable {
             if (pref != null) {
                 currentTheme = pref.getPrefValue();
             }
-            pref = prefEJB.findPreference(user, PreferenceName.DEFAULT_FACILITY);
-            if (pref != null) {
-                facility = facilityEJB.findFacility(pref.getPrefValue());
-            }
+            
         } else {
             logger.log(Level.WARNING, "User not defined in the Hour Log database: {0}", userId);
             Utility.showMessage(FacesMessage.SEVERITY_FATAL, "You are not registered as Hour Log user", "Please contact Hour Log administrator.");
@@ -110,13 +103,7 @@ public class UserSession implements Serializable {
         if (currentTheme == null) {
             currentTheme = prefEJB.defaultThemeName();
         }
-        if (facility == null) {
-            facility = facilityEJB.defaultFacility(); 
-        }
-        
-        selectedLogbooks.clear();
-        selectedLogbooks.add(facility.getOpsLogbook());
-        // loggedIn = true;
+       
     }
 
     /**
@@ -124,22 +111,7 @@ public class UserSession implements Serializable {
      *
      * @param facility
      */
-    public void switchFacility(Facility facility) {
-        if (facility == null) {
-            logger.log(Level.WARNING, "Null facility given");
-            return;
-        }
-
-        this.facility = facility;
-        Logbook lb = facility.getOpsLogbook();
-
-        if (lb == null) {
-            logger.log(Level.SEVERE, "No operations logbook defined for {0})", facility.getFacilityName());
-            return;
-        }
-        selectedLogbooks.clear();
-        selectedLogbooks.add(lb);       
-    }
+    
     
     /**
      * end user session
@@ -150,9 +122,7 @@ public class UserSession implements Serializable {
     public void end() {
         userId = null;
         user = null;
-        role = null;
-        // loggedIn = false;
-        token = null;
+        
     }
 
     // -- getters/setters 
@@ -161,40 +131,12 @@ public class UserSession implements Serializable {
         return userId;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public Sysuser getUser() {
+    public AuthUser getUser() {
         return user;
     }
 
-    public Facility getFacility() {
-        return facility;
-    }
-
-    public void setFacility(Facility facility) {
-        this.facility = facility;      
-    }
-    
-    public AuthRole getRole() {
-        return role;
-    }
-
-    public void setRole(AuthRole role) {
-        this.role = role;
-    }
-   
-    public List<Logbook> getSelectedLogbooks() {
-        return selectedLogbooks;
-    }
-
-    public void setSelectedLogbooks(List<Logbook> selectedLogbooks) {
-        this.selectedLogbooks = selectedLogbooks;
+    public void setUser(AuthUser user) {
+        this.user = user;
     }
 
     public String getCurrentTheme() {
@@ -205,12 +147,4 @@ public class UserSession implements Serializable {
         this.currentTheme = currentTheme;
     }
 
-    public LogbookServiceCredential getLogbookCredential() {
-        return logbookCredential;
-    }
-
-    public void setLogbookCredential(LogbookServiceCredential logbookCredential) {
-        this.logbookCredential = logbookCredential;
-    }
-       
 }

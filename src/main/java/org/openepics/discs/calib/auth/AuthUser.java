@@ -41,23 +41,15 @@ import org.openepics.discs.calib.ent.UserPreference;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "AuthUser.findAll", query = "SELECT s FROM AuthUser s"),
-    @NamedQuery(name = "AuthUser.findByUserId", query = "SELECT s FROM AuthUser s WHERE s.userId = :userId"),
-    @NamedQuery(name = "AuthUser.findByFirstName", query = "SELECT s FROM AuthUser s WHERE s.firstName = :firstName"),
-    @NamedQuery(name = "AuthUser.findByLastName", query = "SELECT s FROM AuthUser s WHERE s.lastName = :lastName"),
-    @NamedQuery(name = "AuthUser.findByLoginId", query = "SELECT s FROM AuthUser s WHERE s.loginId = :loginId"),
-    @NamedQuery(name = "AuthUser.findByNickName", query = "SELECT s FROM AuthUser s WHERE s.nickName = :nickName"),
-    @NamedQuery(name = "AuthUser.findByDepartment", query = "SELECT s FROM AuthUser s WHERE s.department = :department"),
-    @NamedQuery(name = "AuthUser.findByEmail", query = "SELECT s FROM AuthUser s WHERE s.email = :email"),
-    @NamedQuery(name = "AuthUser.findByCurrentEmployee", query = "SELECT s FROM AuthUser s WHERE s.currentEmployee = :currentEmployee"),
-    @NamedQuery(name = "AuthUser.findBySmsAddress", query = "SELECT s FROM AuthUser s WHERE s.smsAddress = :smsAddress")
-    })
+    @NamedQuery(name = "AuthUser.findByLoginId", query = "SELECT s FROM AuthUser s WHERE s.loginId = :loginId")
+        })
 public class AuthUser implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @NotNull
-    @Column(name = "user_id")
-    private Integer userId;
+    @Column(name = "id")
+    private Long id;
     
     @Basic(optional = false)
     @NotNull
@@ -113,24 +105,24 @@ public class AuthUser implements Serializable {
     public AuthUser() {
     }
 
-    public AuthUser(Integer userId) {
-        this.userId = userId;
+    public AuthUser(Long userId) {
+        this.id = userId;
     }
 
-    public AuthUser(Integer userId, String firstName, String lastName, boolean currentEmployee, int version) {
-        this.userId = userId;
+    public AuthUser(Long userId, String firstName, String lastName, boolean currentEmployee, int version) {
+        this.id = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.currentEmployee = currentEmployee;
         this.version = version;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public Long getId() {
+        return id;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -235,7 +227,7 @@ public class AuthUser implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (userId != null ? userId.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -246,7 +238,7 @@ public class AuthUser implements Serializable {
             return false;
         }
         AuthUser other = (AuthUser) object;
-        if ((this.userId == null && other.userId != null) || (this.userId != null && !this.userId.equals(other.userId))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -254,7 +246,7 @@ public class AuthUser implements Serializable {
 
     @Override
     public String toString() {
-        return "org.openepics.discs.hourlog.ent.AuthUser[ userId=" + userId + " ]";
+        return "org.openepics.discs.calib.ent.AuthUser[ id=" + id + " ]";
     }
     
 }
