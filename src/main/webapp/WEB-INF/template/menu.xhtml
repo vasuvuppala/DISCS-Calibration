@@ -27,11 +27,16 @@
 
             <p:menuitem value="Preferences" title="Preferences"  icon="ui-icon-gear" url="/preferences.xhtml"  disabled="true"/>
 
-            <p:submenu label="Admin" icon="ui-icon-note" rendered="true">               
+            <p:submenu label="Admin" icon="ui-icon-note" rendered="true">   
+                <p:submenu label="Authorizations" icon="fa fa fa-cubes">
+                    <p:menuitem value="Users" icon="fa fa fa-cubes" url="/admin/auth/manage/auth-users.xhtml" />
+                    <p:menuitem value="Roles" icon="fa fa fa-cubes" url="/admin/auth/manage/auth-roles.xhtml" /> 
+                    <p:menuitem value="User Roles" icon="fa fa fa-cubes" url="/admin/auth/manage/auth-user-roles.xhtml" />                
+                    <p:menuitem value="Permissions" icon="fa fa fa-cubes" url="/admin/auth/manage/auth-permissions.xhtml" />
+                </p:submenu>
+                <p:menuitem value="Authorizations" icon="fa fa-cubes" outcome="auth" rendered="false"/>   
                 <p:menuitem value="Audit Records" title="Browse Audit Records" 
                             url="/audit/" icon="ui-icon-note" />
-                <p:menuitem value="Authorization" title="Manage Authorizations" 
-                            url="/browse/audit/" icon="ui-icon-note"  disabled="true"/>
             </p:submenu>
 
             <p:submenu label="Help" icon="ui-icon-help">
@@ -44,13 +49,12 @@
                 <p:menuitem value=" Report Problems" title="Report Problems/Suggestions" 
                             icon="ui-icon-alert" target="_blank"
                             url="https://controls.frib.msu.edu/controlshelp/" 
-                            rendered="true"/>              
+                            disabled="true"/>              
                 <p:menuitem value=" About" id="aboutMenu" icon="ui-icon-info" 
                             title="About Proteus: Calibration"  onclick="PF('aboutPanelWid').show()"/>    
-            </p:submenu>             
-
+            </p:submenu> 
             <f:facet name="options">  
-               
+
             </f:facet>
         </p:menubar>       
     </h:form>  

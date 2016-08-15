@@ -6,6 +6,7 @@
 
 package org.openepics.discs.calib.ent;
 
+import org.openepics.discs.calib.auth.AuthUser;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -44,7 +45,7 @@ public class UserGroup implements Serializable {
     
     @JoinColumn(name = "sysuser", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
-    private Sysuser sysuser;
+    private AuthUser sysuser;
 
     public UserGroup() {
     }
@@ -69,11 +70,11 @@ public class UserGroup implements Serializable {
         this.sysgroup = sysgroup;
     }
 
-    public Sysuser getSysuser() {
+    public AuthUser getSysuser() {
         return sysuser;
     }
 
-    public void setSysuser(Sysuser sysuser) {
+    public void setSysuser(AuthUser sysuser) {
         this.sysuser = sysuser;
     }
 

@@ -38,31 +38,35 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "AuthPermission.findAll", query = "SELECT a FROM AuthPermission a"),
-    @NamedQuery(name = "AuthPermission.findByVersion", query = "SELECT a FROM AuthPermission a WHERE a.version = :version")})
+    @NamedQuery(name = "AuthPermission.findByResource", query = "SELECT a FROM AuthPermission a WHERE a.resource = :resource"),
+    @NamedQuery(name = "AuthPermission.findByResourceOp", query = "SELECT a FROM AuthPermission a WHERE a.resource = :resource AND a.authOperation = :operation"),
+    @NamedQuery(name = "AuthPermission.findByRole", query = "SELECT a FROM AuthPermission a WHERE a.role = :role"),
+    @NamedQuery(name = "AuthPermission.findByOperation", query = "SELECT a FROM AuthPermission a WHERE a.authOperation = :operation")})
 
 public class AuthPermission implements Serializable {
+
     private static final long serialVersionUID = 1L;
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
-    
+
     @Basic(optional = false)
     @NotNull
     @Column(name = "version")
     private int version;
-    
+
     @Basic(optional = false)
-    @Column(name="resource")
+    @Column(name = "resource")
     private AuthResource resource;
-    
+
     @Basic(optional = false)
-    @Column(name="auth_operation")
+    @Column(name = "auth_operation")
     private AuthOperation authOperation;
-    
-    @JoinColumn(name = "role", referencedColumnName = "role_id")
+
+    @JoinColumn(name = "role")
     @ManyToOne(optional = false)
     private AuthRole role;
 
@@ -102,12 +106,12 @@ public class AuthPermission implements Serializable {
         this.resource = resource;
     }
 
-    public AuthOperation getOperation() {
+    public AuthOperation getAuthOperation() {
         return authOperation;
     }
 
-    public void setOperation(AuthOperation operation) {
-        this.authOperation = operation;
+    public void setAuthOperation(AuthOperation authOperation) {
+        this.authOperation = authOperation;
     }
 
     public AuthRole getRole() {
@@ -142,5 +146,5 @@ public class AuthPermission implements Serializable {
     public String toString() {
         return "org.openepics.discs.calib.ent.AuthPermission[ id=" + id + " ]";
     }
-    
+
 }

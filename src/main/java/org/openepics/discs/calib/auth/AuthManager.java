@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import org.openepics.discs.calib.util.UserSession;
 
 
 /**
@@ -37,16 +38,19 @@ public class AuthManager  {
     @Inject
     private UserSession userSession;
 
-    @PersistenceContext(unitName = "org.openepics.discs.hourlog")
+    @PersistenceContext
     private EntityManager em;
-    private static final Logger logger = Logger.getLogger(AuthManager.class.getName());
+    
+    private static final Logger LOGGER = Logger.getLogger(AuthManager.class.getName());
 
    
     public boolean isValidUser() {     
         return (userSession.getUser() != null);
     }
     
-    
+    public Boolean isAdmin() {
+        return false;
+    }
     /**
      * Can the user perform any of the operations on the resource
      *
@@ -80,7 +84,7 @@ public class AuthManager  {
                 .setParameter("name", name);
         List<AuthResource> resources = query.getResultList();
         if (resources == null || resources.isEmpty()) {
-            logger.log(Level.WARNING, "#findResource: cannot determine resource {0}", name);
+            LOGGER.log(Level.WARNING, "#findResource: cannot determine resource {0}", name);
             return null;
         }
         return resources.get(0);
@@ -103,7 +107,7 @@ public class AuthManager  {
                 .setParameter("names", names);
         List<AuthOperation> resources = query.getResultList();
         if (resources == null || resources.isEmpty()) {
-            logger.log(Level.WARNING, "#findOperation: cannot find opertions: {0}", names);
+            LOGGER.log(Level.WARNING, "#findOperation: cannot find opertions: {0}", names);
             return null;
         }
         return resources;

@@ -33,7 +33,7 @@ import org.openepics.discs.calib.auth.AuthUser;
 @NamedQueries({
     @NamedQuery(name = "UserPreference.findAll", query = "SELECT u FROM UserPreference u"),
     @NamedQuery(name = "UserPreference.findById", query = "SELECT u FROM UserPreference u WHERE u.id = :id"),
-    @NamedQuery(name = "UserPreference.findByPrefName", query = "SELECT u FROM UserPreference u WHERE u.prefName = :prefName"),
+    @NamedQuery(name = "UserPreference.findByPrefName", query = "SELECT u FROM UserPreference u WHERE u.name = :name"),
     @NamedQuery(name = "UserPreference.findByPrefValue", query = "SELECT u FROM UserPreference u WHERE u.prefValue = :prefValue")})
 public class UserPreference implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -46,7 +46,7 @@ public class UserPreference implements Serializable {
     @NotNull
     @Size(min = 1, max = 32)
     @Column(name = "pref_name")
-    private String prefName;
+    private String name;
     
     @Basic(optional = false)
     @NotNull
@@ -54,9 +54,9 @@ public class UserPreference implements Serializable {
     @Column(name = "pref_value")
     private String prefValue;
     
-    @JoinColumn(name = "auth_user", referencedColumnName = "user_id")
+    @JoinColumn(name = "auth_user")
     @ManyToOne(optional = false)
-    private AuthUser authUser;
+    private AuthUser user;
 
     public UserPreference() {
     }
@@ -67,7 +67,7 @@ public class UserPreference implements Serializable {
 
     public UserPreference(Integer id, String prefName, String prefValue) {
         this.id = id;
-        this.prefName = prefName;
+        this.name = prefName;
         this.prefValue = prefValue;
     }
 
@@ -79,12 +79,12 @@ public class UserPreference implements Serializable {
         this.id = id;
     }
 
-    public String getPrefName() {
-        return prefName;
+    public String getName() {
+        return name;
     }
 
-    public void setPrefName(String prefName) {
-        this.prefName = prefName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPrefValue() {
@@ -95,12 +95,12 @@ public class UserPreference implements Serializable {
         this.prefValue = prefValue;
     }
 
-    public AuthUser getAuthUser() {
-        return authUser;
+    public AuthUser getUser() {
+        return user;
     }
 
-    public void setAuthUser(AuthUser sysuser) {
-        this.authUser = sysuser;
+    public void setUser(AuthUser sysuser) {
+        this.user = sysuser;
     }
 
     @Override

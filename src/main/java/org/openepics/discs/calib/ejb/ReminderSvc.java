@@ -26,7 +26,7 @@ import javax.ejb.Stateless;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.SimpleEmail;
 import org.openepics.discs.calib.ent.DeviceGroup;
-import org.openepics.discs.calib.ent.Sysuser;
+import org.openepics.discs.calib.auth.AuthUser;
 import org.openepics.discs.calib.util.DevicePlus;
 
 /**
@@ -92,7 +92,7 @@ public class ReminderSvc {
     }
 
     private  String[] findRecipients(DeviceGroup group) {       
-        List<Sysuser> users = userEJB.reminderSubscribers(group); 
+        List<AuthUser> users = userEJB.reminderSubscribers(group); 
         String[] recipients = new String[users.size()];
         
         for (int i = 0; i < users.size(); i++) {

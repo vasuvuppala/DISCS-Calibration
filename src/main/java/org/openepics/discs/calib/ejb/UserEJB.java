@@ -23,7 +23,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import org.openepics.discs.calib.ent.DeviceGroup;
 import org.openepics.discs.calib.ent.Role;
-import org.openepics.discs.calib.ent.Sysuser;
+import org.openepics.discs.calib.auth.AuthUser;
 import org.openepics.discs.calib.ent.UserRole;
 import org.openepics.discs.calib.util.AppProperties;
 
@@ -46,9 +46,9 @@ public class UserEJB {
      * @param userId Id of the desired user
      * @return User record for a given user id
      */
-    public Sysuser findUser(String userId) {
-        TypedQuery<Sysuser> query = em.createNamedQuery("Sysuser.findByUniqueName", Sysuser.class).setParameter("uniqueName", userId);
-        List<Sysuser> users = query.getResultList();
+    public AuthUser findUser(String userId) {
+        TypedQuery<AuthUser> query = em.createNamedQuery("Sysuser.findByUniqueName", AuthUser.class).setParameter("uniqueName", userId);
+        List<AuthUser> users = query.getResultList();
 
         if (users == null || users.isEmpty()) {
             LOGGER.log(Level.WARNING, "UserEJB: No employees found with id {0}", userId);
@@ -67,9 +67,9 @@ public class UserEJB {
      * @author vuppala
      * @return all users
      */
-    public List<Sysuser> findUsers() {
-        List<Sysuser> users;
-        TypedQuery<Sysuser> query = em.createNamedQuery("Sysuser.findAll", Sysuser.class);
+    public List<AuthUser> findUsers() {
+        List<AuthUser> users;
+        TypedQuery<AuthUser> query = em.createNamedQuery("Sysuser.findAll", AuthUser.class);
         users = query.getResultList();
         LOGGER.log(Level.INFO, "users found: " + users.size());
         return users;
@@ -82,11 +82,11 @@ public class UserEJB {
      * @author vuppala
      * @return all users
      */
-    public List<Sysuser> reminderSubscribers(DeviceGroup group) {
-        List<Sysuser> users;
+    public List<AuthUser> reminderSubscribers(DeviceGroup group) {
+        List<AuthUser> users;
         String gid = group.getGroupId().toString();
         
-        TypedQuery<Sysuser> query = em.createQuery("SELECT u.sysuser FROM UserPreference u WHERE u.prefName = 'DefaultGroup' AND u.prefValue = :gid", Sysuser.class)
+        TypedQuery<AuthUser> query = em.createQuery("SELECT u.sysuser FROM UserPreference u WHERE u.prefName = 'DefaultGroup' AND u.prefValue = :gid", AuthUser.class)
                 .setParameter("gid", gid);
         users = query.getResultList();
         LOGGER.log(Level.INFO, "subscribers found: " + users.size());
@@ -152,7 +152,7 @@ public class UserEJB {
      * @author vuppala
      * @return all user roles
      */
-    public DeviceGroup findDefaultGroup(Sysuser user) {
+    public DeviceGroup findDefaultGroup(AuthUser user) {
         if (user == null ) {
             return null;
         }
@@ -217,7 +217,7 @@ public class UserEJB {
      * @param role
      * @return true or false
      */
-    public boolean hasRole(Sysuser user, Role role) {
+    public boolean hasRole(AuthUser user, Role role) {
         List<UserRole> uroles;
         TypedQuery<UserRole> query = em.createQuery("SELECT u FROM UserRole u WHERE u.sysuser = :user AND u.role = :role", UserRole.class)
                 .setParameter("user", user)

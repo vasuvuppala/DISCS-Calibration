@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 // @WebFilter("/admin/*")
 public class AdminAuthFilter implements Filter {
     
-    @EJB(beanName = "LocalAuthManager")
+    @EJB
     private AuthManager authManager;
     
     private static final Logger logger = Logger.getLogger(AdminAuthFilter.class.getName());
@@ -49,7 +49,7 @@ public class AdminAuthFilter implements Filter {
             logger.log(Level.SEVERE, "authManager is null");
         }      
         
-        if (authManager != null && authManager.canManageFacility()) {
+        if (authManager != null && authManager.isAdmin()) {
             chain.doFilter(request, response);
         } else {
             logger.log(Level.FINE, "not authorized to admin");

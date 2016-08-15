@@ -6,6 +6,7 @@
 
 package org.openepics.discs.calib.ent;
 
+import org.openepics.discs.calib.auth.AuthUser;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -86,7 +87,7 @@ public class UserRole implements Serializable {
     
     @JoinColumn(name = "sysuser", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
-    private Sysuser sysuser;
+    private AuthUser sysuser;
 
     public UserRole() {
     }
@@ -168,11 +169,11 @@ public class UserRole implements Serializable {
         this.role = role;
     }
 
-    public Sysuser getSysuser() {
+    public AuthUser getSysuser() {
         return sysuser;
     }
 
-    public void setSysuser(Sysuser sysuser) {
+    public void setSysuser(AuthUser sysuser) {
         this.sysuser = sysuser;
     }
 

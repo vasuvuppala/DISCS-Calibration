@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 // @WebFilter("/admin/*")
 public class LoginFilter implements Filter {
     
-    @EJB(beanName = "LocalAuthManager")
+    @EJB
     private AuthManager authManager;
     
     private static final Logger logger = Logger.getLogger(LoginFilter.class.getName());

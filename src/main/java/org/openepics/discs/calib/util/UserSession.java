@@ -21,10 +21,10 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
-import org.openepics.discs.calib.ejb.UserEJB;
+import org.openepics.discs.calib.auth.AuthEJB;
 import org.openepics.discs.calib.ent.DeviceGroup;
 import org.openepics.discs.calib.ent.Role;
-import org.openepics.discs.calib.ent.Sysuser;
+import org.openepics.discs.calib.auth.AuthUser;
 
 /**
  *
@@ -35,14 +35,14 @@ import org.openepics.discs.calib.ent.Sysuser;
 public class UserSession implements Serializable {
 
     @EJB
-    private UserEJB userEJB;
+    private AuthEJB userEJB;
     private static final Logger LOGGER = Logger.getLogger(UserSession.class.getName());
 
     private String userId; // user id
     private String token;   // auth token
     private Role role; // current role
     private boolean loggedIn = false;
-    private Sysuser user; // the employee record. ToDo:  keep this in the session?
+    private AuthUser user; // the employee record. ToDo:  keep this in the session?
     private DeviceGroup group; // current facility: ToDo: keep this in the session?   
 
     public void UserSession() {
@@ -75,7 +75,7 @@ public class UserSession implements Serializable {
         this.userId = userId;
         this.role = role;
         user = userEJB.findUser(userId);
-        group = userEJB.findDefaultGroup(user);
+        // group = userEJB.findDefaultGroup(user);
         loggedIn = true;
     }
 
@@ -106,7 +106,7 @@ public class UserSession implements Serializable {
         this.token = token;
     }
 
-    public Sysuser getSysuser() {
+    public AuthUser getUser() {
         return user;
     }
 

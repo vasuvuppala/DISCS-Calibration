@@ -49,13 +49,13 @@ public class AuthManager implements Serializable {
     public boolean canManageCalibrations() {          
         Role roleGrpAdm = userEJB.findRole(AppProperties.ROLE_GROUP_ADMIN);
         Role roleAdm = userEJB.findRole(AppProperties.ROLE_ADMIN);
-        return userEJB.hasRole(userSession.getSysuser(),roleGrpAdm) || userEJB.hasRole(userSession.getSysuser(),roleAdm);
+        return userEJB.hasRole(userSession.getUser(),roleGrpAdm) || userEJB.hasRole(userSession.getUser(),roleAdm);
     }
     
     public boolean canManageDevices() {          
         Role roleGrpAdm = userEJB.findRole(AppProperties.ROLE_GROUP_ADMIN);
         Role roleAdm = userEJB.findRole(AppProperties.ROLE_ADMIN);
-        return userEJB.hasRole(userSession.getSysuser(),roleGrpAdm) || userEJB.hasRole(userSession.getSysuser(),roleAdm);
+        return userEJB.hasRole(userSession.getUser(),roleGrpAdm) || userEJB.hasRole(userSession.getUser(),roleAdm);
     }
     
 }

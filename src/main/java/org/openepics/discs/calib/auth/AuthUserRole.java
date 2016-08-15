@@ -42,7 +42,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "AuthUserRole.findAll", query = "SELECT a FROM AuthUserRole a"),
-    @NamedQuery(name = "AuthUserRole.findByUserRoleId", query = "SELECT a FROM AuthUserRole a WHERE a.userRoleId = :userRoleId"),
     @NamedQuery(name = "AuthUserRole.findByCanDelegate", query = "SELECT a FROM AuthUserRole a WHERE a.canDelegate = :canDelegate"),
     @NamedQuery(name = "AuthUserRole.findByIsRoleManager", query = "SELECT a FROM AuthUserRole a WHERE a.isRoleManager = :isRoleManager"),
     @NamedQuery(name = "AuthUserRole.findByStartTime", query = "SELECT a FROM AuthUserRole a WHERE a.startTime = :startTime"),
@@ -88,11 +87,11 @@ public class AuthUserRole implements Serializable {
     @Column(name = "version")
     private int version;
     
-    @JoinColumn(name = "user", referencedColumnName = "user_id")
+    @JoinColumn(name = "user")
     @ManyToOne(optional = false)
     private AuthUser user;
     
-    @JoinColumn(name = "role", referencedColumnName = "role_id")
+    @JoinColumn(name = "role")
     @ManyToOne(optional = false)
     private AuthRole role;
 

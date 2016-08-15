@@ -1,17 +1,9 @@
 /*
- * This software is Copyright by the Board of Trustees of Michigan
- *  State University (c) Copyright 2014, 2015.
- *  
- *  You may use this software under the terms of the GNU public license
- *  (GPL). The terms of this license are described at:
- *    http://www.gnu.org/licenses/gpl.txt
- *  
- *  Contact Information:
- *       Facility for Rare Isotope Beam
- *       Michigan State University
- *       East Lansing, MI 48824-1321
- *        http://frib.msu.edu
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
  */
+
 package org.openepics.discs.calib.auth;
 
 import java.io.Serializable;
@@ -20,149 +12,125 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import org.openepics.discs.calib.ent.UserPreference;
+import org.openepics.discs.calib.ent.Subscription;
+import org.openepics.discs.calib.ent.UserGroup;
+import org.openepics.discs.calib.ent.UserRole;
 
 /**
  *
  * @author vuppala
  */
 @Entity
-@Table(name = "sysuser")
+@Table(name = "auth_user")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "AuthUser.findAll", query = "SELECT s FROM AuthUser s"),
-    @NamedQuery(name = "AuthUser.findByLoginId", query = "SELECT s FROM AuthUser s WHERE s.loginId = :loginId")
-        })
+    @NamedQuery(name = "AuthUser.findByUserId", query = "SELECT s FROM AuthUser s WHERE s.userId = :userId"),
+    @NamedQuery(name = "AuthUser.countUsers", query = "SELECT COUNT(u) FROM AuthUser u"),
+    @NamedQuery(name = "AuthUser.findByUniqueName", query = "SELECT s FROM AuthUser s WHERE s.uniqueName = :name")
+    })
 public class AuthUser implements Serializable {
     private static final long serialVersionUID = 1L;
+    
+    
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @NotNull
     @Column(name = "id")
-    private Long id;
+    private Integer userId;
     
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 128)
-    @Column(name = "first_name")
-    private String firstName;
+    @Size(min = 1, max = 64)
+    @Column(name = "unique_name", unique=true)
+    private String uniqueName;
+    
+//    @Basic(optional = false)
+//    @NotNull
+//    @Size(min = 1, max = 128)
+//    @Column(name = "name")
+//    private String name;
     
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 128)
     @Column(name = "last_name")
     private String lastName;
-    
-    @Size(max = 32)
-    @Column(name = "login_id")
-    private String loginId;
-    
-    @Size(max = 16)
-    @Column(name = "nick_name")
-    private String nickName;
-    
-    @Size(max = 64)
-    @Column(name = "department")
-    private String department;
+
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 128)
+    @Column(name = "first_name")
+    private String firstName;
     
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
-    @Size(max = 128)
+    @Size(max = 64)
     @Column(name = "email")
     private String email;
     
-    
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "current_employee")
-    private boolean currentEmployee;
-    
-    @Size(max = 64)
-    @Column(name = "sms_address")
-    private String smsAddress;
+    @Size(max = 255)
+    @Column(name = "comment")
+    private String comment;
     
     @Basic(optional = false)
     @NotNull
     @Column(name = "version")
-    @Version
     private int version;
     
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "user")
-    private List<AuthUserRole> authUserRoles;
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "sysuser")
+    private List<UserGroup> userGroupList;
     
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "user")
-    private List<UserPreference> userPreferenceList;
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "sysuser")
+    private List<UserRole> userRoleList;
     
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "sysuser")
+    private List<Subscription> subscriptionList;
+    
+//    @OneToMany(mappedBy = "owner")
+//    private List<Device> deviceList;
+    
+//    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "sysuser")
+//    private List<UserPreference> userPreferenceList;
+
     public AuthUser() {
     }
 
-    public AuthUser(Long userId) {
-        this.id = userId;
+    public AuthUser(Integer userId) {
+        this.userId = userId;
     }
 
-    public AuthUser(Long userId, String firstName, String lastName, boolean currentEmployee, int version) {
-        this.id = userId;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.currentEmployee = currentEmployee;
+    public AuthUser(Integer userId, String uniqueName, String name, int version) {
+        this.userId = userId;
+        this.uniqueName = uniqueName;
+        // this.name = name;
         this.version = version;
     }
 
-    public Long getId() {
-        return id;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getUniqueName() {
+        return uniqueName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getLoginId() {
-        return loginId;
-    }
-
-    public void setLoginId(String loginId) {
-        this.loginId = loginId;
-    }
-
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
-
-    public String getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(String department) {
-        this.department = department;
+    public void setUniqueName(String uniqueName) {
+        this.uniqueName = uniqueName;
     }
 
     public String getEmail() {
@@ -173,24 +141,12 @@ public class AuthUser implements Serializable {
         this.email = email;
     }
 
-    
-
-    public boolean getCurrentEmployee() {
-        return currentEmployee;
+    public String getComment() {
+        return comment;
     }
 
-    public void setCurrentEmployee(boolean currentEmployee) {
-        this.currentEmployee = currentEmployee;
-    }
-
-   
-
-    public String getSmsAddress() {
-        return smsAddress;
-    }
-
-    public void setSmsAddress(String smsAddress) {
-        this.smsAddress = smsAddress;
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public int getVersion() {
@@ -201,33 +157,55 @@ public class AuthUser implements Serializable {
         this.version = version;
     }
 
-   
     @XmlTransient
-//    @JsonIgnore
-    public List<AuthUserRole> getAuthUserRoles() {
-        return authUserRoles;
+    public List<UserGroup> getUserGroupList() {
+        return userGroupList;
     }
 
-    public void setAuthUserRoleList(List<AuthUserRole> authUserRoles) {
-        this.authUserRoles = authUserRoles;
+    public void setUserGroupList(List<UserGroup> userGroupList) {
+        this.userGroupList = userGroupList;
     }
 
     @XmlTransient
-//    @JsonIgnore
-    public List<UserPreference> getUserPreferenceList() {
-        return userPreferenceList;
+    public List<UserRole> getUserRoleList() {
+        return userRoleList;
     }
 
-    public void setUserPreferenceList(List<UserPreference> userPreferenceList) {
-        this.userPreferenceList = userPreferenceList;
+    public void setUserRoleList(List<UserRole> userRoleList) {
+        this.userRoleList = userRoleList;
     }
 
-   
+    @XmlTransient
+    public List<Subscription> getSubscriptionList() {
+        return subscriptionList;
+    }
+
+    public void setSubscriptionList(List<Subscription> subscriptionList) {
+        this.subscriptionList = subscriptionList;
+    }
+
+//    @XmlTransient
+//    public List<Device> getDeviceList() {
+//        return deviceList;
+//    }
+//
+//    public void setDeviceList(List<Device> deviceList) {
+//        this.deviceList = deviceList;
+//    }
+
+//    @XmlTransient
+//    public List<UserPreference> getUserPreferenceList() {
+//        return userPreferenceList;
+//    }
+//
+//    public void setUserPreferenceList(List<UserPreference> userPreferenceList) {
+//        this.userPreferenceList = userPreferenceList;
+//    }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (userId != null ? userId.hashCode() : 0);
         return hash;
     }
 
@@ -238,7 +216,7 @@ public class AuthUser implements Serializable {
             return false;
         }
         AuthUser other = (AuthUser) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.userId == null && other.userId != null) || (this.userId != null && !this.userId.equals(other.userId))) {
             return false;
         }
         return true;
@@ -246,7 +224,7 @@ public class AuthUser implements Serializable {
 
     @Override
     public String toString() {
-        return "org.openepics.discs.calib.ent.AuthUser[ id=" + id + " ]";
+        return "org.openepics.discs.calib.ent.AuthUser[ userId=" + userId + " ]";
     }
     
 }

@@ -1,6 +1,6 @@
 /*
  * This software is Copyright by the Board of Trustees of Michigan
- *  State University (c) Copyright 2014, 2015.
+ *  State University (c) Copyright 2013, 2014.
  *  
  *  You may use this software under the terms of the GNU public license
  *  (GPL). The terms of this license are described at:
@@ -12,25 +12,14 @@
  *       East Lansing, MI 48824-1321
  *        http://frib.msu.edu
  */
-package org.openepics.discs.calib.auth;
+package org.openepics.discs.calib.util;
 
 /**
+ * The CRUD Operations
  *
  * @author vuppala
  */
+public enum InputAction {
 
-public enum AuthResource   {   
-    DEVICE("Device"),  
-    AUTHORIZATIONS("Authorizations"),
-    USER("User");
-
-    private final String label;
-
-    private AuthResource(String label) {
-        this.label = label;
-    }
-
-    public String getLabel() {
-        return label;
-    }
+    CREATE, READ, UPDATE, DELETE;
 }

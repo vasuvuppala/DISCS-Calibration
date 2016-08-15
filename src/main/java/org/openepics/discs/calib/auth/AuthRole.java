@@ -41,8 +41,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "AuthRole.findAll", query = "SELECT a FROM AuthRole a"),
-    @NamedQuery(name = "AuthRole.findByRoleId", query = "SELECT a FROM AuthRole a WHERE a.roleId = :roleId"),
-    @NamedQuery(name = "AuthRole.findByRoleName", query = "SELECT a FROM AuthRole a WHERE a.roleName = :roleName"),
+    @NamedQuery(name = "AuthRole.findByName", query = "SELECT a FROM AuthRole a WHERE a.name = :name"),
     @NamedQuery(name = "AuthRole.findByDescription", query = "SELECT a FROM AuthRole a WHERE a.description = :description"),
     @NamedQuery(name = "AuthRole.findByVersion", query = "SELECT a FROM AuthRole a WHERE a.version = :version")})
 public class AuthRole implements Serializable {
@@ -99,12 +98,12 @@ public class AuthRole implements Serializable {
         this.id = id;
     }
 
-    public String getRoleName() {
+    public String getName() {
         return name;
     }
 
-    public void setRoleName(String roleName) {
-        this.name = roleName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {

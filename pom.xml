@@ -4,7 +4,7 @@
 
     <groupId>org.openepics.discs</groupId>
     <artifactId>discs-calib</artifactId>
-    <version>0.5.2</version>
+    <version>0.6.0</version>
     <packaging>war</packaging>
     <name>DISCS Calibration</name>
 
