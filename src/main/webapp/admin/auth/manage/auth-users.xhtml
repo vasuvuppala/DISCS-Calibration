@@ -85,7 +85,7 @@
                             <p:outputLabel for="loginId" value="Login ID"/>
                         </p:column>
                         <p:column>
-                            <p:inputText id="loginId" value="#{manageUserView.inputAction == 'CREATE'? manageUserView.inputUser.userId : manageUserView.selectedUser.userId}"  
+                            <p:inputText id="loginId" value="#{manageUserView.inputAction == 'CREATE'? manageUserView.inputUser.uniqueName : manageUserView.selectedUser.uniqueName}"  
                                          required="true" 
                                          validatorMessage="Login id is required" disabled="#{manageUserView.inputAction == 'DELETE'}"/>                           
                         </p:column>
@@ -110,16 +110,7 @@
                                          validatorMessage="Last Name is required" disabled="#{manageUserView.inputAction == 'DELETE'}"/>                           
                         </p:column>
                     </p:row>
-                    <p:row>
-                        <p:column>
-                            <p:outputLabel for="nickName" value="Nickname"/>
-                        </p:column>
-                        <p:column>
-                            <p:inputText id="nickName" value="#{manageUserView.inputAction == 'CREATE'? manageUserView.inputUser.name : manageUserView.selectedUser.name}"  
-                                         required="true" 
-                                         validatorMessage="Nickname is required" disabled="#{manageUserView.inputAction == 'DELETE'}"/>                           
-                        </p:column>
-                    </p:row>
+                    
                     <p:row>
                         <p:column>
                             <p:outputLabel for="email" value="Email"/>

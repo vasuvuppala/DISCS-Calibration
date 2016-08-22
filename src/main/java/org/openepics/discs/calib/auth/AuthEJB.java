@@ -251,7 +251,7 @@ public class AuthEJB {
      * @return the user
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // read-only transaction
-    public AuthUser findUser(Long id) {
+    public AuthUser findUser(Integer id) {
         return em.find(AuthUser.class, id);
     }
 

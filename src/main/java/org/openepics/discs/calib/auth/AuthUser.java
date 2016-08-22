@@ -184,6 +184,22 @@ public class AuthUser implements Serializable {
         this.subscriptionList = subscriptionList;
     }
 
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
 //    @XmlTransient
 //    public List<Device> getDeviceList() {
 //        return deviceList;
@@ -224,7 +240,7 @@ public class AuthUser implements Serializable {
 
     @Override
     public String toString() {
-        return "org.openepics.discs.calib.ent.AuthUser[ userId=" + userId + " ]";
+        return this.getClass().getCanonicalName() + "[ " + userId + " ]";
     }
     
 }

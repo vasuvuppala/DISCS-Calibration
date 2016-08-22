@@ -37,7 +37,7 @@ public class AuthUserConverter implements Converter {
         } 
         
         try {
-            return authEJB.findUser(Long.valueOf(stringValue));
+            return authEJB.findUser(Integer.valueOf(stringValue));
         } catch (Exception e){
             throw new ConverterException("Not a valid ID");
         }
