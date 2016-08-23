@@ -225,9 +225,6 @@
                                     <p:commandLink title="Delete" styleClass="fa fa-trash iconDisplay" process="@this" 
                                                    actionListener="#{artifactManager.onDeleteCommand(artif)}" update="artifactTable" 
                                                    disabled="#{not true}"/>
-                                    <!--                                    <p:commandLink title="Delete" styleClass="fa fa-trash iconDisplay" update=":artifactInputDlg" process="@this" 
-                                                                                     actionListener="#{artifactManager.onDeleteCommand(artif)}" oncomplete="PF('artifactInputWid').show()" 
-                                                                                     disabled="#{not true}"/>-->
                                 </p:column>
                                 <p:column  headerText="Name" style="width: 25%" >                  
                                     <h:outputText value="#{artif.artifact.URN}" styleClass="#{artif.operation == 'DELETE' ? 'deleted' : ''}"/>                                    
@@ -279,7 +276,7 @@
         </h:form> 
 
         <p:dialog id="artifactInputDlg" widgetVar="artifactInputWid">
-            <h:form id="objectInputForm">              
+            <h:form id="artifactInputForm" enctype="multipart/form-data">              
                 <p:panelGrid>
                     <f:facet name="header">
                         <p:row>

@@ -15,12 +15,10 @@
                          emptyMessage="No Equipment Found."
                          selectionMode="single"
                          selection="#{manageDeviceView.selectedDevice}" 
-                         filteredValue="#{manageDeviceView.filteredDevices}"     
-                         paginator="true"  rows="25" resizableColumns="true"
-                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" >
-
-                <ui:remove>  scrollable="true" liveScroll="true" scrollRows="25" scrollHeight="600"  </ui:remove>
-
+                         filteredValue="#{manageDeviceView.filteredDevices}"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
+                         rows="25" paginator="true" rowsPerPageTemplate="25,50,100" styleClass="discsDatatable"
+>
                 <p:ajax event="rowSelect" listener="#{manageDeviceView.onSelect}" update="editButton delButton :deviceEditForm" />
 
                 <f:facet name="header">

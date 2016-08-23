@@ -15,19 +15,24 @@
 
 package org.openepics.discs.calib.view;
 
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
 import org.openepics.discs.calib.ent.Artifact;
+import org.openepics.discs.calib.util.BlobStore;
 import org.openepics.discs.calib.util.Utility;
 
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.UploadedFile;
 
@@ -97,6 +102,9 @@ public class ArtifactManager implements Serializable {
         }      
     }
 
+    @Inject
+    private BlobStore blobStore;
+    
     private List<InputArtifact> entities = new ArrayList<>();    
     private List<InputArtifact> filteredEntities;    
     private InputArtifact inputEntity;
@@ -187,6 +195,37 @@ public class ArtifactManager implements Serializable {
             Utility.showMessage(FacesMessage.SEVERITY_ERROR, "Could not complete deletion", e.getMessage());
             RequestContext.getCurrentInstance().addCallbackParam("success", false);
             System.out.println(e);
+        }
+    }
+    
+    public void handleFileUpload(FileUploadEvent event) {
+        // Utility.showMessage(FacesMessage.SEVERITY_INFO, "Succesful", msg);
+        LOGGER.log(Level.FINE, "Entering handleFileUpload");
+        InputStream istream;
+
+        try {
+            UploadedFile uploadedFile = event.getFile();
+            String uploadedFileName = uploadedFile.getFileName();
+            istream = uploadedFile.getInputstream();
+            // logger.log(Level.FINE,"Uploaded file name {0}", uploadedFileName);
+            // Utility.showMessage(FacesMessage.SEVERITY_INFO, "File ", "Name: " + uploadedFileName);
+            LOGGER.log(Level.FINE, "calling blobstore");
+            String fileId = blobStore.storeFile(istream);
+
+            // create an artifact
+
+            inputEntity.artifact.setURL(fileId);
+            
+            istream.close();
+            Utility.showMessage(FacesMessage.SEVERITY_INFO, "File uploaded", "Name: " + uploadedFileName);
+            // ileUploaded = true;
+        } catch (Exception e) {
+            Utility.showMessage(FacesMessage.SEVERITY_ERROR, "Error Uploading file", e.getMessage());
+            LOGGER.log(Level.SEVERE, "LogView.handleFileUpload {0}", e.getMessage());
+            System.out.println(e);
+            // fileUploaded = false;
+        } finally {
+
         }
     }
     

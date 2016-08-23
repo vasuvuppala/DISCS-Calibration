@@ -15,6 +15,7 @@
  */
 package org.openepics.discs.calib.ejb;
 
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -59,7 +60,7 @@ public class AuditEJB {
     public void makeAuditEntry(EntityType entType, EntityTypeOperation oper, String key, String entry) {
         AuditRecord arec = new AuditRecord();
         // AuditRecord arec = new AuditRecord(new Date(), oper, userSession.getUserId(), entry);
-        
+        arec.setLogTime(new Date());
         arec.setEntityType(entType);
         arec.setOper(oper);
         arec.setEntityKey(key);
