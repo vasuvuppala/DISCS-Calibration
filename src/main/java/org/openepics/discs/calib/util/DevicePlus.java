@@ -38,21 +38,60 @@ public class DevicePlus implements Serializable {
     private String dueStatus;
     private int  calibCycle;
     private static final String DUE_SOON = "DueSoon";
+    private static final String NOT_DUE_SOON = "NotDueSoon";
     private static final String PAST_DUE = "PastDue";
 
     // ToDo: make this configurable
     private final static int DUE_SOON_PERIOD = 30; // number of days considered 'due soon'
 
-    public void init(Device e) {
+    private DevicePlus() {
+        
+    }
+    
+     /** 
+     * Factory 
+     * 
+     * @param device
+     * @return 
+     */
+    public static DevicePlus newInstance(Device device) {
+        DevicePlus devicePlus = new DevicePlus();   
+        if (device == null) {
+            return DevicePlus.newInstance();
+        } 
+        devicePlus.init(device);
+              
+        return devicePlus;
+    }
+    
+    public static DevicePlus newInstance() {        
+        DevicePlus devicePlus = new DevicePlus();   
+        // devicePlus.equipment = new Device();
+        
+        return devicePlus;
+    }
+    
+    /**
+     * initialize device plus
+     * 
+     * @param e 
+     */
+    public void init(Device e) {       
         equipment = e;
         lastServicedDate = lastServiced(e);        
         calibCycle = e.getCalibCycle() == null || e.getCalibCycle() == 0 ? e.getModel().getCalibrationCycle() : e.getCalibCycle();
         nextDueDate = nextDue(e);
         dueStatus = nameStatus();
     }
-
+    
+    /**
+     * compute last serviced date for a device
+     * 
+     * @param e
+     * @return 
+     */
     private Date lastServiced(Device e) {
-        List<java.util.Date> calibDates = new ArrayList<java.util.Date>();
+        List<Date> calibDates = new ArrayList<>();
 
         for (CalibrationRecord cr : e.getCalibrationRecordList()) {
             calibDates.add(cr.getCalibrationDate());
@@ -61,8 +100,15 @@ public class DevicePlus implements Serializable {
         return calibDates.isEmpty() ? null : Collections.max(calibDates);
     }
 
+    /**
+     * compute next due date
+     * 
+     * @param e
+     * @return 
+     */
     private Date nextDue(Device e) {
-        java.util.Date lsdate = lastServiced(e);
+//        Date lsdate = lastServiced(e);
+        Date lsdate = this.lastServicedDate;
 
         if (lsdate == null) {
             return null;
@@ -74,13 +120,18 @@ public class DevicePlus implements Serializable {
         // int cycle = e.getCalibCycle() == 0 ? e.getDeviceModel().getCalibrationCycle() : e.getCalibCycle();
 
         cal.add(Calendar.MONTH, calibCycle);
-        java.util.Date nddate = cal.getTime();
+        Date nddate = cal.getTime();
 
         return nddate;
     }
 
+    /**
+     * compute status of device
+     * 
+     * @return 
+     */
     private String nameStatus() {
-        String stat = "NotDueSoon";
+        String stat = NOT_DUE_SOON;
         Date curDate = new Date();
 
         DateTime curDt = new DateTime(curDate);
@@ -109,6 +160,8 @@ public class DevicePlus implements Serializable {
         return PAST_DUE.equalsIgnoreCase(dueStatus);
     }
 
+    // ---------- Getters/setters
+    
     public Date getLastServicedDate() {
         return lastServicedDate;
     }

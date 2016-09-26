@@ -20,8 +20,19 @@
         </navigation-case>     
         <navigation-case>
             <from-outcome>addCalibration</from-outcome>
-            <to-view-id>addcalib</to-view-id>
+            <to-view-id>/device/addcalib.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>device</from-outcome>
+            <to-view-id>/device/device.xhtml</to-view-id>
+            <redirect include-view-params="true"/>
         </navigation-case>  
+        <navigation-case>
+            <from-outcome>calibration</from-outcome>
+            <to-view-id>calibration.xhtml</to-view-id>
+            <redirect include-view-params="true"/>
+        </navigation-case>
         <navigation-case>
             <from-outcome>logout</from-outcome>
             <to-view-id>index</to-view-id>

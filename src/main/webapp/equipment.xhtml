@@ -84,12 +84,11 @@
                 </p:column>
                 
                 <ui:remove> -------------------- Calibration Records ------------------- </ui:remove> 
-                <p:rowExpansion>  
+                <p:rowExpansion> 
+                    <h:outputText value="Calibration Records:" styleClass="paraHeading" />
                     <p:dataTable id="calibRecs" var="calibrec" value="#{eqp.device.calibrationRecordList}" 
                                  emptyMessage="No Calibration Records Found."  transient="true">
-                        <f:facet name="header">                            
-                            <h:outputText value="Calibration Records" /> 
-                        </f:facet>
+                        
                         <p:column id="crdate" headerText="Date">                  
                             <h:outputText value="#{calibrec.calibrationDate}" >  
                                 <f:convertDateTime pattern="${msgs.dateFormat}" />
@@ -101,7 +100,7 @@
                         <p:column id="crnotes" headerText="Notes" width="75%">                  
                             <h:outputText value="#{calibrec.notes}" />                              
                         </p:column>
-                        <p:column id="crdet" headerText="Receipt" width="10%">                                            
+                        <p:column id="crdet" headerText="Operation" width="10%">                                            
                             <p:commandLink  styleClass="ui-icon ui-icon-trash iconDisplay"  title="delete"  process="@this" 
                                               oncomplete="PF('delDiagWid').show()" 
                                               disabled="#{! authManager.canManageCalibrations()}"

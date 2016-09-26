@@ -89,13 +89,12 @@ public class DeviceEJB {
      */
     public List<DevicePlus> findDevicePlus(DeviceGroup group) {
         List<Device> components;
-        List<DevicePlus> equips = new ArrayList<DevicePlus>();;
+        List<DevicePlus> equips = new ArrayList<>();;
 
         components = findDevices(group);
 
         for (Device e : components) {
-            DevicePlus ep = new DevicePlus();
-            ep.init(e);
+            DevicePlus ep = DevicePlus.newInstance(e);           
             equips.add(ep);
         }
         LOGGER.log(Level.INFO, "Processed equipments: ", equips.size());
@@ -142,5 +141,45 @@ public class DeviceEJB {
         em.remove(ct);    
         auditEJB.makeAuditEntry(EntityType.DEVICE, EntityTypeOperation.DELETE, device.getSerialNumber(), "deleted");
         // auditEJB.makeAuditEntry("DEVICE", "DELETE", device.getSerialNumber(), "deleted");
+    }
+    
+    /**
+     * Add an artifact to a device
+     * 
+     * @param device
+     * @param artifact 
+     */
+    public void addArtifact(Device device, Artifact artifact) {
+        Device mdevice = em.find(Device.class, device.getDeviceId());
+        
+        mdevice.getArtifacts().add(artifact);       
+    }
+ 
+    /**
+     * Delete the given artifact from given device
+     * 
+     * @param device
+     * @param artifact 
+     */
+    public void deleteArtifact(Device device, Artifact artifact) {
+        Device mdevice = em.find(Device.class, device.getDeviceId());
+        
+        mdevice.setArtifacts(device.getArtifacts());
+        em.merge(mdevice);
+        
+        Artifact art = em.find(Artifact.class, artifact.getId());
+        em.remove(art);
+    }
+    
+    /**
+     * Update the artifacts of a device
+     * 
+     * @param device 
+     */
+    public void updateArtifacts(Device device) {
+        Device mdevice = em.find(Device.class, device.getDeviceId());    
+        
+        mdevice.setArtifacts(device.getArtifacts());
+        em.merge(mdevice);
     }
 }

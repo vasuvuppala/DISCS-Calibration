@@ -74,19 +74,19 @@ public class CalibrationRecord implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "version")
-    private int version;
+    private int version = 0;
     
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "calibrationRecord")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE} , mappedBy = "calibrationRecord")
     private List<CalibrationDevice> calibrationDeviceList;
     
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "calibrationRecord")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE} , mappedBy = "calibrationRecord")
     private List<CalibrationMeasurement> calibrationMeasurementList;
     
     @JoinColumn(name = "device", referencedColumnName = "device_id")
     @ManyToOne(optional = false)
     private Device device;
     
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE})
     @JoinTable(name = "calib_artifact",
                joinColumns = @JoinColumn(name = "calib_record"),
                inverseJoinColumns = @JoinColumn(name = "artifact") 

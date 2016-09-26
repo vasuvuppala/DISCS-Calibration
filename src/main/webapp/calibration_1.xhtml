@@ -12,16 +12,20 @@
 
     <ui:define name="content">
         <f:metadata>
-            <f:viewParam name="crid" value="#{calibrationDetail.calibrationRecID}" />  
-            <f:viewAction action="#{calibrationDetail.viewHandler()}"/>
+            <f:viewParam name="device" value="#{calibrationDetail.}"/>
+            <f:viewAction action="#{calibrationDetail.viewHandler(event)}"/>
         </f:metadata>
-
-        <h:form id="calibForm">        
-            <p:panel> 
-                <f:facet name="header">  
-                    <h:outputText value="Calibration Receipt" />
-                </f:facet>
+        <f:view>
+            <f:event type="preRenderView" listener="#{calibrationDetail.viewHandler}" />
+            <h:form id="calibForm"> 
+                <p:growl id="cfmsgs" showDetail="true"/> 
+                <f:metadata>             
+                    <f:viewParam name="crid" value="#{calibrationDetail.calibrationRecID}" />                
+                </f:metadata>
                 <p:panelGrid columns="1" style="width: 100%" styleClass="noBorders"> 
+                    <f:facet name="header">  
+                        <h:outputText value="Calibration Receipt" />
+                    </f:facet>
                     <p:row>
                         <p:column>
                             <p:panelGrid style="width: 100%">                              
@@ -47,7 +51,7 @@
                                 <f:facet name="header">
                                     <p:row>
                                         <p:column colspan="6">
-                                            <h:outputText value="Device Information" />
+                                            Equipment Information
                                         </p:column>
                                     </p:row>
 
@@ -187,7 +191,7 @@
                         </p:column>
                     </p:row>
                 </p:panelGrid>
-            </p:panel>
-        </h:form>
+            </h:form>
+        </f:view>
     </ui:define>
 </ui:composition>

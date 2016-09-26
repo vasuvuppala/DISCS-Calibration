@@ -34,6 +34,8 @@ import org.openepics.discs.calib.util.Utility;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 
 /**
@@ -66,7 +68,7 @@ import org.primefaces.model.UploadedFile;
 public class ArtifactManager implements Serializable {         
     private static final Logger LOGGER = Logger.getLogger(ArtifactManager.class.getName());
     
-    public static class InputArtifact {
+    public static class InputArtifact implements Serializable {
         private Artifact artifact;
         private InputAction operation = InputAction.READ;
         
@@ -111,7 +113,8 @@ public class ArtifactManager implements Serializable {
     private InputArtifact selectedEntity;
     private InputAction inputAction;
     private boolean fileSelected = true;
-    private UploadedFile uploadedFile;
+   // private UploadedFile uploadedFile;
+    private Artifact selectedArtifact;
        
     public ArtifactManager() {
     }
@@ -214,19 +217,48 @@ public class ArtifactManager implements Serializable {
 
             // create an artifact
 
-            inputEntity.artifact.setURL(fileId);
+            inputEntity.artifact.setName(uploadedFileName);
+            inputEntity.artifact.setResourceId(fileId);
             
             istream.close();
             Utility.showMessage(FacesMessage.SEVERITY_INFO, "File uploaded", "Name: " + uploadedFileName);
             // ileUploaded = true;
         } catch (Exception e) {
             Utility.showMessage(FacesMessage.SEVERITY_ERROR, "Error Uploading file", e.getMessage());
-            LOGGER.log(Level.SEVERE, "LogView.handleFileUpload {0}", e.getMessage());
+            LOGGER.log(Level.SEVERE, "handleFileUpload {0}", e.getMessage());
             System.out.println(e);
             // fileUploaded = false;
         } finally {
 
         }
+    }
+    
+    
+    public StreamedContent getDownloadedFile() {
+        StreamedContent file = null;
+        
+        try {
+            // return downloadedFile;
+            if (selectedArtifact == null) {
+                Utility.showMessage(FacesMessage.SEVERITY_ERROR, "Selected artifact is null","");
+                LOGGER.log(Level.INFO, "Selected artifact is null");
+                return null;
+            }
+            
+            LOGGER.log(Level.INFO, "Opening stream from repository: {0}",  selectedArtifact.getResourceId());
+            LOGGER.log(Level.INFO, "download file name: {0} ", selectedArtifact.getName());
+            InputStream istream = blobStore.retreiveFile(selectedArtifact.getResourceId());
+            file = new DefaultStreamedContent(istream, "application/octet-stream", selectedArtifact.getName());
+
+            // InputStream stream = new FileInputStream(pathName);                       
+            // downloadedFile = new DefaultStreamedContent(stream, "application/octet-stream", "file.jpg"); //ToDo" replace with actual filename
+        } catch (Exception e) {
+            Utility.showMessage(FacesMessage.SEVERITY_ERROR, "Error: Downloading file", e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error in downloading the file");
+            LOGGER.log(Level.SEVERE, e.toString());
+        }
+        
+        return file;
     }
     
     //-- Getters/Setters 
@@ -263,14 +295,6 @@ public class ArtifactManager implements Serializable {
         this.selectedEntity = selectedEntity;
     }
 
-    public UploadedFile getUploadedFile() {
-        return uploadedFile;
-    }
-
-    public void setUploadedFile(UploadedFile uploadedFile) {
-        this.uploadedFile = uploadedFile;
-    }
-
     public boolean isFileSelected() {
         return fileSelected;
     }
@@ -279,5 +303,11 @@ public class ArtifactManager implements Serializable {
         this.fileSelected = fileSelected;
     }
 
-    
+    public Artifact getSelectedArtifact() {
+        return selectedArtifact;
+    }
+
+    public void setSelectedArtifact(Artifact selectedArtifact) {
+        this.selectedArtifact = selectedArtifact;
+    }
 }

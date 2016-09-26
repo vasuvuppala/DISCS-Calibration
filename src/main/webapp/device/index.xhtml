@@ -1,0 +1,189 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/WEB-INF/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"                
+                xmlns:h="http://java.sun.com/jsf/html" >
+
+    <ui:define name="content">
+        <p:growl id="messages" showDetail="true"/> 
+        <h:form id="searchForm"> 
+            <ui:remove> -------------------- Equipment ------------------- </ui:remove> 
+            <p:dataTable id="searchTable" var="device" value="#{manageDeviceView.devices}"                                                             
+                         rowKey="#{device.deviceId}"                        
+                         emptyMessage="No Equipment Found."
+                         selectionMode="single"
+                         selection="#{manageDeviceView.selectedDevice}" 
+                         filteredValue="#{manageDeviceView.filteredDevices}"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
+                         rows="25" paginator="true" rowsPerPageTemplate="25,50,100" styleClass="discsDatatable"
+                         >
+                <p:ajax event="rowSelect" listener="#{manageDeviceView.onSelect}" update="editButton delButton :deviceEditForm" />
+
+                <f:facet name="header">
+                    <h:outputText value="Manage Devices" />                       
+                </f:facet>              
+                <p:column id="model" headerText="Model" sortBy="#{device.model.name}"
+                          filterBy="#{device.model.name}"
+                          filterMatchMode="startsWith"  >                  
+                    <h:outputText value="#{device.model.name}" />                                    
+                </p:column> 
+                <p:column id="serial" headerText="Serial" sortBy="#{device.serialNumber}"
+                          filterBy="#{device.serialNumber}"
+                          filterMatchMode="contains" style="width: 20%">
+                    <h:outputText value="#{device.serialNumber}" /> 
+                </p:column>              
+                <p:column id="manuf" headerText="Manufacturer" 
+                          filterBy="#{device.model.manufacturer}"
+                          filterMatchMode="contains" >                  
+                    <h:outputText value="#{device.model.manufacturer}" />                              
+                </p:column>         
+                <p:column id="desc" headerText="Description" style="width: 30%"
+                          filterBy="#{device.description}"
+                          filterMatchMode="contains" >                  
+                    <h:outputText value="#{device.description}" />                              
+                </p:column>
+
+                <p:column id="location" headerText="Location" >                  
+                    <h:outputText value="#{device.location}" />                              
+                </p:column>
+
+                <p:column id="active" headerText="Active" 
+                          sortBy="#{device.active}" width="5%" >                  
+                    <h:outputText styleClass="ui-icon ui-icon-check" rendered="#{device.active}" />                    
+                </p:column> 
+                <p:column id="cstandard" headerText="Std" 
+                          sortBy="#{device.calibStandard}"  width="3%">                  
+                    <h:outputText styleClass="ui-icon ui-icon-check" rendered="#{device.calibStandard}" />                              
+                </p:column>
+                <p:column id="custodian" headerText="Custodian" >                  
+                    <h:outputText value="#{device.custodian}" />                              
+                </p:column>  
+                <p:column id="cycle" headerText="Cycle" width="5%">                  
+                    <h:outputText value="#{device.calibCycle}" title="in months" />                              
+                </p:column>
+                <f:facet id="crudMenu" name="footer">
+                    <p:commandButton id="delButton" value="Delete" icon="ui-icon-trash" 
+                                     process="@this" update=":messages"  oncomplete="PF('deleteConfirm').show()" 
+                                     disabled="#{not manageDeviceView.selectionMade}"/>
+                    <p:commandButton id="addButton" value="Add" icon="ui-icon-plus" actionListener="#{manageDeviceView.onAdd}"
+                                     process="@this" update=":messages"  oncomplete="PF('editDialog').show()" />
+                    <p:commandButton id="editButton" value="Edit" icon="ui-icon-pencil" 
+                                     process="@this" update=":messages"  oncomplete="PF('editDialog').show()" 
+                                     disabled="#{not manageDeviceView.selectionMade}"/>                 
+                </f:facet> 
+            </p:dataTable>             
+        </h:form>
+
+        <ui:remove> -------------------------- Add/Edit ------------------- </ui:remove>
+        <p:dialog  id="deviceEditPanel" header="Add/Edit a Device" widgetVar="editDialog" dynamic="true">
+            <h:form id="deviceEditForm">
+                <p:panelGrid id="itemEditPanel" >
+                    <p:row rendered="false">
+                        <p:column><h:outputLabel value="Group" /></p:column>
+                        <p:column>
+                            <p:selectOneMenu  value="#{manageDeviceView.selectedDevice.deviceGroup}"   
+                                              var="grp" converter="#{groupConverter}" 
+                                              filter="true" filterMatchMode="startsWith" required="true">                            
+                                <f:selectItems value="#{groupManager.groups}" var="g" itemLabel="#{g.name}" itemValue="#{g}"/>
+                                <p:column>  
+                                    #{grp.name}
+                                </p:column>                                                
+                                <p:column >  
+                                    <h:outputText value="#{grp.description}" />  
+                                </p:column> 
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column><h:outputLabel value="Model" /></p:column>
+                        <p:column>
+                            <p:selectOneMenu  value="#{manageDeviceView.selectedDevice.model}"   
+                                              var="ct" converter="#{modelConverter}" 
+                                              filter="true" filterMatchMode="startsWith" required="true">                            
+                                <f:selectItems value="#{modelManager.models}" var="m" itemLabel="#{m.name}" itemValue="#{m}"/>
+                                <p:column>  
+                                    #{ct.name}
+                                </p:column>   
+                                <p:column>  
+                                    #{ct.manufacturer}
+                                </p:column> 
+                                <p:column >  
+                                    <h:outputText value="#{ct.description}" />  
+                                </p:column> 
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row rendered="false">
+                        <p:column><h:outputLabel value="Manufacturer" /></p:column>
+                        <p:column><h:inputText  value="#{manageDeviceView.selectedDevice.model.manufacturer}"/> </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column><h:outputLabel value="Serial #" /></p:column>
+                        <p:column><h:inputText id="icode" value="#{manageDeviceView.selectedDevice.serialNumber}" 
+                                               required="true"  /> 
+                        </p:column>
+                    </p:row>
+                    <p:row>                       
+                        <p:column><h:outputLabel value="Description" /></p:column>
+                        <p:column><p:inputTextarea id="desc" value="#{manageDeviceView.selectedDevice.description}" 
+                                                   required="true"   rows="5" cols="50"  /> </p:column>
+                    </p:row>                
+                    <p:row>
+                        <p:column><h:outputLabel value="Custodian" /></p:column>
+                        <p:column><h:inputText  value="#{manageDeviceView.selectedDevice.custodian}"/> </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column><h:outputLabel value="Location" /></p:column>
+                        <p:column><h:inputText  value="#{manageDeviceView.selectedDevice.location}"/> </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column><h:outputLabel value="Active:" /></p:column>
+                        <p:column><p:selectBooleanCheckbox  value="#{manageDeviceView.selectedDevice.active}"/> </p:column>
+                    </p:row> 
+                    <p:row>
+                        <p:column><h:outputLabel value="Standard" /></p:column>
+                        <p:column><p:selectBooleanCheckbox  value="#{manageDeviceView.selectedDevice.calibStandard}"/> </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column><h:outputLabel value="Cycle" /></p:column>
+                        <p:column><h:inputText  value="#{manageDeviceView.selectedDevice.calibCycle}" title="if different from model's cycle"/> </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <p:toolbar>
+                    <f:facet name="right" >                      
+                        <p:commandButton value="Save" icon="ui-icon-disk" 
+                                         update=":searchForm:searchTable :messages" 
+                                         process="@form" actionListener="#{manageDeviceView.onSave}"
+                                         oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('editDialog').hide()" /> 
+                        <p:separator /> 
+                        <p:commandButton value="Cancel" icon="ui-icon-close"                                         
+                                         process="@this"  onclick="PF('editDialog').hide()" />
+                    </f:facet>
+                </p:toolbar> 
+            </h:form>  
+        </p:dialog>
+
+        <ui:remove> -------------------------- Delete Confirm ------------------- </ui:remove>
+        <p:dialog widgetVar="deleteConfirm">  
+            <f:facet name="header">  
+                <h:outputText value="Delete Device"/> 
+            </f:facet>
+            <h:form id="deviceDelForm">
+                <h:outputText value="Do you really want to delete this device?" />
+
+                <p:separator /> 
+                <p:commandButton value="Yes" style="float: left"  
+                                 icon="ui-icon-check"
+                                 process="@this" update=":searchForm:searchTable :messages"
+                                 oncomplete="PF('deleteConfirm').hide()"                                                                
+                                 actionListener="#{manageDeviceView.onDelete}"/> 
+                <p:commandButton  type="cancel" value="No" style="float: right"
+                                  icon="ui-icon-close"
+                                  update=":messages" process="@this"                                  
+                                  onclick="PF('deleteConfirm').hide()"  />  
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

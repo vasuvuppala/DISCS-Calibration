@@ -20,9 +20,8 @@ import org.openepics.discs.calib.util.Utility;
 import java.io.Serializable;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
-import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
-import javax.faces.event.ComponentSystemEvent;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import org.openepics.discs.calib.ejb.CalibrationEJB;
 import org.openepics.discs.calib.ent.*;
@@ -32,16 +31,19 @@ import org.openepics.discs.calib.ent.*;
  * @author Vasu V <vuppala@frib.msu.org>
  */
 @Named
-@RequestScoped
+@ViewScoped
 public class CalibrationDetail implements Serializable {
 
     @EJB
     private CalibrationEJB calibrationEJB;    
     private static final Logger logger = Logger.getLogger(CalibrationDetail.class.getName());
     
+    private Integer deviceId;
+    
     // private Equipment selectedEquipment;
     private CalibrationRecord selectedCalibrationRec;
-    private final DevicePlus selectedEqp = new DevicePlus();
+    private final DevicePlus selectedEqp = DevicePlus.newInstance();
+    
     private int    calibrationRecID; // calibration record id
     
     /**
@@ -50,19 +52,20 @@ public class CalibrationDetail implements Serializable {
     public CalibrationDetail() {
     }
     
-    public void viewHandler(ComponentSystemEvent event) {
+
+    public void viewHandler() {
         selectedCalibrationRec = calibrationEJB.calibrationRecordById(calibrationRecID);
         if ( selectedCalibrationRec == null ) {
             Utility.showMessage(FacesMessage.SEVERITY_ERROR, "invalid calirbation record id", "");
             return;
         }
         
-        Device selectedEquipment = calibrationEJB.physicalComponentById(selectedCalibrationRec.getDevice().getDeviceId());
-        if ( selectedEquipment == null ) {
-            Utility.showMessage(FacesMessage.SEVERITY_ERROR, "Strange missing physical component", "");
+        Device device = calibrationEJB.physicalComponentById(selectedCalibrationRec.getDevice().getDeviceId());
+        if ( device == null ) {
+            Utility.showMessage(FacesMessage.SEVERITY_ERROR, "Strange missing device", "");
             return;
         }
-        selectedEqp.init(selectedEquipment);
+        selectedEqp.init(device);
     }
 
     public int getCalibrationRecID() {

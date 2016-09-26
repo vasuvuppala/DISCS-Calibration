@@ -7,7 +7,6 @@
 package org.openepics.discs.calib.ent;
 
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,7 +14,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -24,7 +22,8 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *
+ * An uploaded file or an external URL
+ * 
  * @author vuppala
  */
 @Entity
@@ -45,9 +44,14 @@ public class Artifact implements Serializable {
     
     @Basic(optional = false)
     @NotNull
+    @Column(name = "ext_resource")
+    private Boolean externalResource = false; // true if resource is external (a link); false if it is an uploaded file
+    
+    @Basic(optional = false)
+    @NotNull
     @Size(min = 1, max = 128)
-    @Column(name = "urn")
-    private String URN;
+    @Column(name = "name")
+    private String name;
     
     @Size(max = 255)
     @Column(name = "description")
@@ -57,13 +61,13 @@ public class Artifact implements Serializable {
     @NotNull
     @Lob
     @Size(min = 1, max = 2048)
-    @Column(name = "url")
-    private String URL;
+    @Column(name = "resource_id")
+    private String resourceId; // URL or BlobStore file id
     
     @Basic(optional = false)
     @NotNull
     @Column(name = "version")
-    private int version;
+    private int version = 0;
     
     public Artifact() {
     }
@@ -73,14 +77,14 @@ public class Artifact implements Serializable {
     }
 
     /** Constructs a new artifact
-     * @param urn the name of the artifact
+     * @param name
+     * @param resource
      * @param description the user specified description
-     * @param url the user specified URL
      */
-    public Artifact(String urn, String description, String url) {
-        this.URN = urn;
+    public Artifact(String name, String description, String resource) {
+        this.name = name;
         this.description = description;
-        this.URL = url;
+        this.resourceId = resource;
     }
 
     public Integer getId() {
@@ -91,20 +95,28 @@ public class Artifact implements Serializable {
         this.id = id;
     }
 
-    public String getURN() {
-        return URN;
+    public Boolean getExternalResource() {
+        return externalResource;
     }
 
-    public void setURN(String URN) {
-        this.URN = URN;
+    public void setExternalResource(Boolean externalResource) {
+        this.externalResource = externalResource;
     }
 
-    public String getURL() {
-        return URL;
+    public String getName() {
+        return name;
     }
 
-    public void setURL(String URL) {
-        this.URL = URL;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getResourceId() {
+        return resourceId;
+    }
+
+    public void setResourceId(String resourceId) {
+        this.resourceId = resourceId;
     }
 
     public String getDescription() {
@@ -145,7 +157,6 @@ public class Artifact implements Serializable {
 
     @Override
     public String toString() {
-        return "org.openepics.discs.calib.ent.Artifact[ id=" + id + " ]";
+        return this.getClass().getCanonicalName() + "[ " + id + " ]";
     }
-    
 }

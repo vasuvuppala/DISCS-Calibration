@@ -1,0 +1,282 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- 
+    manage a device
+
+-->
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/WEB-INF/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:h="http://java.sun.com/jsf/html" >
+    <ui:define name="content">
+
+        <f:metadata>
+            <f:viewParam name="device" value="#{deviceView.deviceId}"  />
+            <f:viewAction action="#{deviceView.initialize()}" />
+        </f:metadata>
+
+
+        <ui:remove> -------------------- Add Form ------------------- </ui:remove>
+        <p:panel >
+            <f:facet name="header">  
+                <h:outputText value="Device Information" />
+            </f:facet>
+
+            <p:panelGrid styleClass="noBorders" style="width: 90%"> 
+                <ui:remove>-------------------Equipment Info ------------</ui:remove>              
+                <c:set var="equipment" value="#{deviceView.selectedDevice.device}"/>
+                <p:row>
+                    <p:column>
+                        <h:form id="deviceInputForm">                                                         
+                            <p:panelGrid id="equipInfo" style="width: 100%"> 
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column colspan="6">
+                                            <h:outputText value="Device Information" />
+                                        </p:column>
+                                    </p:row>
+                                </f:facet>
+                                <p:row> 
+                                    <p:column> <h:outputText value="Model No: " styleClass="calibRecptForm"/> <h:outputText value="#{equipment == null? '' : equipment.model.name}" /></p:column> 
+                                    <p:column> <h:outputText value="Manufacturer:  " styleClass="calibRecptForm"/>#{equipment == null? '' : equipment.model.manufacturer}</p:column> 
+                                    <p:column> <h:outputText value="Serial No:  " styleClass="calibRecptForm"/>#{equipment == null? '' :equipment.serialNumber}</p:column> 
+                                    <p:column> <h:outputText value="Location:  " styleClass="calibRecptForm"/>#{equipment == null? '' :equipment.location}</p:column>
+                                    <p:column> <h:outputText value="Custodian:  " styleClass="calibRecptForm"/></p:column>
+                                    <p:column> <h:outputText value="Standard: " styleClass="calibRecptForm" /> #{equipment == null? '' : equipment.calibStandard ? 'Yes': 'No'} </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2"> <h:outputText value="Description: " styleClass="calibRecptForm"/>#{equipment == null? '' :equipment.description} </p:column>
+                                    <p:column> <h:outputText value="Date Last Svcd: " styleClass="calibRecptForm"/>
+                                        <h:outputText value="#{equipment == null? '': calibrationManager.selectedEplus.lastServicedDate}" >
+                                            <f:convertDateTime pattern="#{msgs.dateFormat}" />
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column> <h:outputText value="Next Due: " styleClass="calibRecptForm" />
+                                        <h:outputText value="#{equipment == null? '': calibrationManager.selectedEplus.nextDueDate}" >
+                                            <f:convertDateTime pattern="#{msgs.dateFormat}" />
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column> <h:outputText value="Cal Cycle: " styleClass="calibRecptForm"/> #{equipment == null? '': equipment.calibCycle} </p:column>
+                                    <p:column> <h:outputText value="Equipment Status: " styleClass="calibRecptForm"/>#{equipment.active ? 'Active': 'Inactive'}</p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </h:form>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <ui:remove>------------------- Calibration info ------------</ui:remove>
+                        <h:form id="calibRecordForm">  
+                            <h:outputText value="Calibration Records:" styleClass="paraHeading"/>  
+                            <p:dataTable id="calibRecs" var="calibrec" value="#{deviceView.selectedDevice.device.calibrationRecordList}" 
+                                         rowKey="#{calibrec.calibrationRecordId}}" selectionMode="single" selection="#{deviceView.selectedCR}"                                        
+                                         emptyMessage="No Calibration Records Found." >
+                                <p:ajax event="rowSelect" update="commandButtonsCR" />
+                                <p:column id="crdate" headerText="Date">                  
+                                    <h:outputText value="#{calibrec.calibrationDate}" >  
+                                        <f:convertDateTime pattern="${msgs.dateFormat}" />
+                                    </h:outputText>
+                                </p:column>    
+                                <p:column id="crby" headerText="By">                  
+                                    <h:outputText value="#{calibrec.performedBy}" />                              
+                                </p:column>
+                                <p:column id="crnotes" headerText="Notes" width="75%">                  
+                                    <h:outputText value="#{calibrec.notes}" />                              
+                                </p:column>
+                                <p:column id="crdet" headerText="Operation" width="10%" rendered="false">                                            
+                                    <p:commandLink  styleClass="ui-icon ui-icon-trash iconDisplay"  title="delete"  process="@this" 
+                                                    oncomplete="PF('delDiagWid').show()" 
+                                                    disabled="#{! authManager.canManageCalibrations()}"
+                                                    action="#{deviceManager.setSelectedCR(calibrec)}"/>                              
+
+                                    <h:outputLink  styleClass="ui-icon ui-icon-pencil iconDisplay"  title="edit" 
+                                                   value="calibration.xhtml?crid=#{calibrec.calibrationRecordId}" 
+                                                   target="_blank" disabled="true"/>
+                                    <h:outputLink  styleClass="ui-icon ui-icon-document iconDisplay" title="view" 
+                                                   value="calibration.xhtml?crid=#{calibrec.calibrationRecordId}" 
+                                                   target="_blank"/>
+                                </p:column>
+                                <f:facet name="footer"> 
+                                    <p:toolbar id="commandButtonsCR">
+                                        <f:facet name="left">                           
+                                            <p:button value="Add" icon="ui-icon-plus" 
+                                                      outcome="addCalibration"                                                           
+                                                      disabled="#{deviceView.newDevice or ! authManager.canManageCalibrations()}">
+                                                <f:param name="device" value="#{deviceView.selectedDevice.device.deviceId}"/>
+                                            </p:button>
+                                            <p:commandButton value="Edit" icon="ui-icon-pencil" ajax="false"
+
+                                                             action="#{deviceManager.addCalibrationRecord(eqp.device)}"
+                                                             disabled="#{empty deviceView.selectedCR or ! authManager.canManageCalibrations()}" />
+                                            <p:commandButton value="Delete" icon="ui-icon-trash" ajax="false"
+
+                                                             action="#{deviceManager.addCalibrationRecord(eqp.device)}"
+                                                             disabled="#{empty deviceView.selectedCR or ! authManager.canManageCalibrations()}" />
+                                            <p:button value="View" icon="ui-icon-note" 
+                                                      outcome="calibration" target="_blank"                                                           
+                                                      disabled="#{empty deviceView.selectedCR}"> 
+                                                <f:param name="crid" value="#{deviceView.selectedCR.calibrationRecordId}"/>
+                                            </p:button>
+                                        </f:facet>
+                                    </p:toolbar>
+                                </f:facet>
+                            </p:dataTable>
+                        </h:form>
+                    </p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column>
+                        <ui:remove>------------------- Artifacts  ------------</ui:remove>
+                        <h:form id="artifactViewForm">  
+                            <h:outputText value="Artifacts: " styleClass="paraHeading"/>                                                 
+                            <p:dataTable id="artifactTable" var="artif"  rowKey="#{artif.id}" 
+                                         selectionMode="single" selection="#{deviceView.selectedArtifact}"
+                                         value="#{deviceView.selectedDevice.device.artifacts}"  styleClass="spartanTable" >  
+
+                                <p:ajax event="rowSelect" update="commandButtonsAF" />
+                                <p:column  headerText="Name" style="width: 25%" >                  
+                                    <h:outputText value="#{artif.name}" />                                    
+                                </p:column>              
+                                <p:column headerText="Description" >                  
+                                    <h:outputText value="#{artif.description}"/>                              
+                                </p:column>
+                                <p:column headerText="URL" style="width: 15%" >                                                   
+                                    <h:outputText value="#{artif.resourceId}" rendered="#{artif.externalResource}"/> 
+                                </p:column>                               
+
+                                <f:facet name="footer"> 
+                                    <p:toolbar id="commandButtonsAF">
+                                        <f:facet name="left">                           
+                                            <p:commandButton value="Add" icon="ui-icon-plus" 
+                                                             actionListener="#{deviceView.onAddAF()}" update="artifactInputDlg" 
+                                                             oncomplete="PF('artifactInputWid').show()"                                                          
+                                                             disabled="#{deviceView.newDevice or ! authManager.canManageCalibrations()}"/>                                                                                         
+                                            <p:commandButton value="Edit" icon="ui-icon-pencil" 
+                                                             actionListener="#{deviceView.onEditAF()}" update="artifactInputDlg"
+                                                             oncomplete="PF('artifactInputWid').show()"
+                                                             disabled="#{empty deviceView.selectedArtifact or ! authManager.canManageCalibrations()}" />
+                                            <p:commandButton value="Delete" icon="ui-icon-trash" 
+                                                             actionListener="#{deviceView.onDeleteAF()}" update="artifactInputDlg"
+                                                             oncomplete="PF('artifactInputWid').show()"
+                                                             disabled="#{empty deviceView.selectedArtifact or ! authManager.canManageCalibrations()}" />                                           
+                                        </f:facet>
+                                    </p:toolbar>
+                                </f:facet>
+                            </p:dataTable>
+                        </h:form> 
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+
+        </p:panel>
+
+        <p:dialog id="discardConfirm" widgetVar="discardConfirmWid">
+            <h:outputText value="Do you realy want to discard this measurement?" />
+            <p:commandButton value="Cancel" icon="ui-icon-close" type="button" 
+                             onclick="PF('discardConfirmWid').hide()"/>
+            <p:commandButton value="Discard" icon="ui-icon-check" type="submit"
+                             actionListener="#{deviceView.resetInput()}" 
+                             update="" oncomplete="PF('discardConfirmWid').hide()"/>
+        </p:dialog>     
+
+        <p:dialog id="saveConfirm" widgetVar="saveConfirmWid">          
+            <h:outputText value="Do you realy want to save this measurement?" />
+            <p:commandButton value="Cancel" icon="ui-icon-close" type="button" onclick="PF('saveConfirmWid').hide()"/>
+            <p:commandButton value="Save" icon="ui-icon-check" process="@this "
+                             update="" actionListener="#{deviceView.saveDevice()}"
+                             oncomplete="PF('saveConfirmWid').hide()" />
+        </p:dialog>
+
+
+        <p:dialog id="artifactInputDlg" widgetVar="artifactInputWid">
+            <h:form id="artifactInputForm" enctype="multipart/form-data">              
+                <p:panelGrid>
+                    <f:facet name="header">
+                        <p:row>
+                            <p:column colspan="2">                             
+                                <h:outputText value="New Artifact" rendered="#{deviceView.inputActionAF == 'CREATE'}"/>
+                                <h:outputText value="Update Existing Artifact" rendered="#{deviceView.inputActionAF == 'UPDATE'}"/>
+                                <h:outputText value="Delete Artifact" rendered="#{deviceView.inputActionAF == 'DELETE'}"/>
+                            </p:column>                
+                        </p:row>
+                    </f:facet>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel  value="File/URL" />
+                        </p:column>
+                        <p:column>
+                            <p:inputSwitch value="#{deviceView.selectedArtifact.externalResource}"  
+                                           offLabel="File" onLabel="URL" disabled="#{deviceView.inputActionAF == 'DELETE'}">
+                                <p:ajax update="@form" />
+                            </p:inputSwitch>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="artName" value="Name"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="artName" value="#{deviceView.selectedArtifact.name}" 
+                                         required="true" 
+                                         validatorMessage="Name required" disabled="#{not deviceView.selectedArtifact.externalResource or deviceView.inputActionAF == 'DELETE'}"/>                             
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="artDesc"  value="Description" />
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="artDesc" value="#{deviceView.selectedArtifact.description}" 
+                                         required="true" 
+                                         validatorMessage="Description required" disabled="#{deviceView.inputActionAF == 'DELETE'}"/>                            
+                        </p:column>
+                    </p:row>
+
+                    <p:row rendered="#{deviceView.selectedArtifact.externalResource}">
+                        <p:column>
+                            <p:outputLabel for="artResource"  value="URL" />
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="artResource" value="#{deviceView.selectedArtifact.resourceId}" 
+                                         required="true" 
+                                         validatorMessage="URL required" disabled="#{not deviceView.selectedArtifact.externalResource}"/>    
+                            <p:tooltip for="artResource" value="You must enter the entire URL including the protocol (http etc)."  hideDelay="30"/>
+                        </p:column>
+                    </p:row>
+                    <p:row rendered="#{not deviceView.selectedArtifact.externalResource}">
+                        <p:column>
+                            <p:outputLabel for="artFile"  value="File" />
+                        </p:column>
+                        <p:column>
+                            <p:fileUpload id="artFile" auto="true" mode="advanced"
+                                          update="artName" sizeLimit="#{msgs.uploadSize}" 
+                                          disabled="#{deviceView.inputActionAF == 'DELETE'}"
+                                          fileUploadListener="#{deviceView.handleFileUpload}" />
+                        </p:column>
+                    </p:row>
+
+                    <f:facet name="footer">
+                        <p:row>
+                            <p:column colspan="2">
+                                <p:commandButton type="button" icon="ui-icon-close" value="Cancel" style="float: left;" 
+                                                 onclick="PF('artifactInputWid').hide()"/>
+                                <p:commandButton icon="ui-icon-disk" value="Save" style="float: right;"
+                                                 action="#{deviceView.saveArtifact()}"  
+                                                 oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('artifactInputWid').hide()"
+                                                 process="@form"  update="@form artifactViewForm" rendered="#{deviceView.inputActionAF != 'DELETE'}"/>
+                                <p:commandButton icon="ui-icon-trash" value="Confirm" style="float: right;"
+                                                 action="#{deviceView.saveArtifact()}" 
+                                                 oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('artifactInputWid').hide()"
+                                                 process="@form" update="artifactViewForm" rendered="#{deviceView.inputActionAF == 'DELETE'}"/>                                
+                            </p:column>                
+                        </p:row>
+                    </f:facet>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

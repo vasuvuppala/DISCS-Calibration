@@ -87,7 +87,7 @@ public class CalibrationMeasurement implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "version")
-    private int version;
+    private int version = 0;
     
     @JoinColumn(name = "calibration_record", referencedColumnName = "calibration_record_id")
     @ManyToOne(optional = false)

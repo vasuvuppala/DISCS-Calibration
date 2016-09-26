@@ -15,6 +15,7 @@
  */
 package org.openepics.discs.calib.ejb;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -132,14 +133,15 @@ public class CalibrationEJB {
      * @see Device
      */
     // ToDo: improve this method. not well written
-    public CalibrationRecord addCalibRecord(CalibrationRecord cr, Device[] standards, List<CalibrationMeasurement> measurements) {
+    public void addCalibRecord(CalibrationRecord cr, Device[] standards, List<CalibrationMeasurement> measurements, List<Artifact> artifacts) {
         //logger.info("CalibrationManager.addCalibRecord: entering");
         if (cr == null) {
-            LOGGER.log(Level.SEVERE, "CcalibrationRecord is null!");
-            return cr;
+            LOGGER.log(Level.SEVERE, "CalibrationRecord is null!");
+            return;
         }
-        em.persist(cr);
+        // em.persist(cr);
 
+        List<CalibrationDevice> calibDevices = new ArrayList<>();
         for (Device p : standards) {
             if (p == null) {
                 LOGGER.log(Level.SEVERE, "standard is null!");
@@ -149,25 +151,65 @@ public class CalibrationEJB {
             CalibrationDevice cd = new CalibrationDevice();
             cd.setDevice(dev);
             cd.setCalibrationRecord(cr);
-            em.persist(cd);
-            cr.getCalibrationDeviceList().add(cd);
+//             em.persist(cd);
+            calibDevices.add(cd);
         }
-
+        cr.setCalibrationDeviceList(calibDevices);
+        
         for (CalibrationMeasurement measurement : measurements) {
             measurement.setCalibrationRecord(cr);
-            em.persist(measurement);
+//             em.persist(measurement);
         }
-
+        
         cr.setCalibrationMeasurementList(measurements);
-        // update the equipment
-        cr.getDevice().getCalibrationRecordList().add(cr);
-        em.merge(cr.getDevice());
+        cr.setArtifactList(artifacts);
+        
+        em.persist(cr);
+        // update the device
+        Device device = em.find(Device.class, cr.getDevice().getDeviceId()) ;
+        device.getCalibrationRecordList().add(cr);
+        // em.merge(cr.getDevice());
         // auditEJB.makeAuditEntry(EntityType.CALIBRATION_RECORD, EntityTypeOperation.CREATE, cr.getDevice().getSerialNumber(), "created calibration record");
         auditEJB.makeAuditEntry(EntityType.CALIBRATION_RECORD, EntityTypeOperation.CREATE, cr.getDevice().getSerialNumber(), "created calibration record");
 
-        return cr;
     }
 
+//    public CalibrationRecord addCalibRecord(CalibrationRecord cr, Device[] standards, List<CalibrationMeasurement> measurements) {
+//        //logger.info("CalibrationManager.addCalibRecord: entering");
+//        if (cr == null) {
+//            LOGGER.log(Level.SEVERE, "CcalibrationRecord is null!");
+//            return cr;
+//        }
+//        em.persist(cr);
+//
+//        for (Device p : standards) {
+//            if (p == null) {
+//                LOGGER.log(Level.SEVERE, "standard is null!");
+//                continue;
+//            }
+//            Device dev = em.find(Device.class, p.getDeviceId());
+//            CalibrationDevice cd = new CalibrationDevice();
+//            cd.setDevice(dev);
+//            cd.setCalibrationRecord(cr);
+//            em.persist(cd);
+//            cr.getCalibrationDeviceList().add(cd);
+//        }
+//
+//        for (CalibrationMeasurement measurement : measurements) {
+//            measurement.setCalibrationRecord(cr);
+//            em.persist(measurement);
+//        }
+//
+//        cr.setCalibrationMeasurementList(measurements);
+//        // update the equipment
+//        cr.getDevice().getCalibrationRecordList().add(cr);
+//        em.merge(cr.getDevice());
+//        // auditEJB.makeAuditEntry(EntityType.CALIBRATION_RECORD, EntityTypeOperation.CREATE, cr.getDevice().getSerialNumber(), "created calibration record");
+//        auditEJB.makeAuditEntry(EntityType.CALIBRATION_RECORD, EntityTypeOperation.CREATE, cr.getDevice().getSerialNumber(), "created calibration record");
+//
+//        return cr;
+//    }
+    
     public void deleteCalibRecord(Integer crid) throws Exception {
         CalibrationRecord cr;
 

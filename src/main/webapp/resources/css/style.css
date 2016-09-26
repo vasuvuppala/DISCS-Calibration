@@ -75,8 +75,8 @@ a {
 }
 
 .paraHeading {
-    font-weight: normal;
-    font-size:  larger;
+    font-weight: bold;
+    /* font-size:  larger; */
 }
 
 .deleted {

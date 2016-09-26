@@ -17,6 +17,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -107,6 +109,13 @@ public class Device implements Serializable {
     
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} , mappedBy = "device")
     private List<MaintenanceRecord> maintRecordList;
+    
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE})
+    @JoinTable(name = "device_artifact",
+               joinColumns = @JoinColumn(name = "device"),
+               inverseJoinColumns = @JoinColumn(name = "artifact") 
+    )
+    private List<Artifact> artifacts;
     
 //    @JoinColumn(name = "owner", referencedColumnName = "user_id")
 //    @ManyToOne
@@ -270,6 +279,14 @@ public class Device implements Serializable {
 
     public void setMaintRecordList(List<MaintenanceRecord> maintRecordList) {
         this.maintRecordList = maintRecordList;
+    }
+
+    public List<Artifact> getArtifacts() {
+        return artifacts;
+    }
+
+    public void setArtifacts(List<Artifact> artifacts) {
+        this.artifacts = artifacts;
     }
 
     @Override
