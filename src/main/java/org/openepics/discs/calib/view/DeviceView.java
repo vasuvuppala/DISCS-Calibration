@@ -106,7 +106,8 @@ public class DeviceView implements Serializable {
     public void saveDevice() {
         
     }
-    // calibrations
+    // Artifacts
+    
     public void onAddAF() {
         selectedArtifact = new Artifact();
          inputActionAF = InputAction.CREATE;

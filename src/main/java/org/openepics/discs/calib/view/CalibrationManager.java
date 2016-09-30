@@ -15,6 +15,7 @@
  */
 package org.openepics.discs.calib.view;
 
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,8 +25,6 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -38,7 +37,9 @@ import org.openepics.discs.calib.util.DevicePlus;
 import org.openepics.discs.calib.util.UserSession;
 import org.openepics.discs.calib.util.Utility;
 import org.openepics.discs.calib.view.ArtifactManager.InputArtifact;
-import org.primefaces.event.SelectEvent;
+import org.primefaces.context.RequestContext;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.UploadedFile;
 
 /**
  * Calibration Record Management view
@@ -63,12 +64,16 @@ public class CalibrationManager implements Serializable {
     @Inject 
     private ArtifactManager artifactManager;
 
-    private List<Device> physicalComponents;
+    // private List<Device> physicalComponents;
     private Device selectedDevice;
     private DevicePlus selectedEplus = DevicePlus.newInstance();
     private List<Device> filteredDevice;
     private List<Device> standards;
-    // private String equipmentSerial;
+   
+    // request params
+    private Integer deviceId;
+    private Integer crecordId; // calibration record id
+    
     // inputs
     private CalibrationRecord inputCalibRecord;
     private Device[] inputStandards;
@@ -77,10 +82,13 @@ public class CalibrationManager implements Serializable {
     private Date inputCalDate;
     private String inputCalNotes;
     private String selectedSerial;
-    private Integer deviceId;
+    
 
     // for artifacts
-    private String uploadedFileName;
+    private List<Artifact> artifacts;
+    private Artifact selectedArtifact;
+     private InputAction inputActionAF;
+    // private String uploadedFileName;
 
     /**
      * Creates a new instance of CalibrationManager
@@ -91,7 +99,7 @@ public class CalibrationManager implements Serializable {
     @PostConstruct
     private void init() {
         try {
-            physicalComponents = calibrationEJB.findDevices();
+            // physicalComponents = calibrationEJB.findDevices();
             standards = calibrationEJB.standards();
             resetInputs();
             // checkFlash();
@@ -101,13 +109,28 @@ public class CalibrationManager implements Serializable {
         }
     }
 
+    /**
+     * initialize device and calibration record
+     * 
+     */
     public void initialize() {
-        if (deviceId == null) {
-            selectedEplus = DevicePlus.newInstance(null);
+        if (deviceId == null && crecordId == null) {
+            Utility.showMessage(FacesMessage.SEVERITY_ERROR, "Invalid device", "Device ID and Calibration Record ID are missing");
+            return;
+        }
+        if (crecordId != null) {
+            inputCalibRecord = calibrationEJB.calibrationRecordById(crecordId);
+            if (inputCalibRecord == null) {
+                Utility.showMessage(FacesMessage.SEVERITY_ERROR, "No such calibration record", "Invalid calibration record ID");
+                return;
+            }
+            selectedDevice = inputCalibRecord.getDevice();
+            artifacts = new ArrayList<>(inputCalibRecord.getArtifacts());
         } else {
             selectedDevice = deviceEJB.findDevice(deviceId);
-            selectedEplus = DevicePlus.newInstance(selectedDevice);
+            artifacts = new ArrayList<>();
         }
+        selectedEplus = DevicePlus.newInstance(selectedDevice);
     }
     
     private void resetInputs() {
@@ -120,37 +143,12 @@ public class CalibrationManager implements Serializable {
         selectedDevice = null;
     }
 
-//    private void checkFlash() {
-//        /* check if serial number was passed from the previous view */
-//        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-//        String flashSerial = (String) context.getFlash().get("DeviceSerialNumber");
-//
-//        if (flashSerial == null || flashSerial.isEmpty()) {
-//            Utility.showMessage(FacesMessage.SEVERITY_INFO, "No serial number passed from the previous view (Flash)", "Must have an non-null serial number");
-//            LOGGER.log(Level.INFO, "No serial number passed from the previous view (Flash)");
-//        } else {
-//            selectedSerial = flashSerial;
-//            selectedEquip = findDevice(selectedSerial);
-//            if (selectedEquip == null) {
-//                Utility.showMessage(FacesMessage.SEVERITY_ERROR, "No equipment found. Invalid serial number from previous view (Flash)", selectedSerial);
-//                LOGGER.log(Level.INFO, "No equipment found. Invalid serial number from previous view (Flash): " + selectedSerial);
-//            }
-//            selectedEplus.init(selectedEquip);
-//        }
-//    }
 
-    public List<Device> completeDevice(String query) {
-        List<Device> suggestions = new ArrayList<>();
-
-        for (Device p : physicalComponents) {
-            if (p.getSerialNumber().contains(query)) {
-                suggestions.add(p);
-            }
-        }
-
-        return suggestions;
-    }
-
+    /**
+     * validate inputs
+     * 
+     * @return 
+     */
     private boolean validate() {
 //        if (selectedEquip == null) {
 //            LOGGER.log(Level.INFO, "Invalid equipment.");
@@ -186,12 +184,12 @@ public class CalibrationManager implements Serializable {
             cr.setPerformedBy(userSession.getUserId());
            
             LOGGER.log(Level.INFO, "Artifacts: ");
-            List<Artifact> artifacts = new ArrayList<>();
-            for(InputArtifact iartifact: artifactManager.getEntities() ) {
-                LOGGER.log(Level.INFO, "  artifact Name {0}", iartifact.getArtifact().getName());
-                LOGGER.log(Level.INFO, "  artifact Resource ID {0}", iartifact.getArtifact().getResourceId());
-                artifacts.add(iartifact.getArtifact());
-            }
+//            List<Artifact> artifacts = new ArrayList<>();
+//            for(InputArtifact iartifact: artifactManager.getEntities() ) {
+//                LOGGER.log(Level.INFO, "  artifact Name {0}", iartifact.getArtifact().getName());
+//                LOGGER.log(Level.INFO, "  artifact Resource ID {0}", iartifact.getArtifact().getResourceId());
+//                artifacts.add(iartifact.getArtifact());
+//            }
             calibrationEJB.addCalibRecord(cr, inputStandards, inputMeasurements, artifacts);
             Utility.showMessage(FacesMessage.SEVERITY_INFO, "Calibration was successfully added", "Success!");
             // this.resetInputs();
@@ -218,33 +216,73 @@ public class CalibrationManager implements Serializable {
         Utility.showMessage(FacesMessage.SEVERITY_INFO, "New measurement added", "");
     }
 
-//    public Device findDevice(String serial) {
-//        Device result = null;
-//
-//        for (Device p : physicalComponents) {
-//            if (p.getSerialNumber().equalsIgnoreCase(serial)) {
-//                result = p;
-//                break;
-//            }
-//        }
-//        return result;
-//    }
-
-//    public void handleSelect(SelectEvent event) {
-//        for (Device p : physicalComponents) {
-//            if (p.getSerialNumber().equalsIgnoreCase(selectedSerial)) {
-//                selectedEquip = p;
-//                break;
-//            }
-//        }
-//        if (selectedEquip == null) {
-//            LOGGER.log(Level.INFO, "Strangely selectedEquip is null");
-//            Utility.showMessage(FacesMessage.SEVERITY_INFO, "No selected equipment", "This is strange, possibly a bug.");
-//        }
-//    }
-
+    // Artifacts
     
+    public void onAddAF() {
+        selectedArtifact = new Artifact();
+        inputActionAF = InputAction.CREATE;
+    }
+    
+    public void onEditAF() {
+       inputActionAF = InputAction.UPDATE;
+    }
+    
+    public void onDeleteAF() {
+        inputActionAF = InputAction.DELETE;
+    }
+    
+    public void saveArtifact() {
+        try {                      
+            if (inputActionAF == InputAction.CREATE) {
+                artifacts.add(selectedArtifact);                
+            } 
+            RequestContext.getCurrentInstance().addCallbackParam("success", true);
+            Utility.showMessage(FacesMessage.SEVERITY_INFO, "Artifact Saved", "");
+        } catch (Exception e) {
+            Utility.showMessage(FacesMessage.SEVERITY_ERROR, "Could not save Artifact", e.getMessage());
+            RequestContext.getCurrentInstance().addCallbackParam("success", false);
+            System.out.println(e);
+        }
+    }
+    /**
+     * Move to Utility?
+     * 
+     * @param event 
+     */
+    public void handleFileUpload(FileUploadEvent event) {
+        // Utility.showMessage(FacesMessage.SEVERITY_INFO, "Succesful", msg);
+        LOGGER.log(Level.FINE, "Entering handleFileUpload");
+        InputStream istream;
 
+        try {
+            UploadedFile uploadedFile = event.getFile();
+            String uploadedFileName = uploadedFile.getFileName();
+            istream = uploadedFile.getInputstream();
+            // logger.log(Level.FINE,"Uploaded file name {0}", uploadedFileName);
+            // Utility.showMessage(FacesMessage.SEVERITY_INFO, "File ", "Name: " + uploadedFileName);
+            LOGGER.log(Level.FINE, "calling blobstore");
+            String fileId = blobStore.storeFile(istream);
+
+            // create an artifact
+
+            selectedArtifact.setName(uploadedFileName);
+            selectedArtifact.setResourceId(fileId);
+            
+            istream.close();
+            Utility.showMessage(FacesMessage.SEVERITY_INFO, "File uploaded", "Name: " + uploadedFileName);
+            // ileUploaded = true;
+        } catch (Exception e) {
+            Utility.showMessage(FacesMessage.SEVERITY_ERROR, "Error Uploading file", e.getMessage());
+            LOGGER.log(Level.SEVERE, "handleFileUpload {0}", e.getMessage());
+            System.out.println(e);
+            // fileUploaded = false;
+        } finally {
+
+        }
+    }
+
+    // getters and setters
+    
     public List<Device> getFilteredDevice() {
         return filteredDevice;
     }
@@ -293,9 +331,9 @@ public class CalibrationManager implements Serializable {
         this.inputCalNotes = inputCalNotes;
     }
 
-    public List<Device> getDevices() {
-        return physicalComponents;
-    }
+//    public List<Device> getDevices() {
+//        return physicalComponents;
+//    }
 
     public List<Device> getStandards() {
         return standards;
@@ -328,6 +366,29 @@ public class CalibrationManager implements Serializable {
     public void setDeviceId(Integer deviceId) {
         this.deviceId = deviceId;
     }
-    
-    
+
+    public List<Artifact> getArtifacts() {
+        return artifacts;
+    }
+
+    public void setArtifacts(List<Artifact> artifacts) {
+        this.artifacts = artifacts;
+    }
+
+    public Artifact getSelectedArtifact() {
+        return selectedArtifact;
+    }
+
+    public void setSelectedArtifact(Artifact selectedArtifact) {
+        this.selectedArtifact = selectedArtifact;
+    }
+
+    public InputAction getInputActionAF() {
+        return inputActionAF;
+    }
+
+    public void setInputActionAF(InputAction inputActionAF) {
+        this.inputActionAF = inputActionAF;
+    }
+       
 }

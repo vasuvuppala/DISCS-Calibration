@@ -10,14 +10,14 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:c="http://java.sun.com/jsp/jstl/core"
                 xmlns:h="http://java.sun.com/jsf/html" >
-    
+
     <ui:define name="content">
         <f:metadata>
             <f:viewParam name="device" value="#{calibrationManager.deviceId}"/>
             <f:viewAction action="#{calibrationManager.initialize()}"/>
         </f:metadata>
         <h:outputText value="Device is #{param['device']}" />
-        
+
         <h:form id="calibInputForm">
             <ui:remove> -------------------- Add Form ------------------- </ui:remove>
             <p:panel >
@@ -69,7 +69,7 @@
                             <ui:remove>------------------- Calibration info ------------</ui:remove>
                             <p:panelGrid id="calibinfo" style="width: 100%">                                       
                                 <p:row> 
-                                    
+
                                     <p:column> 
                                         <p:outputLabel value="Calibration Date: " for="calDate"/><br/>
                                         <p:calendar id="calDate" value="#{calibrationManager.inputCalDate}" navigator="true"   required="true"/> 
@@ -193,34 +193,44 @@
                     <p:row>
                         <p:column>
                             <ui:remove>------------------- Artifacts  ------------</ui:remove>
-                            <h:outputText value="Artifacts: " styleClass="paraHeading"/>
-                            <p:commandLink value="Add" title="Add a new artifact" update=":artifactInputDlg" process="@this" 
-                                           actionListener="#{artifactManager.onAddCommand}" oncomplete="PF('artifactInputWid').show()"
-                                           disabled="#{not true}"/>                        
-                            <p:dataTable id="artifactTable" var="artif"  rowKey="#{artif.artifact.id}" 
-                                         value="#{artifactManager.entities}"  styleClass="spartanTable" >  
-                                <p:column   style="width: 2%" >
-                                    <p:commandLink title="Delete" styleClass="fa fa-trash iconDisplay" process="@this" 
-                                                   actionListener="#{artifactManager.onDeleteCommand(artif)}" update="artifactTable" 
-                                                   disabled="#{not true}"/>
-                                </p:column>
-                                <p:column  headerText="Name" style="width: 25%" >                  
-                                    <h:outputText value="#{artif.artifact.name}" styleClass="#{artif.operation == 'DELETE' ? 'deleted' : ''}"/>                                    
-                                </p:column>              
-                                <p:column headerText="Description" >                  
-                                    <h:outputText value="#{artif.artifact.description}" styleClass="#{artif.operation == 'DELETE' ? 'deleted' : ''}"/>                              
-                                </p:column>
-                                <p:column headerText="Link" style="width: 15%" >                                
-                                    <h:outputText value="#{artifact.resourceId}" />                                    
-                                </p:column> 
-                                <p:column   style="width: 2%">                             
-                                    <p:commandLink title="Edit" styleClass="fa fa-pencil iconDisplay"   
-                                                   update=":artifactInputDlg"  process="@this"                                          
-                                                   actionListener="#{artifactManager.onEditCommand(artif)}"
-                                                   oncomplete="PF('artifactInputWid').show()" 
-                                                   disabled="#{artif.operation == 'DELETE'}" />
-                                </p:column>
-                            </p:dataTable>
+                            
+                                <h:outputText value="Artifacts: " styleClass="paraHeading"/>
+
+                                <p:dataTable id="artifactTable" var="artif"  rowKey="#{artif.id}"
+                                             selectionMode="single" selection="#{calibrationManager.selectedArtifact}"
+                                             value="#{calibrationManager.artifacts}"  styleClass="spartanTable" >  
+
+                                    <p:ajax event="rowSelect" update="commandButtonsAF" />
+                                    <p:column  headerText="Name" style="width: 25%" >                  
+                                        <h:outputText value="#{artif.name}" />                                    
+                                    </p:column>              
+                                    <p:column headerText="Description" >                  
+                                        <h:outputText value="#{artif.description}"/>                              
+                                    </p:column>
+                                    <p:column headerText="Link" style="width: 15%" >                                
+                                        <h:outputText value="#{artif.resourceId}" />                                    
+                                    </p:column> 
+
+                                    <f:facet name="footer"> 
+                                        <p:toolbar id="commandButtonsAF">
+                                            <f:facet name="left">                           
+                                                <p:commandButton value="Add" icon="ui-icon-plus" process="@this"
+                                                                 actionListener="#{calibrationManager.onAddAF()}" update="artifactInputDlg" 
+                                                                 oncomplete="PF('artifactInputWid').show()"                                                          
+                                                                 disabled="#{! authManager.canManageCalibrations()}"/>                                                                                         
+                                                <p:commandButton value="Edit" icon="ui-icon-pencil" 
+                                                                 actionListener="#{calibrationManager.onEditAF()}" update="artifactInputDlg"
+                                                                 oncomplete="PF('artifactInputWid').show()"
+                                                                 disabled="#{empty calibrationManager.selectedArtifact or ! authManager.canManageCalibrations()}" />
+                                                <p:commandButton value="Delete" icon="ui-icon-trash" 
+                                                                 actionListener="#{calibrationManager.onDeleteAF()}" update="artifactInputDlg"
+                                                                 oncomplete="PF('artifactInputWid').show()"
+                                                                 disabled="#{empty calibrationManager.selectedArtifact or ! authManager.canManageCalibrations()}" />                                           
+                                            </f:facet>
+                                        </p:toolbar>
+                                    </f:facet>
+                                </p:dataTable>
+                           
                         </p:column>
                     </p:row>
                 </p:panelGrid>
@@ -236,7 +246,7 @@
                 <h:outputText value="Do you realy want to discard this measurement?" />
                 <p:commandButton value="Cancel" icon="ui-icon-close" type="button" 
                                  onclick="PF('discardConfirmWid').hide()"/>
-               
+
                 <p:button value="Discard" icon="ui-icon-check"  outcome="device">
                     <f:param name="device" value="#{calibrationManager.deviceId}"/>
                 </p:button>
@@ -256,10 +266,10 @@
                 <p:panelGrid>
                     <f:facet name="header">
                         <p:row>
-                            <p:column colspan="2">
-                                <h:outputText value="New Artifact" rendered="#{artifactManager.inputAction == 'CREATE'}"/>
-                                <h:outputText value="Update Existing Artifact" rendered="#{artifactManager.inputAction == 'UPDATE'}"/>
-                                <h:outputText value="Delete Artifact" rendered="#{artifactManager.inputAction == 'DELETE'}"/>
+                            <p:column colspan="2">                             
+                                <h:outputText value="New Artifact" rendered="#{calibrationManager.inputActionAF == 'CREATE'}"/>
+                                <h:outputText value="Update Existing Artifact" rendered="#{calibrationManager.inputActionAF == 'UPDATE'}"/>
+                                <h:outputText value="Delete Artifact" rendered="#{calibrationManager.inputActionAF == 'DELETE'}"/>
                             </p:column>                
                         </p:row>
                     </f:facet>
@@ -268,7 +278,8 @@
                             <p:outputLabel  value="File/URL" />
                         </p:column>
                         <p:column>
-                            <p:inputSwitch value="#{artifactManager.inputAction == 'CREATE'? artifactManager.inputEntity.artifact.externalResource : artifactManager.selectedEntity.artifact.externalResource}"  offLabel="File" onLabel="URL">
+                            <p:inputSwitch value="#{calibrationManager.selectedArtifact.externalResource}"  
+                                           offLabel="File" onLabel="URL" disabled="#{calibrationManager.inputActionAF == 'DELETE'}">
                                 <p:ajax update="@form" />
                             </p:inputSwitch>
                         </p:column>
@@ -278,9 +289,9 @@
                             <p:outputLabel for="artName" value="Name"/>
                         </p:column>
                         <p:column>
-                            <p:inputText id="artName" value="#{artifactManager.inputAction == 'CREATE'? artifactManager.inputEntity.artifact.name : artifactManager.selectedEntity.artifact.name}" 
+                            <p:inputText id="artName" value="#{calibrationManager.selectedArtifact.name}" 
                                          required="true" 
-                                         validatorMessage="Name required" disabled="#{not artifactManager.inputEntity.artifact.externalResource or artifactManager.inputAction == 'DELETE'}"/>                             
+                                         validatorMessage="Name required" disabled="#{not calibrationManager.selectedArtifact.externalResource or calibrationManager.inputActionAF == 'DELETE'}"/>                             
                         </p:column>
                     </p:row>
 
@@ -289,31 +300,32 @@
                             <p:outputLabel for="artDesc"  value="Description" />
                         </p:column>
                         <p:column>
-                            <p:inputText id="artDesc" value="#{artifactManager.inputAction == 'CREATE'? artifactManager.inputEntity.artifact.description : artifactManager.selectedEntity.artifact.description}" 
+                            <p:inputText id="artDesc" value="#{calibrationManager.selectedArtifact.description}" 
                                          required="true" 
-                                         validatorMessage="Description required" disabled="#{artifactManager.inputAction == 'DELETE'}"/>                            
+                                         validatorMessage="Description required" disabled="#{calibrationManager.inputActionAF == 'DELETE'}"/>                            
                         </p:column>
                     </p:row>
-                                       
-                    <p:row rendered="#{artifactManager.inputEntity.artifact.externalResource}">
+
+                    <p:row rendered="#{calibrationManager.selectedArtifact.externalResource}">
                         <p:column>
                             <p:outputLabel for="artResource"  value="URL" />
                         </p:column>
                         <p:column>
-                            <p:inputText id="artResource" value="#{artifactManager.inputAction == 'CREATE'? artifactManager.inputEntity.artifact.resourceId : artifactManager.selectedEntity.artifact.resourceId}" 
+                            <p:inputText id="artResource" value="#{calibrationManager.selectedArtifact.resourceId}" 
                                          required="true" 
-                                         validatorMessage="URL required" disabled="#{not artifactManager.inputEntity.artifact.externalResource}"/>    
+                                         validatorMessage="URL required" disabled="#{not calibrationManager.selectedArtifact.externalResource}"/>    
                             <p:tooltip for="artResource" value="You must enter the entire URL including the protocol (http etc)."  hideDelay="30"/>
                         </p:column>
                     </p:row>
-                    <p:row rendered="#{not artifactManager.inputEntity.artifact.externalResource}">
+                    <p:row rendered="#{not calibrationManager.selectedArtifact.externalResource}">
                         <p:column>
                             <p:outputLabel for="artFile"  value="File" />
                         </p:column>
                         <p:column>
                             <p:fileUpload id="artFile" auto="true" mode="advanced"
                                           update="artName" sizeLimit="#{msgs.uploadSize}" 
-                                          fileUploadListener="#{artifactManager.handleFileUpload}" />
+                                          disabled="#{calibrationManager.inputActionAF == 'DELETE'}"
+                                          fileUploadListener="#{calibrationManager.handleFileUpload}" />
                         </p:column>
                     </p:row>
 
@@ -323,13 +335,13 @@
                                 <p:commandButton type="button" icon="ui-icon-close" value="Cancel" style="float: left;" 
                                                  onclick="PF('artifactInputWid').hide()"/>
                                 <p:commandButton icon="ui-icon-disk" value="Save" style="float: right;"
-                                                 action="#{artifactManager.saveEntity()}"  
+                                                 action="#{calibrationManager.saveArtifact()}"  
                                                  oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('artifactInputWid').hide()"
-                                                 process="@form"  update="@form :calibInputForm:artifactTable" rendered="#{artifactManager.inputAction != 'DELETE'}"/>
+                                                 process="@form"  update="@form :calibInputForm:artifactTable" rendered="#{calibrationManager.inputActionAF != 'DELETE'}"/>
                                 <p:commandButton icon="ui-icon-trash" value="Confirm" style="float: right;"
-                                                 action="#{artifactManager.deleteEntity()}" 
+                                                 action="#{calibrationManager.saveArtifact()}" 
                                                  oncomplete="if (!args.validationFailed &amp;&amp; args.success) PF('artifactInputWid').hide()"
-                                                 process="@form" update=":calibInputForm:artifactTable" rendered="#{artifactManager.inputAction == 'DELETE'}"/>                                
+                                                 process="@form" update=":calibInputForm:artifactTable" rendered="#{calibrationManager.inputActionAF == 'DELETE'}"/>                                
                             </p:column>                
                         </p:row>
                     </f:facet>

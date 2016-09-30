@@ -18,8 +18,8 @@
                          filteredValue="#{manageDeviceView.filteredDevices}"
                          paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
                          rows="25" paginator="true" rowsPerPageTemplate="25,50,100" styleClass="discsDatatable"
->
-                <p:ajax event="rowSelect" listener="#{manageDeviceView.onSelect}" update="editButton delButton :deviceEditForm" />
+                         >
+                <p:ajax event="rowSelect" listener="#{manageDeviceView.onSelect}" update="commandButtons" />
 
                 <f:facet name="header">
                     <h:outputText value="Manage Devices" />                       
@@ -44,7 +44,7 @@
                           filterMatchMode="contains" >                  
                     <h:outputText value="#{device.description}" />                              
                 </p:column>
-                
+
                 <p:column id="location" headerText="Location" >                  
                     <h:outputText value="#{device.location}" />                              
                 </p:column>
@@ -64,14 +64,23 @@
                     <h:outputText value="#{device.calibCycle}" title="in months" />                              
                 </p:column>
                 <f:facet id="crudMenu" name="footer">
-                    <p:commandButton id="delButton" value="Delete" icon="ui-icon-trash" 
-                                     process="@this" update=":messages"  oncomplete="PF('deleteConfirm').show()" 
-                                     disabled="#{not manageDeviceView.selectionMade}"/>
-                    <p:commandButton id="addButton" value="Add" icon="ui-icon-plus" actionListener="#{manageDeviceView.onAdd}"
-                                     process="@this" update=":messages"  oncomplete="PF('editDialog').show()" />
-                    <p:commandButton id="editButton" value="Edit" icon="ui-icon-pencil" 
-                                     process="@this" update=":messages"  oncomplete="PF('editDialog').show()" 
-                                     disabled="#{not manageDeviceView.selectionMade}"/>                 
+                    <p:toolbar id="commandButtons" >
+                        <f:facet name="left">                           
+                            <p:commandButton id="addButton" value="Add" icon="ui-icon-plus" actionListener="#{manageDeviceView.onAdd}"
+                                             process="@this" update=":messages :deviceEditForm"  oncomplete="PF('editDialog').show()" />
+                            <p:commandButton id="editButton" value="Edit" icon="ui-icon-pencil" 
+                                             process="@this" update=":messages :deviceEditForm"  oncomplete="PF('editDialog').show()" 
+                                             disabled="#{not manageDeviceView.selectionMade}"/>                            
+                            <p:commandButton id="viewButton" value="View" icon="ui-icon-note" 
+                                             process="@this" update=":messages :deviceEditForm"   
+                                             disabled="#{not manageDeviceView.selectionMade}"/>
+                        </f:facet>                   
+                        <f:facet name="right">                                                       
+                            <p:commandButton id="delButton1" value="Delete" icon="ui-icon-trash" 
+                                             process="@this" update=":messages :deviceEditForm"  oncomplete="PF('deleteConfirm').show()" 
+                                             disabled="#{not manageDeviceView.selectionMade}"/>                         
+                        </f:facet>
+                    </p:toolbar>     
                 </f:facet> 
             </p:dataTable>             
         </h:form>
@@ -146,7 +155,7 @@
                         <p:column><h:outputLabel value="Standard" /></p:column>
                         <p:column><p:selectBooleanCheckbox  value="#{manageDeviceView.selectedDevice.calibStandard}"/> </p:column>
                     </p:row>
-                     <p:row>
+                    <p:row>
                         <p:column><h:outputLabel value="Cycle" /></p:column>
                         <p:column><h:inputText  value="#{manageDeviceView.selectedDevice.calibCycle}" title="if different from model's cycle"/> </p:column>
                     </p:row>

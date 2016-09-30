@@ -21,7 +21,7 @@
         <ui:remove> -------------------- Add Form ------------------- </ui:remove>
         <p:panel >
             <f:facet name="header">  
-                <h:outputText value="Device Information" />
+                <h:outputText value="Manage Device" />
             </f:facet>
 
             <p:panelGrid styleClass="noBorders" style="width: 90%"> 
@@ -29,7 +29,8 @@
                 <c:set var="equipment" value="#{deviceView.selectedDevice.device}"/>
                 <p:row>
                     <p:column>
-                        <h:form id="deviceInputForm">                                                         
+                        <h:form id="deviceInputForm">  
+                            <h:outputText value="Device Information:" styleClass="paraHeading"/> 
                             <p:panelGrid id="equipInfo" style="width: 100%"> 
                                 <f:facet name="header">
                                     <p:row>
